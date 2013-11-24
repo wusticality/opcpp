@@ -15,7 +15,7 @@
 //so it doesn't need to be compiled so much
 //could also accomplish this by adding a static library for it.
 
-#include "../../Lib/boost/boost/xpressive/regex_error.hpp"
+#include <boost/xpressive/regex_error.hpp>
 
 namespace regex
 {

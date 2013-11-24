@@ -104,14 +104,14 @@ typedef opList<opNode*>::pointer_iterator iterator;		\
 	enum implements_##iface { iface##_implementation };	\
 iface<Parent>()											\
 {														\
-	Init();												\
+	this->Init();										\
 }
 
 #define PARSE_START							\
 	if(!Super::Parse())						\
 		return false;						\
-	AlterContext newcontext(GetId(),this);	\
-	ResetPosition();						\
+	AlterContext newcontext(this->GetId(),this);	\
+	this->ResetPosition();						\
 	INIT_EXCEPTIONS
 
 #define PARSE_END			\
@@ -119,10 +119,10 @@ iface<Parent>()											\
 	CATCH_EXCEPTIONS
 
 #define PREPARSE_START							\
-	AlterContext newcontext(GetId(),this);		\
+	AlterContext newcontext(this->GetId(),this);		\
 	if(!Super::PreParse())						\
 		return false;							\
-	ResetPosition();							\
+	this->ResetPosition();							\
 	INIT_EXCEPTIONS	
 
 #define PREPARSE_END		\
@@ -132,8 +132,8 @@ iface<Parent>()											\
 //wrap visitor functions - catches exceptions
 //function must return false for failure/errors
 #define OPERATIONS_START				\
-AlterContext newcontext(GetId(),this);	\
-	ResetPosition();					\
+AlterContext newcontext(this->GetId(),this);	\
+	this->ResetPosition();					\
 	INIT_EXCEPTIONS		
 
 #define OPERATIONS_END		\
@@ -141,10 +141,10 @@ AlterContext newcontext(GetId(),this);	\
 	CATCH_EXCEPTIONS
 
 #define POSTPARSE_START						\
-	AlterContext newcontext(GetId(),this);	\
+	AlterContext newcontext(this->GetId(),this);	\
 	if (!Super::PostParse())				\
 		return false;						\
-	ResetPosition();						\
+	this->ResetPosition();						\
 	INIT_EXCEPTIONS
 
 #define POSTPARSE_END		\
@@ -152,8 +152,8 @@ AlterContext newcontext(GetId(),this);	\
 	CATCH_EXCEPTIONS
 
 #define DISALLOW_START						\
-	AlterContext newcontext(GetId(),this);	\
-	ResetPosition();						\
+	AlterContext newcontext(this->GetId(),this);	\
+	this->ResetPosition();						\
 	INIT_EXCEPTIONS
 
 #define DISALLOW_END		\
@@ -173,7 +173,7 @@ AlterContext newcontext(GetId(),this);	\
 //loop macros
 #define LOOP_START(t)								\
 	AlterContext newcontext(t,this);				\
-	ResetPosition();								\
+	this->ResetPosition();								\
 	bool done = false;								\
 	while(!done)									\
 		{											\
@@ -188,15 +188,15 @@ AlterContext newcontext(GetId(),this);	\
 				exceptionhandler.CaughtException();	\
 			}										\
 		}											\
-	ResetPosition();
+	this->ResetPosition();
 
 // INSPECT macros
 #define INSPECT_START(t)				\
 	AlterContext newcontext(t,this);	\
-	ResetPosition();			
+	this->ResetPosition();			
 
 #define INSPECT_END						\
-	ResetPosition();					\
+	this->ResetPosition();					\
 	return false;
 
 ///==========================================

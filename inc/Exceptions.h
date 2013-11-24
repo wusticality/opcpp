@@ -36,7 +36,7 @@ public:
 			opException::Throw();
 		}
 
-		friend opException;
+		friend class opException;
 	};
 
 	//throws out to end the compiling
@@ -48,7 +48,7 @@ public:
 			opException::Throw();
 		}
 
-		friend opException;
+		friend class opException;
 	};
 
 	//throws out to Parse()
@@ -60,7 +60,7 @@ public:
 			opException::Throw();
 		}
 
-		friend opException;
+		friend class opException;
 	};
 
 	//throws
@@ -74,7 +74,7 @@ public:
 	public:
 		string exceptionstring;
 
-		friend opException;
+		friend class opException;
 	};
 
 	/**** utility ****/
@@ -169,7 +169,7 @@ private:
 			throw opCPP_FatalException();
 	}
 
-	friend setexceptionmode;
+	friend class setexceptionmode;
 };
 
 //NOTE: this is necessary for resetting the exception counter

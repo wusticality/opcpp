@@ -32,7 +32,7 @@ class  opNode;
 // base class for all opnodes
 class opNodeBase
 {
-	friend opNode;
+	friend class opNode;
 
 public:
 	/**** typedefs ****/

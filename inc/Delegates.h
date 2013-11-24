@@ -12,10 +12,12 @@
 ///****************************************************************
 
 //include fast delegate
-#include "../../Lib/FastDelegate/FastDelegate.h"
+// #include "../../Lib/FastDelegate/FastDelegate.h"
+#include <boost/function.hpp>
 
 namespace delegates
 {
-	typedef fastdelegate::FastDelegate< opNode* (const opString& modifiername) > ModifierDelegate;
-	
+    // kevin: Fix this!
+	// typedef fastdelegate::FastDelegate< opNode* (const opString& modifiername) > ModifierDelegate;
+    typedef boost::function< opNode* (const opString& modifiername) > ModifierDelegate;
 }

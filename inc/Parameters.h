@@ -73,7 +73,7 @@ protected:
 		bUsed = bused;
 	}
 	
-	friend opParameters;
+	friend class opParameters;
 
 private:
 	const opString Name;
@@ -322,8 +322,8 @@ private:
 
 class opParameters
 {
-	friend opDriver;
-	friend Globber;
+	friend class opDriver;
+	friend class lobber;
 
 public:
 	/**** singleton stuff ****/
@@ -417,7 +417,7 @@ public:
 
 private:
 
-	friend opOption;
+	friend class opOption;
 
 	static void AddOption(opOption* option)
 	{

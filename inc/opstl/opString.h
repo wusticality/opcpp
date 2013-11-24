@@ -202,9 +202,10 @@ public:
 	}
 
 	// StringTo specializations (int, float, double)
-	template<> static int    StringTo<int>(const opString& _s);
-	template<> static float  StringTo<float>(const opString& _s);
-	template<> static double StringTo<double>(const opString& _s);
+    // kevin: Fix this!
+	// template<> static int    StringTo<int>(const opString& _s);
+	// template<> static float  StringTo<float>(const opString& _s);
+	// template<> static double StringTo<double>(const opString& _s);
 
 	// Get a fixed point string from a numeric input type.
 	template<class T>
@@ -802,8 +803,9 @@ public:
 
 		int c;
 
-		while (c = *str++)
+		while ((c = *str++)) {
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+        }
 
 		return hash;
 	}

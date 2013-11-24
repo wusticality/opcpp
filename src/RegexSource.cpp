@@ -12,8 +12,7 @@
 ///****************************************************************
 
 #include "opSTL.h"
-
-#include "../../Lib/boost/boost/xpressive/xpressive.hpp"
+#include <boost/xpressive/xpressive.hpp>
 
 using boost::xpressive::sregex;
 using boost::xpressive::smatch;

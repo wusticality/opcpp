@@ -251,54 +251,57 @@ bool opDemoSupport::IsBlacklisted(const opString& key, const opString& hash)
 // we should run in demo mode.
 bool opDemoSupport::ValidateLicense(opParameters& params)
 {
-	opString      licenseFile = opParameters::Get().License.GetString();
-	path          licensePath = licenseFile.GetString();
-	std::ifstream ifs( licensePath.string().c_str() );
+    // kevin: Nuke this file.
+    return true;
 
-	// If the license file does not exist, we're in demo mode.
-	if ( !ifs )
-	{
-		DemoMode = true;
-		return false;
-	}
+	// opString      licenseFile = opParameters::Get().License.GetString();
+	// path          licensePath = licenseFile.GetString();
+	// std::ifstream ifs( licensePath.string().c_str() );
 
-	opString          file;
-	opArray<opString> lines;
+	// // If the license file does not exist, we're in demo mode.
+	// if ( !ifs )
+	// {
+	// 	DemoMode = true;
+	// 	return false;
+	// }
 
-	file.LoadFile(ifs);
-	file.FixNewlines();
-	file.Tokenize('\n', lines);
-	ifs.close();
+	// opString          file;
+	// opArray<opString> lines;
 
-	// If their license file is corrupt, we're in demo mode.
-	if (lines.Size() < 3)
-	{
-		DemoMode = true;
-		return false;
-	}
+	// file.LoadFile(ifs);
+	// file.FixNewlines();
+	// file.Tokenize('\n', lines);
+	// ifs.close();
 
-	opString key  = lines[0].RemoveWhitespace() + lines[1].RemoveWhitespace() + opDemoSupport::ExtraHashString;
-	opString hash = lines[2].RemoveWhitespace();
+	// // If their license file is corrupt, we're in demo mode.
+	// if (lines.Size() < 3)
+	// {
+	// 	DemoMode = true;
+	// 	return false;
+	// }
 
-	// If the hash of the key does not match the hash in the file, we're in demo mode.
-	if (md5Encode(key) != hash)
-	{
-		DemoMode = true;
-		return false;
-	}
+	// opString key  = lines[0].RemoveWhitespace() + lines[1].RemoveWhitespace() + opDemoSupport::ExtraHashString;
+	// opString hash = lines[2].RemoveWhitespace();
 
-	PopulateBlacklist();
+	// // If the hash of the key does not match the hash in the file, we're in demo mode.
+	// if (md5Encode(key) != hash)
+	// {
+	// 	DemoMode = true;
+	// 	return false;
+	// }
 
-	// If this key/hash combination has been blacklisted, then we're in demo mode.
-	if (IsBlacklisted(key, hash))
-	{
-		DemoMode = true;
-		return false;
-	}
+	// PopulateBlacklist();
 
-	// We're not in demo mode!
-	DemoMode = false;
+	// // If this key/hash combination has been blacklisted, then we're in demo mode.
+	// if (IsBlacklisted(key, hash))
+	// {
+	// 	DemoMode = true;
+	// 	return false;
+	// }
 
-	return true;
+	// // We're not in demo mode!
+	// DemoMode = false;
+
+	// return true;
 }
 

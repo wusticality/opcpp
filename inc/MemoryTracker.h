@@ -13,14 +13,17 @@
 
 
 //hash pointer functor
-template<>
-struct opHashFunction<opNode*>
+namespace opstl
 {
-	static size_t Hash(const opNode* const t)
-	{
-		return (size_t) t;
-	}
-};
+    template<>
+    struct opHashFunction<opNode*>
+    {
+        static size_t Hash(const opNode* const t)
+        {
+            return (size_t) t;
+        }
+    };
+}
 
 namespace memory
 {
@@ -71,16 +74,18 @@ class stackedcontext;
 template<class T>
 class stacked
 {
-protected:
+// kevin: Fix this?
+public:
+// protected:
 	/**** construction / destruction ****/
 
 	explicit stacked<T>(T* pointer)
 		: node(pointer)
 	{}
 
-	friend opNode;
-	friend opNodeBase;
-	friend NewHandler;
+	friend class opNode;
+	friend class opNodeBase;
+	friend class NewHandler;
 
 public:
 	

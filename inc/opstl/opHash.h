@@ -18,20 +18,30 @@
 
 // Include correct hash containers
 // based on compiler.
-#if defined(OPSTL_GNU_LINUX)
-    #include <tr1/unordered_set>
-    #include <tr1/unordered_map>
-	using namespace std::tr1;
 
-#elif defined(OPSTL_INTEL_LINUX)
-    #include <ext/hash_set>
-    #include <ext/hash_map>
-	using namespace __gnu_cxx;
-#else
-	#include <hash_set>
-	#include <hash_map>
-	using namespace stdext;
-#endif	
+// kevin: Fix this!
+#include <unordered_set>
+#include <unordered_map>
+namespace opstl 
+{
+    using std::unordered_set;
+    using std::unordered_map;
+}
+
+// #if defined(OPSTL_GNU_LINUX)
+//     #include <tr1/unordered_set>
+//     #include <tr1/unordered_map>
+// 	using namespace std::tr1;
+
+// #elif defined(OPSTL_INTEL_LINUX)
+//     #include <ext/hash_set>
+//     #include <ext/hash_map>
+// 	using namespace __gnu_cxx;
+// #else
+// 	#include <hash_set>
+// 	#include <hash_map>
+// 	using namespace stdext;
+// #endif	
 
 namespace opstl
 {

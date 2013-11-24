@@ -99,7 +99,7 @@ public:
 
 	const_iterator Last() const
 	{
-		if (Empty())
+		if (IsEmpty())
 			return End();
 
 		return --End();

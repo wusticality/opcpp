@@ -35,8 +35,8 @@ public:
 
 	void removeWhitespace()
 	{
-		iterator i   = GetBegin();
-		iterator end = GetEnd();
+		iterator i   = this->GetBegin();
+		iterator end = this->GetEnd();
 
 		while (i != end)
 		{
@@ -46,7 +46,7 @@ public:
 			{
 				iterator newi = i;
 				++i;
-				DeleteNode(newi);
+				this->DeleteNode(newi);
 				continue;
 			}
 
@@ -76,8 +76,8 @@ public:
 
 	void removeComments()
 	{
-		iterator i   = GetBegin();
-		iterator end = GetEnd();
+		iterator i   = this->GetBegin();
+		iterator end = this->GetEnd();
 
 		while (i != end)
 		{
@@ -87,7 +87,7 @@ public:
 			{
 				iterator newi = i;
 				++i;
-				DeleteNode(newi);
+				this->DeleteNode(newi);
 				continue;
 			}
 
@@ -118,8 +118,8 @@ public:
 
 	void CleanAll()
 	{
-		removeComments();
-		removeWhitespace();
+		this->removeComments();
+		this->removeWhitespace();
 	}
 };
 
@@ -153,8 +153,8 @@ public:
 
 	void DoTrim()
 	{
-		iterator i   = GetBegin();
-		iterator end = GetEnd();
+		iterator i   = this->GetBegin();
+		iterator end = this->GetEnd();
 
 		// Trim the front.
 		while (i != end
@@ -162,22 +162,22 @@ public:
 		{
 			iterator old = i;
 			++i;
-			DeleteNode(old);
+			this->DeleteNode(old);
 		}
 
-		if (IsEmpty())
+		if (this->IsEmpty())
 			return;
 
 		// Trim the end.
-		i   = GetBegin();
-		end = --GetEnd();
+		i   = this->GetBegin();
+		end = --(this->GetEnd());
 
 		while (end != i
 		&&     end->IsWhitespace())
 		{
 			iterator old = end;
 			--end;
-			DeleteNode(old);
+			this->DeleteNode(old);
 		}
 	}
 };
@@ -200,9 +200,9 @@ public:
 		if(container.size())
 			return;
 
-		ResetPosition();
+		this->ResetPosition();
 
-		if (!IsEmpty())
+		if (!this->IsEmpty())
 		{
 			while(1)
 			{
@@ -211,9 +211,9 @@ public:
 				if(arg->IsEmpty())
 					arg->CopyBasics(this);
 
-				if(IsCurrent(Delimiter))
+				if(this->IsCurrent(Delimiter))
 				{
-					Erase(Delimiter);
+					this->Erase(Delimiter);
 					container.push_back(*arg);
 				}
 				else
@@ -228,11 +228,11 @@ public:
 			for (int i = 0; i < size; i++)
 			{
 				stacked<opNode> tempstacked = stacked<opNode>::buildstacked(container[i]);
-				AppendNode(tempstacked);
+				this->AppendNode(tempstacked);
 			}
 		}
 
-		ResetPosition();
+		this->ResetPosition();
 	}
 
 	// delimiter specific functions
@@ -251,10 +251,10 @@ class UnInlineSupport : public Parent
 	bool GetInlineMode()
 	{
 		//if inline, then inline
-		bool binline = HasModifier(T_INLINE);
+		bool binline = this->HasModifier(T_INLINE);
 
 		//if uninline, then uninline
-		bool buninline = HasModifier(T_UNINLINE);
+		bool buninline = this->HasModifier(T_UNINLINE);
 
 		//if inline and uninline, then uninline
 		bool doinline = binline && !buninline;

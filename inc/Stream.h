@@ -216,12 +216,12 @@ private:
 	//the full stream
 	opString o;
 
-	friend DirectiveOverride;
-	friend IgnoreNewlines;
-	friend LineOverride;
-	friend CommentMode;
-	friend LineOrigin;
-	friend ForceNewlines;
+	friend class DirectiveOverride;
+	friend class IgnoreNewlines;
+	friend class LineOverride;
+	friend class CommentMode;
+	friend class LineOrigin;
+	friend class ForceNewlines;
 };
 
 class opSectionStream

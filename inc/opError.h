@@ -102,7 +102,7 @@ private:
 		node = ContextNode;
 	}
 	
-	friend AlterContext;
+	friend class AlterContext;
 
 public:
 	/*=== utility ===*/
@@ -270,9 +270,9 @@ namespace memory
 // 			: stacked<T>(pointer), AlterContext(pointer)
 // 		{}
 
-		friend opNode;
-		friend opNodeBase;
-		//friend NewHandler;
+		friend class opNode;
+		friend class opNodeBase;
+		//friend class NewHandler;
 
 	public:
 
