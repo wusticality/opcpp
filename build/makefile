@@ -16,11 +16,12 @@ FLAGS = -DOPCPP
 INC =
 INC += -I ${BOOST_INC}
 INC += -I ../inc/
+INC += -I ../src/
 
 # source
 SRC =
-SRC += ../src/opCPPSource.cpp
-SRC += ../src/RegexSource.cpp
+SRC += ../src/opcpp/opcpp_source.cpp
+SRC += ../src/opcpp/regex_source.cpp
 
 # debug
 debug:
