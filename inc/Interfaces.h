@@ -44,15 +44,15 @@ public:
 			{
 				stackedcontext<NamespaceNode> newNode = opNode::Make<NamespaceNode>(T_NAMESPACE);
 				
-				Erase(T_NAMESPACE);
+				this->Erase(T_NAMESPACE);
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
-				if(IsCurrent(T_ASSIGN))
+				if(this->IsCurrent(T_ASSIGN))
 				{
 					//create an alias instead (transform and set...)
 					stackedcontext<NamespaceAliasNode> alias = opNode::Transform<NamespaceAliasNode>(newNode);
@@ -60,40 +60,40 @@ public:
 					alias->SetName(*name);
 					alias->AppendNode(name);
 
-					Erase(T_ASSIGN);
+					this->Erase(T_ASSIGN);
 					
-					EatWhitespaceAndComments();
+					this->EatWhitespaceAndComments();
 
-					while(IsCurrent(T_ID))
+					while(this->IsCurrent(T_ID))
 					{
 						stacked<TerminalNode> scope = opNode::Expect<TerminalNode>(T_ID);
 						
 						alias->AddScope(*scope);
 						alias->AppendNode(scope);
 						
-						if(IsCurrent(T_SCOPE_RESOLUTION))
-							Erase(T_SCOPE_RESOLUTION);
+						if(this->IsCurrent(T_SCOPE_RESOLUTION))
+							this->Erase(T_SCOPE_RESOLUTION);
 					}
 					
-					EatWhitespaceAndComments();
+					this->EatWhitespaceAndComments();
 					
-					Erase(T_SEMICOLON);
+					this->Erase(T_SEMICOLON);
 
-					InsertNodeAtCurrent(alias);
+					this->InsertNodeAtCurrent(alias);
 				}
 				else
 				{
 					newNode->SetName(*name);
 					newNode->AppendNode(name);
 
-					EatWhitespaceAndComments();
+					this->EatWhitespaceAndComments();
 
 					stacked<BraceBlockNode>     bbn = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 					stacked<NamespaceBlockNode> nbn = opNode::Transform<NamespaceBlockNode>(bbn);
 					newNode->SetBody(*nbn);
 					newNode->AppendNode(nbn);
 
-					InsertNodeAtCurrent(newNode);
+					this->InsertNodeAtCurrent(newNode);
 				}
 			}
 		}
@@ -130,16 +130,16 @@ public:
 				{
 					stackedcontext<UsingNamespaceKeywordNode> newNode = opNode::Make<UsingNamespaceKeywordNode>(T_USING);
 
-					Erase(T_USING);
+					this->Erase(T_USING);
 
-					EatWhitespaceAndComments();
+					this->EatWhitespaceAndComments();
 
-					Erase(T_NAMESPACE);
+					this->Erase(T_NAMESPACE);
 
-					InsertNodeAtCurrent(newNode);					
+					this->InsertNodeAtCurrent(newNode);					
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END
@@ -174,14 +174,14 @@ public:
 			{
 				stackedcontext<UsingNode> newNode = opNode::Make<UsingNode>(T_USING);
 
-				Erase(T_USING);
+				this->Erase(T_USING);
 
 				stacked<ScopeNode> scope = opNode::Expect<ScopeNode>(G_SCOPE);
 
 				newNode->SetScope(*scope);
 				newNode->AppendNode(scope);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END
@@ -255,7 +255,7 @@ public:
 				DeleteCurrentNode();
 				
 				// add the new node
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -313,41 +313,41 @@ public:
 				stacked<TerminalNode>       firststar;
 
 				//grab all the stars and c/v specifiers
-				while( IsCurrent(T_STAR) )
+				while( this->IsCurrent(T_STAR) )
 				{
 					// Save off the first star (for error messages).
 					if ( firststar.IsValid() )
-						Erase(T_STAR);
+						this->Erase(T_STAR);
 					else
 						firststar = opNode::Expect<TerminalNode>(T_STAR);
 					
 					PointerNode::StarType type = PointerNode::Plain;
 
 					// const
-					if( IsCurrent(T_CONST) )
+					if( this->IsCurrent(T_CONST) )
 					{
-						Erase(T_CONST);
+						this->Erase(T_CONST);
 						type = PointerNode::Const;
 					}
 					// volatile
-					else if ( IsCurrent(T_VOLATILE) )
+					else if ( this->IsCurrent(T_VOLATILE) )
 					{
-						Erase(T_VOLATILE);
+						this->Erase(T_VOLATILE);
 						type = PointerNode::Volatile;
 					}
 
 					// const volatile
 					if ( type == PointerNode::Volatile
-					     && IsCurrent(T_CONST) )
+					     && this->IsCurrent(T_CONST) )
 					{
-						Erase(T_CONST);
+						this->Erase(T_CONST);
 						type = PointerNode::ConstVolatile;
 					}
 					// volatile const
 					else if ( type == PointerNode::Const
-					&&        IsCurrent(T_VOLATILE) )
+					&&        this->IsCurrent(T_VOLATILE) )
 					{
-						Erase(T_VOLATILE);
+						this->Erase(T_VOLATILE);
 						type = PointerNode::ConstVolatile;
 					}
 
@@ -366,7 +366,7 @@ public:
 
 				firststar.Delete();
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -440,10 +440,10 @@ public:
 			{
 				stackedcontext<OperatorNode> newNode = opNode::Make<OperatorNode>(T_OPERATOR);
 				
-				Erase(T_OPERATOR);
+				this->Erase(T_OPERATOR);
 				
 				//operator ()() special case
-				if(IsCurrent(G_PAREN_BLOCK))
+				if(this->IsCurrent(G_PAREN_BLOCK))
 				{
 					//NOTE: we dont support templated operator()() : P
 					stacked<ParenBlockNode> paren = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
@@ -461,7 +461,7 @@ public:
 				
 				//opNode* oper = ExpectOverloadableOperator();
 				
-				InsertNodeAtCurrent(newNode);	
+				this->InsertNodeAtCurrent(newNode);	
 			}
 		}
 		LOOP_END;
@@ -556,10 +556,10 @@ public:
  					newNode->SetArguments(*arguments);
  					newNode->AppendNode(arguments);
  					
- 					InsertNodeAtCurrent(newNode);
+ 					this->InsertNodeAtCurrent(newNode);
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END;
@@ -610,17 +610,17 @@ public:
 				newNode->AppendNode(Arguments);
 				
 				// check for const-ness
-				if (IsCurrent(T_CONST))
+				if (this->IsCurrent(T_CONST))
 				{
-					Erase(T_CONST);
+					this->Erase(T_CONST);
 					newNode->SetConst(true);
 				}
 				
 				// check for pure methods
 				// NOTE: we just look for assignment = #, = ID, we dont look for null or anything like that
-				if (IsCurrent(T_ASSIGN))
+				if (this->IsCurrent(T_ASSIGN))
 				{
-					Erase(T_ASSIGN);
+					this->Erase(T_ASSIGN);
 					
 					stacked<TerminalNode> assignment = opNode::ExpectOr<TerminalNode>(T_NUMBER,T_ID);
 
@@ -628,7 +628,7 @@ public:
 					newNode->AppendNode(assignment);
 				}
 				
-				InsertNodeAtCurrent(newNode);		
+				this->InsertNodeAtCurrent(newNode);		
 			}
 		}
 		LOOP_END;
@@ -666,7 +666,7 @@ public:
 				//NOTE: this function should be ok, test a while.
 				//TODO: fix this, this function still sucks - might be ok now..
 
-				bool bFunctionDefinition = !IsCurrent(T_SEMICOLON);
+				bool bFunctionDefinition = !this->IsCurrent(T_SEMICOLON);
 
 				//is it a function declaration?
 				if (bFunctionDefinition)
@@ -687,7 +687,7 @@ public:
 					newNode->AppendNode(Function);
 					newNode->AppendNode(Body);
 					
-					InsertNodeAtCurrent(newNode);		
+					this->InsertNodeAtCurrent(newNode);		
 				}
 				//must be a function prototype
 				else
@@ -704,7 +704,7 @@ public:
 					newNode->AppendNode(Return);
 					newNode->AppendNode(Function);
 
-					InsertNodeAtCurrent(newNode);		
+					this->InsertNodeAtCurrent(newNode);		
 				}
 			}
 		}
@@ -761,7 +761,7 @@ public:
 				//ctor() {}
 				//ctor()
 
-				bool bdefinition = IsCurrent(T_COLON) || IsCurrent(G_BRACE_BLOCK);
+				bool bdefinition = this->IsCurrent(T_COLON) || this->IsCurrent(G_BRACE_BLOCK);
 
 				if(bdefinition)
 				{
@@ -770,7 +770,7 @@ public:
 					newNode->CopyBasics(*Constructor);
 
 					//optional initializer list
-					if(IsCurrent(T_COLON))
+					if(this->IsCurrent(T_COLON))
 					{
 						stacked<ConstructorInitializerListNode> initializers = opNode::PushUntil<ConstructorInitializerListNode>(G_BRACE_BLOCK);
 						
@@ -785,7 +785,7 @@ public:
 					newNode->AppendNode(Constructor);
 					newNode->AppendNode(Body);
 
-					InsertNodeAtCurrent(newNode);		
+					this->InsertNodeAtCurrent(newNode);		
 				}
 				//must be a function prototype
 				else
@@ -796,7 +796,7 @@ public:
 
 					newNode->SetConstructor(*Constructor);
 					newNode->AppendNode(Constructor);
-					InsertNodeAtCurrent(newNode);		
+					this->InsertNodeAtCurrent(newNode);		
 				}
 			}
 		}
@@ -837,7 +837,7 @@ public:
 				//~dtor() {}
 				//~dtor()
 
-				bool bdefinition = IsCurrent(G_BRACE_BLOCK);
+				bool bdefinition = this->IsCurrent(G_BRACE_BLOCK);
 
 				if(bdefinition)
 				{
@@ -852,7 +852,7 @@ public:
 					newNode->SetBody(*Body);
 					newNode->AppendNode(Body);
 
-					InsertNodeAtCurrent(newNode);		
+					this->InsertNodeAtCurrent(newNode);		
 				}
 				//must be a function prototype
 				else
@@ -864,7 +864,7 @@ public:
 					newNode->SetDestructor(*Destructor);
 					newNode->AppendNode(Destructor);
 					
-					InsertNodeAtCurrent(newNode);		
+					this->InsertNodeAtCurrent(newNode);		
 				}
 			}
 		}
@@ -904,23 +904,23 @@ public:
 				newNode->SetIdentifier(*identifier);
 				newNode->AppendNode(identifier);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<BraceBlockNode> bbn		= opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 				stacked<OPEnumBodyNode> eobn	= opNode::Transform<OPEnumBodyNode>(bbn);
 				newNode->SetBody(*eobn);
 				newNode->AppendNode(eobn);
 
-				EatWhitespaceAndComments();
-				Erase(T_SEMICOLON);
+				this->EatWhitespaceAndComments();
+				this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -961,10 +961,10 @@ public:
 				//I don't want to save this, because untransformed one is disallowed
 				category.Delete();
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				// is there middle modifiers?
-				if (IsCurrent(G_CPLUSPLUS))
+				if (this->IsCurrent(G_CPLUSPLUS))
 				{
 					stacked<CPlusPlusNode> middleModifiers = opNode::Expect<CPlusPlusNode>(G_CPLUSPLUS);
 
@@ -972,14 +972,14 @@ public:
 					newNode->AppendNode(middleModifiers);
 				}
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				// add name
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				// add inheritance
 				stacked<OPObjectInheritanceNode> i = opNode::PushUntil<OPObjectInheritanceNode>(G_BRACE_BLOCK);
@@ -1004,14 +1004,14 @@ public:
 				newNode->AppendNode(ocbn);
 	
 				//get rid of trailing semicolon (required now!)
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
-				Erase(T_SEMICOLON);
+				this->Erase(T_SEMICOLON);
 
-// 				if(IsCurrent(T_SEMICOLON))
-// 					Erase(T_SEMICOLON);
+// 				if(this->IsCurrent(T_SEMICOLON))
+// 					this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 
@@ -1046,7 +1046,7 @@ public:
 		{
 			stackedcontext<StateNode> newNode = opNode::Make<StateNode>(T_STATE);
 
-			Erase(T_STATE);
+			this->Erase(T_STATE);
 
 			// add name
 			stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
@@ -1060,11 +1060,11 @@ public:
 			newNode->AppendNode(sbn);
 
 			//get rid of trailing semicolons (which are optional)
-			EatWhitespaceAndComments();
-			if(IsCurrent(T_SEMICOLON))
-				Erase(T_SEMICOLON);
+			this->EatWhitespaceAndComments();
+			if(this->IsCurrent(T_SEMICOLON))
+				this->Erase(T_SEMICOLON);
 
-			InsertNodeAtCurrent(newNode);
+			this->InsertNodeAtCurrent(newNode);
 		}
 
 		LOOP_END;
@@ -1114,7 +1114,7 @@ public:
 				newNode->AppendNode(id);
 				newNode->AppendNode(body);				
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1163,7 +1163,7 @@ public:
 
 				ampersand.Delete();
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1203,18 +1203,18 @@ public:
 				
 				opArray< stacked<BracketBlockNode> > brackets;
 
-				while(IsCurrent(G_BRACKET_BLOCK))
+				while(this->IsCurrent(G_BRACKET_BLOCK))
 				{
 					stacked<BracketBlockNode> b = opNode::Expect<BracketBlockNode>(G_BRACKET_BLOCK);
 					brackets.push_back(b);
 				}
 
-				if ( IsPrevious(G_FUNDAMENTAL_TYPE) ||
-					 IsPrevious(T_BASIC_TYPE) ||
-					 IsPrevious(G_POINTER) ||
-					 IsPrevious(G_REFERENCE) ||
-					 IsPrevious(G_TEMPLATE_TYPE) ||
-					 IsPrevious(G_SCOPE) )
+				if ( this->IsPrevious(G_FUNDAMENTAL_TYPE) ||
+					 this->IsPrevious(T_BASIC_TYPE) ||
+					 this->IsPrevious(G_POINTER) ||
+					 this->IsPrevious(G_REFERENCE) ||
+					 this->IsPrevious(G_TEMPLATE_TYPE) ||
+					 this->IsPrevious(G_SCOPE) )
 				{
 					stackedcontext<TypeArrayNode> node = opNode::Transform<TypeArrayNode>(newNode);
 
@@ -1231,7 +1231,7 @@ public:
 					node->AppendNode(Type);
 
 					AppendBrackets(brackets,*node);
-					InsertNodeAtCurrent(node);
+					this->InsertNodeAtCurrent(node);
 				}
 				else 
 				{
@@ -1245,7 +1245,7 @@ public:
 					node->AppendNode(Name);
 
 					AppendBrackets(brackets,*node);
-					InsertNodeAtCurrent(node);
+					this->InsertNodeAtCurrent(node);
 				}
 			}
 		}
@@ -1298,22 +1298,22 @@ public:
 		{
 			HIT(token)
 			{
-				if(IsCurrent(token) && Peek(T_COLON))
+				if(this->IsCurrent(token) && Peek(T_COLON))
 				{
 					stackedcontext<VisibilityLabelNode> newNode = opNode::Make<VisibilityLabelNode>(token);
 					
 					stacked<TerminalNode> Label = opNode::Expect<TerminalNode>(token);
-					Erase(T_COLON);
+					this->Erase(T_COLON);
 
 					newNode->SetLabel(*Label);
 					
 					Label.Delete();
 
-					InsertNodeAtCurrent(newNode);
+					this->InsertNodeAtCurrent(newNode);
 				}
 				else
 				{
-					IncrementPosition();
+					this->IncrementPosition();
 				}
 			}
 		}
@@ -1362,7 +1362,7 @@ public:
 				opArray< stacked<opNode> > scopes;
 				
 				//is it a global scope or not?
-				if(IsPrevious(T_ID) || IsPrevious(G_TEMPLATE_TYPE))
+				if(this->IsPrevious(T_ID) || this->IsPrevious(G_TEMPLATE_TYPE))
 				{
 					// get the name/initial scope
 					stacked<opNode> name = ReverseExpectOr(T_ID, G_TEMPLATE_TYPE, *scoperesolution);
@@ -1393,9 +1393,9 @@ public:
 					stacked<opNode> name = ExpectOr(T_ID, G_TEMPLATE_TYPE);
 					scopes.PushBack(name);
 					
-					if(IsCurrent(T_SCOPE_RESOLUTION))
+					if(this->IsCurrent(T_SCOPE_RESOLUTION))
 					{
-						Erase(T_SCOPE_RESOLUTION);
+						this->Erase(T_SCOPE_RESOLUTION);
 						
 						//check for ...::*
 						if(CheckScopePointer(scope,scopes,bGlobal))
@@ -1417,7 +1417,7 @@ public:
 							scope->AppendNode(scopes[i]);
 						}
 						
-						InsertNodeAtCurrent(scope);
+						this->InsertNodeAtCurrent(scope);
 						bContinue = false;
 					}
 				}
@@ -1428,14 +1428,14 @@ public:
 
 	bool CheckScopePointer( stacked<ScopeNode>& scope, opArray< stacked< opNode > >& scopes, bool bGlobal)
 	{
-		if(IsCurrent(T_STAR))
+		if(this->IsCurrent(T_STAR))
 		{
 			stacked<ScopePointerNode> scopepointer = opNode::Transform<ScopePointerNode>(scope);
 
 			int numstars = 0;
-			while(IsCurrent(T_STAR))
+			while(this->IsCurrent(T_STAR))
 			{
-				Erase(T_STAR);
+				this->Erase(T_STAR);
 				numstars++;
 			}
 
@@ -1450,7 +1450,7 @@ public:
 				scopepointer->AppendNode(scopes[i]);
 			}
 
-			InsertNodeAtCurrent(scopepointer);
+			this->InsertNodeAtCurrent(scopepointer);
 			return true;
 		}
 
@@ -1503,7 +1503,7 @@ public:
 				newNode->SetType(*type);
 				newNode->AppendNode(type);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1538,14 +1538,14 @@ public:
 			{
 				stackedcontext<TypenameNode> newNode = opNode::Make<TypenameNode>(T_TYPENAME);
 
-				Erase(T_TYPENAME);
+				this->Erase(T_TYPENAME);
 
 				opNode* name = ExpectOr(T_ID,G_TEMPLATE_TYPE,G_SCOPE,G_POINTER,G_REFERENCE);
 
 				newNode->SetName(name);
 				newNode->AppendNode(name);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1581,7 +1581,7 @@ public:
 				if(!Peek(G_PAREN_BLOCK))
 				{
 					//not a function pointer, move past it
-					IncrementPosition();
+					this->IncrementPosition();
 					continue;
 				}
 
@@ -1613,7 +1613,7 @@ public:
 				newNode->SetReturn(*ReturnType);
 				newNode->PrependNode(ReturnType);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1647,31 +1647,31 @@ public:
 			{
 				stackedcontext<OPDefineNode> newNode = opNode::Make<OPDefineNode>(T_OPDEFINE);
 				
-				Erase(T_OPDEFINE);
+				this->Erase(T_OPDEFINE);
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
-				if (IsCurrent(G_PAREN_BLOCK))
+				if (this->IsCurrent(G_PAREN_BLOCK))
 				{
 					stacked<ParenBlockNode> arguments = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 					newNode->SetArguments(*arguments);
 					newNode->AppendNode(arguments);
 				}
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				stacked<BraceBlockNode> bbn		= opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 				stacked<OPDefineBodyNode> body	= opNode::Transform<OPDefineBodyNode>(bbn);
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1728,14 +1728,14 @@ public:
 			{
 				stackedcontext<NodeType> newNode = opNode::Make<NodeType>(HitToken);
 
-				Erase(HitToken);
+				this->Erase(HitToken);
 
 				// check and see that this #____ token is the first thing
 				// on the line (except for whitespace) and error if not
-				if (IsPrevious(T_WHITESPACE))
-					ReverseErase(T_WHITESPACE);
+				if (this->IsPrevious(T_WHITESPACE))
+					this->ReverseErase(T_WHITESPACE);
 
-				if (!IsPrevious(T_NEWLINE) && GetPosition() != GetBegin())
+				if (!this->IsPrevious(T_NEWLINE) && GetPosition() != GetBegin())
 					opError::MessageError(*newNode, "Preprocessor definitions must not be preceeded by any tokens on a line except whitespace.");
 
 				newNode->SetDirectiveName(directivename);
@@ -1763,7 +1763,7 @@ public:
 						bDone = true;
 				}
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1868,9 +1868,9 @@ public:
 			{
 				stackedcontext<OPIncludeNode> newNode = opNode::Make<OPIncludeNode>(T_OPINCLUDE);
 
-				Erase(T_OPINCLUDE);
+				this->Erase(T_OPINCLUDE);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> FileName = opNode::Expect<TerminalNode>(T_STRING);
 
@@ -1878,7 +1878,7 @@ public:
 				newNode->AppendNode(FileName);
 
 				OPIncludeNode* node = *newNode;
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1913,18 +1913,18 @@ public:
 			{
 				stackedcontext<ExpandCallNode> newNode = opNode::Make<ExpandCallNode>(T_EXPAND);
 
-				Erase(T_EXPAND);
+				this->Erase(T_EXPAND);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<opNode> name = Expect(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
-				if (IsCurrent(G_PAREN_BLOCK))
+				if (this->IsCurrent(G_PAREN_BLOCK))
 				{
 					stacked<ParenBlockNode> args = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 					stacked<ExpandCallArgumentListNode> arguments = opNode::Transform<ExpandCallArgumentListNode>(args);
@@ -1933,7 +1933,7 @@ public:
 					newNode->AppendNode(arguments);
 				}
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -1967,17 +1967,17 @@ public:
 			{
 				stackedcontext<OPMacroNode> newNode = opNode::Make<OPMacroNode>(T_OPMACRO);
 				
-				Erase(T_OPMACRO);
+				this->Erase(T_OPMACRO);
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
-				if (IsCurrent(G_PAREN_BLOCK))
+				if (this->IsCurrent(G_PAREN_BLOCK))
 				{
 					stacked<ParenBlockNode> args = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 					stacked<OPMacroArgumentListNode> arguments = opNode::Transform<OPMacroArgumentListNode>(args);
@@ -1986,14 +1986,14 @@ public:
 					newNode->AppendNode(arguments);
 				}
 				
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				stacked<BraceBlockNode> bbn   = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 				stacked<OPMacroBodyNode> body = opNode::Transform<OPMacroBodyNode>(bbn);
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2027,9 +2027,9 @@ public:
 			{
 				stackedcontext<CPlusPlusNode> newNode = opNode::Make<CPlusPlusNode>(T_CPLUSPLUS);
 
-				Erase(T_CPLUSPLUS);
+				this->Erase(T_CPLUSPLUS);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<BraceBlockNode>    bbn  = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 				stacked<CPlusPlusBodyNode> body = opNode::Transform<CPlusPlusBodyNode>(bbn);
@@ -2037,7 +2037,7 @@ public:
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2072,7 +2072,7 @@ public:
 			{
 				stackedcontext<FundamentalTypeNode> newNode = opNode::Make<FundamentalTypeNode>(T_SIGNED);
 
-				Erase(T_SIGNED);
+				this->Erase(T_SIGNED);
 
 				stacked<TerminalNode> type = opNode::Expect<TerminalNode>(T_BASIC_TYPE);
 
@@ -2087,7 +2087,7 @@ public:
 
 				newNode->SetIsSigned(true);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2101,7 +2101,7 @@ public:
 			{
 				stackedcontext<FundamentalTypeNode> newNode = opNode::Make<FundamentalTypeNode>(T_UNSIGNED);
 
-				Erase(T_UNSIGNED);
+				this->Erase(T_UNSIGNED);
 
 				stacked<TerminalNode> type = opNode::Expect<TerminalNode>(T_BASIC_TYPE);
 
@@ -2112,7 +2112,7 @@ public:
 				newNode->SetType(*type);
 				newNode->AppendNode(type);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2146,10 +2146,10 @@ public:
 					ctor->SetFunction(*f);
 					ctor->AppendNode(f);
 
-					InsertNodeAtCurrent(ctor);
+					this->InsertNodeAtCurrent(ctor);
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END	
@@ -2178,13 +2178,13 @@ public:
 
 				if(fname 
 				&& fname->GetValue() == classname 
-				&& IsPrevious(T_BITWISE_COMPLEMENT))
+				&& this->IsPrevious(T_BITWISE_COMPLEMENT))
 				{
 					stackedcontext<DestructorNode> dtor = opNode::Make<DestructorNode>(G_FUNCTION);
 					stacked<FunctionNode> f = opNode::Expect<FunctionNode>(G_FUNCTION);
 					dtor->SetFunction(*f);
 					
-					ReverseErase(T_BITWISE_COMPLEMENT);
+					this->ReverseErase(T_BITWISE_COMPLEMENT);
 
 					//do we want ~ in the member name or not?
 					//fname->PrependValue("~");
@@ -2197,10 +2197,10 @@ public:
 
 					dtor->AppendNode(f);
 
-					InsertNodeAtCurrent(dtor);
+					this->InsertNodeAtCurrent(dtor);
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END	
@@ -2234,7 +2234,7 @@ public:
 			{
 				stackedcontext<FriendNode> newNode = opNode::Make<FriendNode>(T_FRIEND);
 
-				Erase(T_FRIEND);
+				this->Erase(T_FRIEND);
 
 				stacked<opNode> first = opNode::ExpectOr(T_ID,
 														 G_SCOPE,
@@ -2263,7 +2263,7 @@ public:
  					newNode->SetFriend(*name);
  					newNode->AppendNode(name);
 
-					Erase(T_SEMICOLON);
+					this->Erase(T_SEMICOLON);
 
 					newNode->SetSemicolon(true);
 				}
@@ -2276,7 +2276,7 @@ public:
 					newNode->SetFriend(*first);
 					newNode->AppendNode(first);
 
-					Erase(T_SEMICOLON);
+					this->Erase(T_SEMICOLON);
 
 					newNode->SetSemicolon(true);
 				}
@@ -2287,7 +2287,7 @@ public:
  					newNode->AppendNode(first);
 				}
 								
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2321,10 +2321,10 @@ public:
 			{
 				stackedcontext<TypedefNode> newNode = opNode::Make<TypedefNode>(T_TYPEDEF);
 				
-				Erase(T_TYPEDEF);
+				this->Erase(T_TYPEDEF);
 
-				if (IsCurrent(T_VOLATILE)
-				||  IsCurrent(T_CONST))
+				if (this->IsCurrent(T_VOLATILE)
+				||  this->IsCurrent(T_CONST))
 				{
 					stacked<TerminalNode> modifier = opNode::ExpectOr<TerminalNode>(T_VOLATILE, T_CONST);
 
@@ -2351,9 +2351,9 @@ public:
 				newNode->AppendNode(name);
 
 				// eat the semicolon
-				Erase( T_SEMICOLON );
+				this->Erase( T_SEMICOLON );
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2386,14 +2386,14 @@ public:
 			HIT(T_TEMPLATE)
 			{
 				stackedcontext<TemplateDeclNode> newNode = opNode::Make<TemplateDeclNode>(T_TEMPLATE);
-				Erase(T_TEMPLATE);
+				this->Erase(T_TEMPLATE);
 
 				stacked<AngledBlockNode> braces = opNode::Expect<AngledBlockNode>(G_ANGLED_BLOCK);
 
 				newNode->SetBraces(*braces);
 				newNode->AppendNode(braces);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2438,10 +2438,10 @@ public:
 			{
 				stackedcontext<NodeClass> newNode = opNode::Make<NodeClass>(Hit);
 
-				Erase(Hit);
+				this->Erase(Hit);
 
 				// If we have a name, parse it.
-				if ( IsCurrent(T_ID) )
+				if ( this->IsCurrent(T_ID) )
 				{
 					stacked<TerminalNode> name = opNode::Expect<TerminalNode>( T_ID );
 
@@ -2455,10 +2455,10 @@ public:
 				newNode->SetBody(*bbn);
 				newNode->AppendNode(bbn);
 
-				EatWhitespaceAndComments();
-				Erase(T_SEMICOLON);
+				this->EatWhitespaceAndComments();
+				this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2474,11 +2474,11 @@ public:
 			{
 				stackedcontext<NodeClass> newNode = opNode::Make<NodeClass>(Hit);
 
-				Erase(Hit);
+				this->Erase(Hit);
 
 				// If we have a name, parse it.
 				// Also, if we have a name, look for inheritance.
-				if ( IsCurrent(T_ID) )
+				if ( this->IsCurrent(T_ID) )
 				{
 					stacked<TerminalNode> name = opNode::Expect<TerminalNode>( T_ID );
 
@@ -2503,7 +2503,7 @@ public:
 				newNode->SetBody(*bbn);
 				newNode->AppendNode(bbn);		
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -2553,7 +2553,7 @@ public:
 				newNode->SetTemplated( *templated );
 				newNode->AppendNode( templated );
 
-				InsertNodeAtCurrent( newNode );
+				this->InsertNodeAtCurrent( newNode );
 			}
 		}
 		LOOP_END;
