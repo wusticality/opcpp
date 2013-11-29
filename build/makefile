@@ -16,7 +16,6 @@ FLAGS = -DOPCPP
 INC =
 INC += -I ${BOOST_INC}
 INC += -I ../inc/
-INC += -I ../inc/opstl/
 
 # source
 SRC =

@@ -11,18 +11,15 @@
 // Include this header to include all opstl containers.
 //****************************************************************
 
-#ifndef __OPSTL__
-#define __OPSTL__
+#pragma once
 
-// Include the opstl containers.
-#include "opArray.h"
-#include "opDeque.h"
-#include "opList.h"
-#include "opHash.h"
-#include "opSet.h"
-#include "opMap.h"
-#include "opString.h"
-#include "opWideString.h"
+#include "opstl/array.h"
+#include "opstl/deque.h"
+#include "opstl/list.h"
+#include "opstl/hash.h"
+#include "opstl/set.h"
+#include "opstl/map.h"
+#include "opstl/string.h"
+#include "opstl/wide_string.h"
 
-#endif // end __OPSTL__
 

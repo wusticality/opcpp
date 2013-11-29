@@ -14,8 +14,8 @@
 //we only add includes to headers that
 //can be independently included
 #include <iostream>
-#include "opSTL.h"
-#include <File.h>
+#include "opstl/opstl.h"
+#include "opcpp/file.h"
 
 //errors?
 namespace errors

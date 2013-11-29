@@ -11,37 +11,17 @@
 // Wrapper for STL <hash_set> and <hash_map> classes.
 //****************************************************************
 
-#ifndef __OPSTL_OPHASH__
-#define __OPSTL_OPHASH__
+#pragma once
 
 #include "opstlcommon.h"
-
-// Include correct hash containers
-// based on compiler.
-
-// kevin: Fix this!
 #include <unordered_set>
 #include <unordered_map>
+
 namespace opstl 
 {
     using std::unordered_set;
     using std::unordered_map;
 }
-
-// #if defined(OPSTL_GNU_LINUX)
-//     #include <tr1/unordered_set>
-//     #include <tr1/unordered_map>
-// 	using namespace std::tr1;
-
-// #elif defined(OPSTL_INTEL_LINUX)
-//     #include <ext/hash_set>
-//     #include <ext/hash_map>
-// 	using namespace __gnu_cxx;
-// #else
-// 	#include <hash_set>
-// 	#include <hash_map>
-// 	using namespace stdext;
-// #endif	
 
 namespace opstl
 {
@@ -668,5 +648,5 @@ public:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPHASH__
+
 

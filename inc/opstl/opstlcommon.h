@@ -11,8 +11,7 @@
 // Common macros/initialization for all opstl containers.
 //****************************************************************
 
-#ifndef __OPSTL_COMMON__
-#define __OPSTL_COMMON__
+#pragma once
 
 // If we're compiling on Linux, figure
 // out which compiler.
@@ -63,7 +62,7 @@ namespace opstl {}
 using namespace opstl;
 
 // Include iterator extensions.
-#include "opInterfaces.h"
+#include "opstl/interfaces.h"
 
-#endif // end __OPSTL_COMMON__
+
 
