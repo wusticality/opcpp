@@ -77,13 +77,13 @@ using boost::filesystem::path;
 #include "opcpp/mappings.h"
 #include "opcpp/modifiers.h"
 #include "opcpp/timer.h"
-#include "opcpp/interface_inlines.h"
 #include "opcpp/regex_support.h"
 #include "opcpp/macro_interfaces.h"
 #include "opcpp/walkers.h"
 #include "opcpp/dialect_visitors.h"
 #include "opcpp/code_visitors.h"
 #include "opcpp/interfaces_inlines.h"
+#include "opcpp/statement_interfaces_inlines.h"
 
 
 

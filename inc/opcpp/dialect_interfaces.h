@@ -125,7 +125,6 @@ class CategoryLocations : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(CategoryLocations);
-	REQUIRES_INTERFACE(Clean);
 
 	bool Parse()
 	{
@@ -174,7 +173,6 @@ class Disallows : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(Disallows);
-	REQUIRES_INTERFACE(Clean);
 
 	bool Parse()
 	{
@@ -385,7 +383,6 @@ class CriteriaExpressions : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(CriteriaExpressions);
-	REQUIRES_INTERFACE(Clean);
 
 	bool Parse()
 	{
@@ -598,7 +595,6 @@ class EnumerationLocations : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(EnumerationLocations);
-	REQUIRES_INTERFACE(Clean);
 
 	bool Parse()
 	{

@@ -86,16 +86,6 @@
 /// Interface macros / exceptions
 ///==========================================
 
-//use these to validate order of interfaces
-//use this declaration as many times as needed within interfaces
-
-//NOTE: I had to disable these interfaces for a while :/
-
-#define REQUIRES_INTERFACE(iface)											\
-	enum required_##iface { iface##_requires = iface##_implementation, };
-
-//void Requires_##iface() { Implements_##iface(); }
-
 //use this declaration once per interface (within the class)
 #define IMPLEMENTS_INTERFACE(iface)						\
 public:													\

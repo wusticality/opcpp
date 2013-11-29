@@ -111,8 +111,6 @@ namespace context
 	{
 	public:
 		IMPLEMENTS_INTERFACE(Declaration)
-		REQUIRES_INTERFACE(Blocks)
-		REQUIRES_INTERFACE(Clean)
 
 		virtual opString GetClassName()
 		{
@@ -208,7 +206,6 @@ namespace context
 	{
 	public:
 		IMPLEMENTS_INTERFACE(Argument)
-		REQUIRES_INTERFACE(Blocks)
 
 		bool Parse()
 		{

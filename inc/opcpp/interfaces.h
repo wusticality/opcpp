@@ -54,7 +54,6 @@ class Usings : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(Usings)
-	REQUIRES_INTERFACE(Scopes)
 
 	bool Parse();
 	void FindUsings();
@@ -120,7 +119,7 @@ class Operators : public Parent
 public:
 	IMPLEMENTS_INTERFACE(Operators)
 
-	bool Parse()
+	bool Parse();
 	void FindOperators();
 };
 
@@ -175,7 +174,6 @@ class FunctionDefinitions : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(FunctionDefinitions)
-	REQUIRES_INTERFACE(Clean)
 
 	bool Parse();
 	void FindFunctionDefinitions();
@@ -193,7 +191,6 @@ class ConstructorDefinitions : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(ConstructorDefinitions)
-	REQUIRES_INTERFACE(Clean)
 
 	bool Parse();
 	void FindConstructorDefinitions();
@@ -208,7 +205,6 @@ class DestructorDefinitions : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(DestructorDefinitions);
-	REQUIRES_INTERFACE(Clean)
 
 	bool Parse();
 	void FindDestructorDefinitions();
@@ -311,7 +307,6 @@ class VisibilityLabels : public Parent
 {
 public:
 	IMPLEMENTS_INTERFACE(VisibilityLabels)
-	REQUIRES_INTERFACE(Clean)
 
 	bool Parse();
 	void FindVisibilityLabels();

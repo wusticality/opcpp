@@ -202,7 +202,6 @@ class DialectCategoryStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(DialectCategoryStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
@@ -279,7 +278,6 @@ class DialectEnumerationStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(DialectEnumerationStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
@@ -350,7 +348,6 @@ class EnumerationLocationStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(EnumerationLocationStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
@@ -421,7 +418,6 @@ class CategoryLocationStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(CategoryLocationStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
@@ -495,7 +491,6 @@ class DialectCriteriaStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(DialectCriteriaStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
@@ -563,7 +558,6 @@ class FileDeclarationLocationStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(FileDeclarationLocationStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
@@ -631,7 +625,6 @@ class GlobalDialectStatements : public DialectStatementsBase<Parent>
 {
 public:
 	IMPLEMENTS_INTERFACE(GlobalDialectStatements)
-	REQUIRES_INTERFACE(DialectStatementsBase)
 
 	bool Parse()
 	{
