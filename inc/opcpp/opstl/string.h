@@ -11,10 +11,9 @@
 // Wrapper for STL string class.
 //****************************************************************
 
-#ifndef __OPSTL_OPSTRING__
-#define __OPSTL_OPSTRING__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -1454,5 +1453,5 @@ inline opString operator + (double d, const opString& right_string)
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPSTRING__
+
 

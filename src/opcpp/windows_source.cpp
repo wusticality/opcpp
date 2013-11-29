@@ -13,8 +13,8 @@
 
 /*=== logging ===*/
 
-#include "Config.h"
-#include "opLog.h"
+#include "opcpp/config.h"
+#include "opcpp/log.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -26,7 +26,7 @@ void errors::opLog::DebugLog(const opString& s)
 
 /*=== platform ===*/
 
-#include "Platforms.h"
+#include "opcpp/platforms.h"
 
 // If you hit a breakpoint, step out.
 void opPlatform::Breakpoint()
@@ -49,7 +49,7 @@ bool opPlatform::ParseExeLocation(const opString& cmdarg)
 
 /*=== timing ===*/
 
-#include "Timer.h"
+#include "opcpp/timer.h"
 
 double timing::opTimer::GetTimeSeconds()
 {

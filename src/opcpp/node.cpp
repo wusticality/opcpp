@@ -11,7 +11,7 @@
 /// Contains the source code for many of the opNode base class methods.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // opNode

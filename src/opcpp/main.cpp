@@ -21,7 +21,7 @@
 	#include <crtdbg.h>
 #endif
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 // main function - entry point to app
 int main(int argc, char** argv)

@@ -11,7 +11,7 @@
 /// Regex Source
 ///****************************************************************
 
-#include "opSTL.h"
+#include "opcpp/opstl/opstl.h"
 #include <boost/xpressive/xpressive.hpp>
 
 using boost::xpressive::sregex;

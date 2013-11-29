@@ -12,7 +12,7 @@
 /// before compiling.  This dramatically reduces compile times.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // OPCPP Source Glob
@@ -38,113 +38,113 @@
 
 OPCOMPILING_SOURCE_START;
 
-OPCOMPILING_SOURCE("Beta.cpp");
-#include "Beta.cpp"
+OPCOMPILING_SOURCE("opcpp/beta.cpp");
+#include "opcpp/beta.cpp"
 
-OPCOMPILING_SOURCE("Version.cpp");
-#include "Version.cpp"
+OPCOMPILING_SOURCE("opcpp/version.cpp");
+#include "opcpp/version.cpp"
 
-OPCOMPILING_SOURCE("Platforms.cpp");
-#include "Platforms.cpp"
+OPCOMPILING_SOURCE("opcpp/platforms.cpp");
+#include "opcpp/platforms.cpp"
 
-OPCOMPILING_SOURCE("opError.cpp");
-#include "opError.cpp"
+OPCOMPILING_SOURCE("opcpp/error.cpp");
+#include "opcpp/error.cpp"
 
-OPCOMPILING_SOURCE("Tokens.cpp");
-#include "Tokens.cpp"
+OPCOMPILING_SOURCE("opcpp/tokens.cpp");
+#include "opcpp/tokens.cpp"
 
-OPCOMPILING_SOURCE("Driver.cpp");
-#include "Driver.cpp"
+OPCOMPILING_SOURCE("opcpp/driver.cpp");
+#include "opcpp/driver.cpp"
 
-OPCOMPILING_SOURCE("Stream.cpp");
-#include "Stream.cpp"
+OPCOMPILING_SOURCE("opcpp/stream.cpp");
+#include "opcpp/stream.cpp"
 
-OPCOMPILING_SOURCE("opNode.cpp");
-#include "opNode.cpp"
+OPCOMPILING_SOURCE("opcpp/node.cpp");
+#include "opcpp/node.cpp"
 
-OPCOMPILING_SOURCE("SymbolTracker.cpp");
-#include "SymbolTracker.cpp"
+OPCOMPILING_SOURCE("opcpp/symbol_tracker.cpp");
+#include "opcpp/symbol_tracker.cpp"
 
-OPCOMPILING_SOURCE("PreParse.cpp");
-#include "PreParse.cpp"
+OPCOMPILING_SOURCE("opcpp/pre_parse.cpp");
+#include "opcpp/pre_parse.cpp"
 
-OPCOMPILING_SOURCE("Parameters.cpp");
-#include "Parameters.cpp"
+OPCOMPILING_SOURCE("opcpp/parameters.cpp");
+#include "opcpp/parameters.cpp"
 
-OPCOMPILING_SOURCE("Exceptions.cpp");
-#include "Exceptions.cpp"
+OPCOMPILING_SOURCE("opcpp/exceptions.cpp");
+#include "opcpp/exceptions.cpp"
 
-OPCOMPILING_SOURCE("Parse.cpp");
-#include "Parse.cpp"
+OPCOMPILING_SOURCE("opcpp/parse.cpp");
+#include "opcpp/parse.cpp"
 
-OPCOMPILING_SOURCE("PostParse.cpp");
-#include "PostParse.cpp"
+OPCOMPILING_SOURCE("opcpp/post_parse.cpp");
+#include "opcpp/post_parse.cpp"
 
-OPCOMPILING_SOURCE("Print.cpp");
-#include "Print.cpp"
+OPCOMPILING_SOURCE("opcpp/print.cpp");
+#include "opcpp/print.cpp"
 
-OPCOMPILING_SOURCE("PrintNotes.cpp")
-#include "PrintNotes.cpp"
+OPCOMPILING_SOURCE("opcpp/print_notes.cpp")
+#include "opcpp/print_notes.cpp"
 
-OPCOMPILING_SOURCE("PrintMaps.cpp")
-#include "PrintMaps.cpp"
+OPCOMPILING_SOURCE("opcpp/print_maps.cpp")
+#include "opcpp/print_maps.cpp"
 
-OPCOMPILING_SOURCE("FileNodes.cpp");
-#include "FileNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/file_nodes.cpp");
+#include "opcpp/file_nodes.cpp"
 
-OPCOMPILING_SOURCE("StatementNodes.cpp");
-#include "StatementNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/statement_nodes.cpp");
+#include "opcpp/statement_nodes.cpp"
 
-OPCOMPILING_SOURCE("ModifierNodes.cpp");
-#include "ModifierNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/modifier_nodes.cpp");
+#include "opcpp/modifier_nodes.cpp"
 
-OPCOMPILING_SOURCE("DialectModifierNodes.cpp");
-#include "DialectModifierNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/dialect_modifier_nodes.cpp");
+#include "opcpp/dialect_modifier_nodes.cpp"
 
-OPCOMPILING_SOURCE("ExtensionNodes.cpp");
-#include "ExtensionNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/extension_nodes.cpp");
+#include "opcpp/extension_nodes.cpp"
 
-OPCOMPILING_SOURCE("MacroNodes.cpp")
-#include "MacroNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/macro_nodes.cpp")
+#include "opcpp/macro_nodes.cpp"
 
-OPCOMPILING_SOURCE("Scanner.cpp");
-#include "Scanner.cpp"
+OPCOMPILING_SOURCE("opcpp/scanner.cpp");
+#include "opcpp/scanner.cpp"
 
-OPCOMPILING_SOURCE("Timer.cpp");
-#include "Timer.cpp"
+OPCOMPILING_SOURCE("opcpp/timer.cpp");
+#include "opcpp/timer.cpp"
 
-OPCOMPILING_SOURCE("DialectNodes.cpp");
-#include "DialectNodes.cpp"
+OPCOMPILING_SOURCE("opcpp/dialect_nodes.cpp");
+#include "opcpp/dialect_nodes.cpp"
 
-OPCOMPILING_SOURCE("PrintDialect.cpp");
-#include "PrintDialect.cpp"
+OPCOMPILING_SOURCE("opcpp/print_dialect.cpp");
+#include "opcpp/print_dialect.cpp"
 
-OPCOMPILING_SOURCE("Globber.cpp")
-#include "Globber.cpp"
+OPCOMPILING_SOURCE("opcpp/globber.cpp")
+#include "opcpp/globber.cpp"
 
-OPCOMPILING_SOURCE("MemoryTracker.cpp")
-#include "MemoryTracker.cpp"
+OPCOMPILING_SOURCE("opcpp/memory_tracker.cpp")
+#include "opcpp/memory_tracker.cpp"
 
-OPCOMPILING_SOURCE("DialectTracker.cpp")
-#include "DialectTracker.cpp"
+OPCOMPILING_SOURCE("opcpp/dialect_tracker.cpp")
+#include "opcpp/dialect_tracker.cpp"
 
-OPCOMPILING_SOURCE("States.cpp")
-#include "States.cpp"
+OPCOMPILING_SOURCE("opcpp/states.cpp")
+#include "opcpp/states.cpp"
 
-OPCOMPILING_SOURCE("ErrorNames.cpp")
-#include "ErrorNames.cpp"
+OPCOMPILING_SOURCE("opcpp/error_names.cpp")
+#include "opcpp/error_names.cpp"
 
-OPCOMPILING_SOURCE("main.cpp");
-#include "main.cpp"
+OPCOMPILING_SOURCE("opcpp/main.cpp");
+#include "opcpp/main.cpp"
 
-OPCOMPILING_SOURCE("Demo.cpp");
-#include "Demo.cpp"
+OPCOMPILING_SOURCE("opcpp/demo.cpp");
+#include "opcpp/demo.cpp"
 
-OPCOMPILING_SOURCE("Blacklist.cpp");
-#include "Blacklist.cpp"
+OPCOMPILING_SOURCE("opcpp/blacklist.cpp");
+#include "opcpp/blacklist.cpp"
 
-OPCOMPILING_SOURCE("Modifiers.cpp");
-#include "Modifiers.cpp"
+OPCOMPILING_SOURCE("opcpp/modifiers.cpp");
+#include "opcpp/modifiers.cpp"
 
 OPCOMPILING_SOURCE_END;
 

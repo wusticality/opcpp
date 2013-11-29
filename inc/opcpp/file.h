@@ -11,8 +11,7 @@
 /// File
 ///****************************************************************
 
-#ifndef OPCPP_FILE
-#define OPCPP_FILE
+#pragma once
 
 #include <stdio.h>
 
@@ -101,6 +100,6 @@ private:
 	FILE*    file;
 };
 
-#endif//OPCPP_FILE
+
 
 

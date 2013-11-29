@@ -11,10 +11,9 @@
 // wrapper for wide char strings
 //****************************************************************
 
-#ifndef __OPSTL_OPWIDESTRING__
-#define __OPSTL_OPWIDESTRING__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -115,5 +114,5 @@ private:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPSTRING__
+
 

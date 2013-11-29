@@ -11,7 +11,7 @@
 /// Contains timer-related code.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 namespace timing
 {

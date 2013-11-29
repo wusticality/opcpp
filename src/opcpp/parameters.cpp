@@ -11,7 +11,7 @@
 /// Contains source code for opParameters command line parser class.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // opOption

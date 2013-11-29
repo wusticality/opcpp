@@ -11,10 +11,9 @@
 // opSet class
 //****************************************************************
 
-#ifndef __OPSTL_OPSET__
-#define __OPSTL_OPSET__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <set>
 
 namespace opstl
@@ -429,5 +428,5 @@ public:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPSET__
+
 

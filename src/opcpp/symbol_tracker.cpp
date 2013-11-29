@@ -11,7 +11,7 @@
 /// SymbolTracker source code.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///==========================================
 /// opSymbolTracker

@@ -11,7 +11,7 @@
 /// Expand Operation Nodes
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 void ExpandableNode::ReplaceNodes(const opString& matchname, opNode* node)
 {

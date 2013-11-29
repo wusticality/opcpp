@@ -11,7 +11,7 @@
 /// Source for version stuff.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// opVersion

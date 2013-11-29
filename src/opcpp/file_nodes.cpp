@@ -11,7 +11,7 @@
 /// This file contains the source code for parsing files.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 bool opStringStream::bLineDirectives = true;//true - should be true, just for testing!
 

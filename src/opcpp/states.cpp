@@ -11,7 +11,7 @@
 /// State Source
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 // void StateStatementNode::GatherStateFunctions(vector<statefunctionpair>& gathered)
 // {

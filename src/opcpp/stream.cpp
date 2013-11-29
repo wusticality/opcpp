@@ -11,7 +11,7 @@
 /// Stream source code.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// opStringStream

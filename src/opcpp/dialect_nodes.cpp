@@ -11,7 +11,7 @@
 /// Dialect nodes source file.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 // This is called for dialect files after post parsing is complete.
 bool DialectFileNode::PostOperations()

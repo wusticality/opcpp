@@ -11,10 +11,9 @@
 // Wrapper for standard <vector> class.
 //****************************************************************
 
-#ifndef __OPSTL_OPARRAY__
-#define __OPSTL_OPARRAY__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <vector>
 
 namespace opstl
@@ -543,5 +542,5 @@ public:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPARRAY__
+
 

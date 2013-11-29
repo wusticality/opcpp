@@ -17,7 +17,7 @@
 //		issue is I need to print the front note for template types...hmmmm
 
 #include <stdlib.h>
-#include <time.h>
+#include <opcpp/time.h>
 
 namespace demo
 {

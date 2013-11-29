@@ -13,13 +13,13 @@
 
 #pragma once
 
-#include "opstl/array.h"
-#include "opstl/deque.h"
-#include "opstl/list.h"
-#include "opstl/hash.h"
-#include "opstl/set.h"
-#include "opstl/map.h"
-#include "opstl/string.h"
-#include "opstl/wide_string.h"
+#include "opcpp/opstl/array.h"
+#include "opcpp/opstl/deque.h"
+#include "opcpp/opstl/list.h"
+#include "opcpp/opstl/hash.h"
+#include "opcpp/opstl/set.h"
+#include "opcpp/opstl/map.h"
+#include "opcpp/opstl/string.h"
+#include "opcpp/opstl/wide_string.h"
 
 

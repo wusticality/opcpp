@@ -11,7 +11,7 @@
 /// Linux Platform Specific Code
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdlib.h>

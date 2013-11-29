@@ -11,10 +11,9 @@
 // Wrapper for standard <deque> class.
 //****************************************************************
 
-#ifndef __OPSTL_OPDEQUE__
-#define __OPSTL_OPDEQUE__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <deque>
 
 namespace opstl
@@ -532,5 +531,5 @@ public:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPDEQUE__
+
 

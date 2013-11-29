@@ -11,7 +11,7 @@
 /// Exception-related source code.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 int opException::ExceptionCount = 0;
 

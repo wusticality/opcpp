@@ -11,7 +11,7 @@
 /// Contains source code for error logging, including initialization of errors, etc.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// opLog

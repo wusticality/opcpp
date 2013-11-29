@@ -11,10 +11,9 @@
 // opList - wrapper for STL <list> class
 //****************************************************************
 
-#ifndef __OPSTL_OPLIST__
-#define __OPSTL_OPLIST__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <list>
 
 namespace opstl
@@ -626,5 +625,5 @@ public:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPLIST__
+
 

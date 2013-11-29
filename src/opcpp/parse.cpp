@@ -11,7 +11,7 @@
 /// Contains all the Parse() methods for all grammar nodes.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // ProgramNode

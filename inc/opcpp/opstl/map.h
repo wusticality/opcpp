@@ -11,10 +11,9 @@
 // Wrapper for STL <map> class.
 //****************************************************************
 
-#ifndef __OPSTL_OPMAP__
-#define __OPSTL_OPMAP__
+#pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <map>
 
 namespace opstl
@@ -745,5 +744,5 @@ public:
 
 } // end namespace opstl
 
-#endif // end __OPSTL_OPMAP__
+
 

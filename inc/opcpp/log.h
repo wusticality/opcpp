@@ -14,7 +14,7 @@
 //we only add includes to headers that
 //can be independently included
 #include <iostream>
-#include "opstl/opstl.h"
+#include "opcpp/opstl/opstl.h"
 #include "opcpp/file.h"
 
 //errors?

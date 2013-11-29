@@ -11,7 +11,7 @@
 /// Contains the Print(...) source code for all grammar nodes.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // opNode

@@ -11,7 +11,7 @@
 /// Memory Tracker Source
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 #ifdef _DEBUG
 

@@ -11,7 +11,7 @@
 /// Contains source code for opScanner class.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // opScanner

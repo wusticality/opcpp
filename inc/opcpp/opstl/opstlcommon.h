@@ -62,7 +62,7 @@ namespace opstl {}
 using namespace opstl;
 
 // Include iterator extensions.
-#include "opstl/interfaces.h"
+#include "opcpp/opstl/interfaces.h"
 
 
 

@@ -11,7 +11,7 @@
 /// Contains blacklisted serials.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// opDemoSupport

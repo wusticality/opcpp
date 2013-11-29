@@ -12,7 +12,7 @@
 /// grammars, etc.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// opTokenMap

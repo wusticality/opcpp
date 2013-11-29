@@ -11,7 +11,7 @@
 /// PreParse Pass Source
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // opNode

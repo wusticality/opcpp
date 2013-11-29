@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "opstlcommon.h"
+#include "opcpp/opstl/opstlcommon.h"
 #include <unordered_set>
 #include <unordered_map>
 

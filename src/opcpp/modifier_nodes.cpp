@@ -11,7 +11,7 @@
 /// Modifier node source.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// ModifiersBase

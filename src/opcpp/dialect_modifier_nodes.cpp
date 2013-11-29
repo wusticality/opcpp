@@ -11,7 +11,7 @@
 // Source for dialect modifier nodes.
 //****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // DialectModifiersNode

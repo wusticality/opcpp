@@ -11,7 +11,7 @@
 /// opCpp Demo Protection
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// opDemoSupport

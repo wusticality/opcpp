@@ -11,7 +11,7 @@
 /// Platform specific source code.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 //
 // opPlatform

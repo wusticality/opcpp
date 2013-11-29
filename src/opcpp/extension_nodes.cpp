@@ -11,7 +11,7 @@
 /// Extention nodes source code.
 ///****************************************************************
 
-#include "opCPP.h"
+#include "opcpp/opcpp.h"
 
 ///
 /// ExpandCallNode
