@@ -50,36 +50,36 @@ namespace context
 		{
 			PARSE_START;
 			{
-				FindBasicTypes();
+				this->FindBasicTypes();
 			}
 			PARSE_END;
 		}
 		
 		void FindBasicTypes()
 		{
-			FindAngles();
+			this->FindAngles();
 			
-			CleanAll();
+			this->CleanAll();
 			
 			//NOTE: we want standalone angles anytime we can have expressions.
-			Disallow(T_LESS_THAN);//??
-			Disallow(T_GREATER_THAN);
+			this->Disallow(T_LESS_THAN);//??
+			this->Disallow(T_GREATER_THAN);
 			
-			FindTemplateTypes();
+			this->FindTemplateTypes();
 			
-			FindScopes(); // id::id
+			this->FindScopes(); // id::id
 		
-			FindSigned();
-			FindUnsigned();
+			this->FindSigned();
+			this->FindUnsigned();
 
-			FindArrays(); // id[...][...]
+			this->FindArrays(); // id[...][...]
 						
-			FindPointers();
-			FindReferences();
+			this->FindPointers();
+			this->FindReferences();
 
-			FindFunctionPointers();
+			this->FindFunctionPointers();
 
-			FindPointerMembers();
+			this->FindPointerMembers();
 		}
 	};
 
@@ -124,67 +124,67 @@ namespace context
 		{
 			PARSE_START;
 			
-			CleanAll();
+			this->CleanAll();
 
 			//needs to be before arrays
-			FindOperators();	 // operator ... [(...)]
+			this->FindOperators();	 // operator ... [(...)]
 
-			FindAngles();
+			this->FindAngles();
 
 			ConcatenationWalker performconcat(this);
 
-			FindCPlusPluses();
+			this->FindCPlusPluses();
 		
-			FindTemplateDecls(); // template< ... >
+			this->FindTemplateDecls(); // template< ... >
 
-			FindTemplateTypes();
+			this->FindTemplateTypes();
 
-			FindSigned();
-			FindUnsigned();
+			this->FindSigned();
+			this->FindUnsigned();
 
-			FindModifiers();
-			FindValuedModifiers();
+			this->FindModifiers();
+			this->FindValuedModifiers();
 			
-			FindScopes(); // id::id
+			this->FindScopes(); // id::id
 			
-			FindArrays(); // id[...][...]
+			this->FindArrays(); // id[...][...]
 			
-			FindPointers();
+			this->FindPointers();
 			
-			FindReferences();
+			this->FindReferences();
 			
-			FindFunctionPointers();
+			this->FindFunctionPointers();
 			
-			FindPointerMembers();			
+			this->FindPointerMembers();			
 			
-			FindFunctions();
+			this->FindFunctions();
 			
-			FindDestructors(GetClassName());
+			this->FindDestructors(GetClassName());
 			
-			FindConstructors(GetClassName());
+			this->FindConstructors(GetClassName());
 			
-			FindDestructorDefinitions();
+			this->FindDestructorDefinitions();
 
-			FindConstructorDefinitions();			
+			this->FindConstructorDefinitions();			
 
-			FindFunctionDefinitions();
+			this->FindFunctionDefinitions();
 
-			FindFriends();
+			this->FindFriends();
 
-			FindUsings();
+			this->FindUsings();
 
-			FindTypedefs();
+			this->FindTypedefs();
 
-			FindVisibilityLabels();
+			this->FindVisibilityLabels();
 
-			FindCPPConstructs();
+			this->FindCPPConstructs();
 
-			FindOPEnums();
-			FindOPObjects();
+			this->FindOPEnums();
+			this->FindOPObjects();
 
-			FindTemplated();
+			this->FindTemplated();
 			
-			FindBasicStatements();
+			this->FindBasicStatements();
 			
 			PARSE_END;
 		}
@@ -193,7 +193,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyBasicStatements();
+				this->AllowOnlyBasicStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -214,7 +214,7 @@ namespace context
 		{
 			PARSE_START;
 			{
-				FindBasicTypes();
+				this->FindBasicTypes();
 			}
 			PARSE_END;
 		}
@@ -249,32 +249,32 @@ namespace context
 			PARSE_START;
 			
 			//TODO: definitely should group these things... (share between stuff...)
-			FindAngles();
+			this->FindAngles();
 		
-			CleanAll();
+			this->CleanAll();
 			
-			Disallow(T_LESS_THAN);
-			Disallow(T_GREATER_THAN);
+			this->Disallow(T_LESS_THAN);
+			this->Disallow(T_GREATER_THAN);
 
-			FindTemplateTypes();
+			this->FindTemplateTypes();
 						
-			FindScopes();
+			this->FindScopes();
 		
-			FindArrays();
+			this->FindArrays();
 				
-			FindPointers();
-			FindReferences();
+			this->FindPointers();
+			this->FindReferences();
 			
-			FindFunctionPointers();
+			this->FindFunctionPointers();
 			
-			FindFunctions();
-			FindFunctionDefinitions();
+			this->FindFunctions();
+			this->FindFunctionDefinitions();
 			
-			FindStates();
+			this->FindStates();
 			
-			FindVisibilityLabels();
+			this->FindVisibilityLabels();
 			
-			FindStateStatements();
+			this->FindStateStatements();
 			
 			PARSE_END;
 		}
@@ -283,7 +283,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyStateStatements();
+				this->AllowOnlyStateStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -308,15 +308,15 @@ namespace context
 		{
 			PARSE_START;
 
-			FindAngles();
+			this->FindAngles();
 		
-			CleanAll();
+			this->CleanAll();
 
-			Disallow(T_LESS_THAN);
-			Disallow(T_GREATER_THAN);
+			this->Disallow(T_LESS_THAN);
+			this->Disallow(T_GREATER_THAN);
 
-			FindTemplateTypes();
-			FindScopes();
+			this->FindTemplateTypes();
+			this->FindScopes();
 
 			PARSE_END;
 		}
@@ -341,9 +341,9 @@ namespace context
 		{
 			PARSE_START;
 
-			CleanAll();
+			this->CleanAll();
 
-			FindScopes();
+			this->FindScopes();
 
 			PARSE_END;
 		}
@@ -372,7 +372,7 @@ namespace context
 		{
 			PREPARSE_START;
 			{
-				FindOPIncludes();
+				this->FindOPIncludes();
 			}
 			PREPARSE_END;
 		}
@@ -383,13 +383,13 @@ namespace context
 			{
 				ConcatenationWalker performconcat(this);
 
-				FindOPDefines();
-				FindUsingNamespaceKeywords();
-				FindNamespaces();
-				FindCPlusPluses();
-				FindOPEnums();
-				FindOPObjects();
-				FindConditionalPreprocessorStatements();
+				this->FindOPDefines();
+				this->FindUsingNamespaceKeywords();
+				this->FindNamespaces();
+				this->FindCPlusPluses();
+				this->FindOPEnums();
+				this->FindOPObjects();
+				this->FindConditionalPreprocessorStatements();
 			}
 			PARSE_END;
 		}
@@ -430,13 +430,13 @@ namespace context
 			PARSE_START;
 
 			//TODO: validate this, its probably wrong.
-			FindScopes();
+			this->FindScopes();
 
 			if(!IsCurrent(T_STAR))
-				FindPointers();
+				this->FindPointers();
 			
 			if(!IsCurrent(T_AMPERSAND))
-				FindReferences();
+				this->FindReferences();
 
 			if( IsCurrent(G_POINTER) || IsCurrent(T_ID) || IsCurrent(G_REFERENCE) || IsCurrent(G_SCOPE) )
 			{
@@ -487,8 +487,8 @@ namespace context
 		{
 			PREPARSE_START;
 			{
-				FindCodeLocations();
-				FindOPIncludes();
+				this->FindCodeLocations();
+				this->FindOPIncludes();
 			}
 			PREPARSE_END;
 		}
@@ -497,16 +497,16 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();	
-				FindOPDefines();
-				FindScopes();
-				FindDialectNamespaces();
-				FindEnumerations();
-				FindCategories();
-				FindNoteDefinitions();
-				FindFileDeclarations();
-				FindExtensions();
-				FindExtendPoints();
+				this->CleanAll();	
+				this->FindOPDefines();
+				this->FindScopes();
+				this->FindDialectNamespaces();
+				this->FindEnumerations();
+				this->FindCategories();
+				this->FindNoteDefinitions();
+				this->FindFileDeclarations();
+				this->FindExtensions();
+				this->FindExtendPoints();
 
 				// look for extensionpoint's (everywhere)
 				{
@@ -514,7 +514,7 @@ namespace context
 				}
 
 				// parse global dialect statements
-				FindGlobalDialectStatements();
+				this->FindGlobalDialectStatements();
 			}
 			PARSE_END;
 		}
@@ -523,7 +523,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyGlobalDialectStatements();
+				this->AllowOnlyGlobalDialectStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -550,13 +550,13 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
-				FindDataModifiers();
-				FindFunctionModifiers();
-				FindCategoryLocations();
-				FindDisallows();
+				this->CleanAll();
+				this->FindDataModifiers();
+				this->FindFunctionModifiers();
+				this->FindCategoryLocations();
+				this->FindDisallows();
 
-				FindDialectCategoryStatements();
+				this->FindDialectCategoryStatements();
 			}
 			PARSE_END;
 		}
@@ -565,7 +565,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyDialectCategoryStatements();
+				this->AllowOnlyDialectCategoryStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -590,13 +590,13 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
-				FindNotes();
-				FindCategoryMaps();
+				this->CleanAll();
+				this->FindNotes();
+				this->FindCategoryMaps();
 
 				// parse category location statements, then 
 				// do an appropriate allow only
-				FindCategoryLocationStatements();
+				this->FindCategoryLocationStatements();
 			}
 			PARSE_END;
 		}
@@ -605,7 +605,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyCategoryLocationStatements();
+				this->AllowOnlyCategoryLocationStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -629,12 +629,12 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
-				FindCriteriaExpressions();
+				this->CleanAll();
+				this->FindCriteriaExpressions();
 
 				// parse category map criteria expressions, and 
 				// do the correct allowonly
-				FindCriteriaStatements();
+				this->FindCriteriaStatements();
 			}
 			PARSE_END;
 		}
@@ -643,7 +643,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyDialectCriteriaStatements();
+				this->AllowOnlyDialectCriteriaStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -668,11 +668,11 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
-				FindEnumerationLocations();
-				FindDisallows();
+				this->CleanAll();
+				this->FindEnumerationLocations();
+				this->FindDisallows();
 
-				FindDialectEnumStatements();
+				this->FindDialectEnumStatements();
 			}
 			PARSE_END;
 		}
@@ -681,7 +681,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyDialectEnumStatements();
+				this->AllowOnlyDialectEnumStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -706,12 +706,12 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
-				FindNotes();
-				FindEnumerationMaps();
+				this->CleanAll();
+				this->FindNotes();
+				this->FindEnumerationMaps();
 
 				// parse statements
-				FindEnumerationLocationStatements();
+				this->FindEnumerationLocationStatements();
 			}
 			PARSE_END;
 		}
@@ -720,7 +720,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyEnumerationLocationStatements();
+				this->AllowOnlyEnumerationLocationStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -744,11 +744,11 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
-				FindFileDeclarationLocations();
+				this->CleanAll();
+				this->FindFileDeclarationLocations();
 
 				// parse into statements
-				FindFileDeclarationLocationStatements();
+				this->FindFileDeclarationLocationStatements();
 			}
 			PARSE_END;
 		}
@@ -757,7 +757,7 @@ namespace context
 		{
 			POSTPARSE_START;
 			{
-				AllowOnlyFileDeclarationLocationStatements();
+				this->AllowOnlyFileDeclarationLocationStatements();
 			}
 			POSTPARSE_END;
 		}
@@ -781,10 +781,10 @@ namespace context
 		{
 			PARSE_START;
 			{
-				CleanAll();
+				this->CleanAll();
 				
-				FindTemplateTypes();
-				FindScopes();
+				this->FindTemplateTypes();
+				this->FindScopes();
 			}
 			PARSE_END;
 		}
