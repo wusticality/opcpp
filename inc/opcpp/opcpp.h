@@ -83,6 +83,7 @@ using boost::filesystem::path;
 #include "opcpp/walkers.h"
 #include "opcpp/dialect_visitors.h"
 #include "opcpp/code_visitors.h"
+#include "opcpp/interfaces_inlines.h"
 
 
 
