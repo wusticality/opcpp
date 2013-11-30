@@ -84,6 +84,7 @@ using boost::filesystem::path;
 #include "opcpp/code_visitors.h"
 #include "opcpp/interfaces_inlines.h"
 #include "opcpp/statement_interfaces_inlines.h"
+#include "opcpp/dialect_interfaces_inlines.h"
 
 
 
