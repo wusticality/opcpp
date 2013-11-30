@@ -85,6 +85,7 @@ using boost::filesystem::path;
 #include "opcpp/interfaces_inlines.h"
 #include "opcpp/statement_interfaces_inlines.h"
 #include "opcpp/dialect_interfaces_inlines.h"
+#include "opcpp/dialect_statement_interfaces_inlines.h"
 
 
 
