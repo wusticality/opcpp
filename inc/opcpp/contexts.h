@@ -46,41 +46,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(BasicTypes)
 		
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->FindBasicTypes();
-			}
-			PARSE_END;
-		}
-		
-		void FindBasicTypes()
-		{
-			this->FindAngles();
-			
-			this->CleanAll();
-			
-			//NOTE: we want standalone angles anytime we can have expressions.
-			this->Disallow(T_LESS_THAN);//??
-			this->Disallow(T_GREATER_THAN);
-			
-			this->FindTemplateTypes();
-			
-			this->FindScopes(); // id::id
-		
-			this->FindSigned();
-			this->FindUnsigned();
-
-			this->FindArrays(); // id[...][...]
-						
-			this->FindPointers();
-			this->FindReferences();
-
-			this->FindFunctionPointers();
-
-			this->FindPointerMembers();
-		}
+		bool Parse();
+        void FindBasicTypes();
 	};
 
 	template<class Parent>
@@ -112,89 +79,9 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Declaration)
 
-		virtual opString GetClassName()
-		{
-			ABSTRACT_FUNCTION;
-			return "";
-		}
-
-		bool Parse()
-		{
-			PARSE_START;
-			
-			this->CleanAll();
-
-			//needs to be before arrays
-			this->FindOperators();	 // operator ... [(...)]
-
-			this->FindAngles();
-
-			ConcatenationWalker performconcat(this);
-
-			this->FindCPlusPluses();
-		
-			this->FindTemplateDecls(); // template< ... >
-
-			this->FindTemplateTypes();
-
-			this->FindSigned();
-			this->FindUnsigned();
-
-			this->FindModifiers();
-			this->FindValuedModifiers();
-			
-			this->FindScopes(); // id::id
-			
-			this->FindArrays(); // id[...][...]
-			
-			this->FindPointers();
-			
-			this->FindReferences();
-			
-			this->FindFunctionPointers();
-			
-			this->FindPointerMembers();			
-			
-			this->FindFunctions();
-			
-			this->FindDestructors(GetClassName());
-			
-			this->FindConstructors(GetClassName());
-			
-			this->FindDestructorDefinitions();
-
-			this->FindConstructorDefinitions();			
-
-			this->FindFunctionDefinitions();
-
-			this->FindFriends();
-
-			this->FindUsings();
-
-			this->FindTypedefs();
-
-			this->FindVisibilityLabels();
-
-			this->FindCPPConstructs();
-
-			this->FindOPEnums();
-			this->FindOPObjects();
-
-			this->FindTemplated();
-			
-			this->FindBasicStatements();
-			
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyBasicStatements();
-			}
-			POSTPARSE_END;
-		}
+		virtual opString GetClassName();
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -207,14 +94,7 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Argument)
 
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->FindBasicTypes();
-			}
-			PARSE_END;
-		}
+		bool Parse();
 	};
 
 	///==========================================
@@ -241,49 +121,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(State)
 
-		bool Parse()
-		{
-			PARSE_START;
-			
-			//TODO: definitely should group these things... (share between stuff...)
-			this->FindAngles();
-		
-			this->CleanAll();
-			
-			this->Disallow(T_LESS_THAN);
-			this->Disallow(T_GREATER_THAN);
-
-			this->FindTemplateTypes();
-						
-			this->FindScopes();
-		
-			this->FindArrays();
-				
-			this->FindPointers();
-			this->FindReferences();
-			
-			this->FindFunctionPointers();
-			
-			this->FindFunctions();
-			this->FindFunctionDefinitions();
-			
-			this->FindStates();
-			
-			this->FindVisibilityLabels();
-			
-			this->FindStateStatements();
-			
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyStateStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -301,22 +140,7 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Inheritance)
 
-		bool Parse()
-		{
-			PARSE_START;
-
-			this->FindAngles();
-		
-			this->CleanAll();
-
-			this->Disallow(T_LESS_THAN);
-			this->Disallow(T_GREATER_THAN);
-
-			this->FindTemplateTypes();
-			this->FindScopes();
-
-			PARSE_END;
-		}
+		bool Parse();
 	};
 
 	///==========================================
@@ -334,16 +158,7 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(NamespaceDecl)
 
-		bool Parse()
-		{
-			PARSE_START;
-
-			this->CleanAll();
-
-			this->FindScopes();
-
-			PARSE_END;
-		}
+		bool Parse();
 	};
 
 	///==========================================
@@ -365,40 +180,9 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Global)
 
-		bool PreParse()
-		{
-			PREPARSE_START;
-			{
-				this->FindOPIncludes();
-			}
-			PREPARSE_END;
-		}
-
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				ConcatenationWalker performconcat(this);
-
-				this->FindOPDefines();
-				this->FindUsingNamespaceKeywords();
-				this->FindNamespaces();
-				this->FindCPlusPluses();
-				this->FindOPEnums();
-				this->FindOPObjects();
-				this->FindConditionalPreprocessorStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				NameResolverWalker walker(this);
-			}
-			POSTPARSE_END;
-		}
+		bool PreParse();
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -416,41 +200,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Operator)
 
-		void Init()
-		{
-        	bCastOperator = false;
-			OperatorType  = NULL;
-		}
-
-		bool Parse()
-		{
-			PARSE_START;
-
-			//TODO: validate this, its probably wrong.
-			this->FindScopes();
-
-			if(!this->IsCurrent(T_STAR))
-				this->FindPointers();
-			
-			if(!this->IsCurrent(T_AMPERSAND))
-				this->FindReferences();
-
-			if( this->IsCurrent(G_POINTER) || 
-                this->IsCurrent(T_ID) || 
-                this->IsCurrent(G_REFERENCE) || 
-                this->IsCurrent(G_SCOPE) )
-			{
-				bCastOperator = true;
-				OperatorType  = this->CurrentNode();
-				this->IncrementPosition();
-			}
-			else
-				OperatorType = CheckOverloadableOperator();
-
-			this->CheckNone();
-
-			PARSE_END;
-		}
+		void Init();
+		bool Parse();
 
 	protected:
 		opNode* OperatorType;
@@ -483,50 +234,9 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Dialect)
 
-		bool PreParse()
-		{
-			PREPARSE_START;
-			{
-				this->FindCodeLocations();
-				this->FindOPIncludes();
-			}
-			PREPARSE_END;
-		}
-
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();	
-				this->FindOPDefines();
-				this->FindScopes();
-				this->FindDialectNamespaces();
-				this->FindEnumerations();
-				this->FindCategories();
-				this->FindNoteDefinitions();
-				this->FindFileDeclarations();
-				this->FindExtensions();
-				this->FindExtendPoints();
-
-				// look for extensionpoint's (everywhere)
-				{
-					ExtensionPointWalker walker(this);
-				}
-
-				// parse global dialect statements
-				this->FindGlobalDialectStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyGlobalDialectStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool PreParse();
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -546,29 +256,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Category);
 		
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				this->FindDataModifiers();
-				this->FindFunctionModifiers();
-				this->FindCategoryLocations();
-				this->FindDisallows();
-
-				this->FindDialectCategoryStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyDialectCategoryStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -586,29 +275,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(CategoryLocation);
 		
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				this->FindNotes();
-				this->FindCategoryMaps();
-
-				// parse category location statements, then 
-				// do an appropriate allow only
-				this->FindCategoryLocationStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyCategoryLocationStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -625,28 +293,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(CategoryMap);
 
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				this->FindCriteriaExpressions();
-
-				// parse category map criteria expressions, and 
-				// do the correct allowonly
-				this->FindCriteriaStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyDialectCriteriaStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -664,27 +312,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(Enumeration);
 		
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				this->FindEnumerationLocations();
-				this->FindDisallows();
-
-				this->FindDialectEnumStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyDialectEnumStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	///==========================================
@@ -702,28 +331,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(EnumerationLocation);
 
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				this->FindNotes();
-				this->FindEnumerationMaps();
-
-				// parse statements
-				this->FindEnumerationLocationStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyEnumerationLocationStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	//==========================================
@@ -740,27 +349,8 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(FileDeclaration);
 
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				this->FindFileDeclarationLocations();
-
-				// parse into statements
-				this->FindFileDeclarationLocationStatements();
-			}
-			PARSE_END;
-		}
-
-		bool PostParse()
-		{
-			POSTPARSE_START;
-			{
-				this->AllowOnlyFileDeclarationLocationStatements();
-			}
-			POSTPARSE_END;
-		}
+		bool Parse();
+		bool PostParse();
 	};
 
 	//==========================================
@@ -777,17 +367,7 @@ namespace context
 	public:
 		IMPLEMENTS_INTERFACE(TemplateType)
 
-		bool Parse()
-		{
-			PARSE_START;
-			{
-				this->CleanAll();
-				
-				this->FindTemplateTypes();
-				this->FindScopes();
-			}
-			PARSE_END;
-		}
+		bool Parse();
 	};
 
 } // end namespace context
