@@ -1424,8 +1424,6 @@ inline opString operator + (double d, const opString& right_string)
 
 /**** opStringUtility static function definitions ****/
 
-#ifdef __OPSTL_OPHASH__
-	
 	/**** opHasher related code ****/
 	
 	// specialize opHasher for opString as a key
@@ -1438,7 +1436,6 @@ inline opString operator + (double d, const opString& right_string)
 		}
 	};
 	
-	#ifdef OPSTL_GNU_LINUX
 	template<>
 	struct opHashCompare<opString>
 	{
@@ -1447,10 +1444,7 @@ inline opString operator + (double d, const opString& right_string)
 			return t1 == t2;
 		}
 	};
-	#endif
 	
-#endif
-
 } // end namespace opstl
 
 

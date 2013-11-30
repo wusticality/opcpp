@@ -401,7 +401,7 @@ void opError::Add(FileNode* file, int line, const opString& error)
 	filepath = initial_path() / filepath;
 	filepath.normalize();
 
-	opString nativefile = filepath.native_file_string();
+	opString nativefile = filepath.string();
 
 	newError.Error = nativefile + "(" + line + ") : error :\n" + error;
 

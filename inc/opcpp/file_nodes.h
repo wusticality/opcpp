@@ -142,8 +142,9 @@ private:
 	static FileNode* GetLoadedFile(const opString& filename);
 	
 	static void		 UnRegisterLoadedFiles();
+public:
 	static void      DeleteLoadedFiles();
-	
+private:
 	friend class opDriver;
 	friend class opMemoryTracker;
 };

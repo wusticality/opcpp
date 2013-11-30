@@ -227,8 +227,10 @@ protected:
 
 	void RegisterBasicModifier(const opString& modifiername)
 	{
-		ModifierDelegate modifier(this,&ModifierSupportBase::ModifierBasic);
-		RegisterModifier(modifiername,modifier);
+		// ModifierDelegate modifier(this,&ModifierSupportBase::ModifierBasic);
+        // kevin: hacked to use boost::bind here ..
+		RegisterModifier(modifiername,
+                         boost::bind(&ModifierSupportBase::ModifierBasic, this, _1));
 	}
 
 	opNode* ModifierBasic(const opString& name)

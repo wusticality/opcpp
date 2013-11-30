@@ -54,7 +54,9 @@ public:
 
 private:
 	static bool                           DemoMode;
+public: // kevin: hack
 	static const char*                    LicenseFileName;
+private:
 	static const char*                    ExtraHashString;
 	static opMultiMap<opString, opString> Blacklist;
 };

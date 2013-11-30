@@ -151,7 +151,8 @@ bool opDriver::Convert(const opParameters &p)
 	catch( boost::filesystem::filesystem_error& fe )
 	{
 		opString errorstr = fe.what();
-		errorstr.Replace(fe.who(),"Error: Improper path detected ");
+        opString who = "";
+		errorstr.Replace(who,"Error: Improper path detected ");
 		Log(errorstr);
 		Log(opParameters::Get().GetCommandLineString());
 	}
@@ -187,7 +188,7 @@ bool opDriver::CheckDependencies()
 		
 		if(exists(filepath))
 		{
-			opString targetfile = filepath.leaf();
+			opString targetfile = filepath.leaf().c_str();
 			
 			targetfile += ".target";
 			
@@ -1170,7 +1171,7 @@ bool opDriver::CleanMode(const opParameters& p)
 	{
 		opString filestring = p.Depend[i];
 		path     filepath   = filestring.GetString();
-		opString targetfile = filepath.leaf();
+		opString targetfile = filepath.leaf().c_str();
 
 		targetfile += ".target";
 
@@ -1213,7 +1214,8 @@ bool opDriver::GlobMode(const opParameters& p)
 	catch( boost::filesystem::filesystem_error& fe )
 	{
 		opString errorstr = fe.what();
-		errorstr.Replace(fe.who(),"Error: Improper path detected when globbing.");
+        opString who = "";
+		errorstr.Replace(who,"Error: Improper path detected when globbing.");
 		Log(errorstr);
 	}
 	catch (...)

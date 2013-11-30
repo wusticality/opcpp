@@ -346,13 +346,13 @@ public:
 	// validate command-line options (post-dialect reading)
 	bool Validate();
 
-private:
 	//should only be called once from opDriver
 	static bool ValidateParameters()
 	{
 		return GetWritable().Validate();
 	}
 
+private:
 	/**** private construction / destruction ****/
 
 	opParameters();
