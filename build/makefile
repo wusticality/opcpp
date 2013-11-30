@@ -10,7 +10,7 @@ BOOST_INC = ${BOOST}/include/
 BOOST_LIB = ${BOOST}/lib/
 
 # flags
-FLAGS = -DOPCPP
+FLAGS = -ftemplate-depth=512
 
 # headers
 INC =
