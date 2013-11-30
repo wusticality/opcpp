@@ -32,7 +32,7 @@ private:
 			ohfilepath = inohfilepath;
 			oohfilepath = inoohfilepath;
 			ocppfilepath = inocppfilepath;
-			ohfilename = ohfilepath.leaf();
+			ohfilename = ohfilepath.leaf().c_str();
 		}
 		
 		path ohfilepath;

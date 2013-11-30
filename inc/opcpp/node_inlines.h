@@ -500,7 +500,7 @@ inline bool opNode::IgnoreUntil()
 {
 	return IgnoreUntilBase< 
 		TokenListNode<t1,
-		TokenListNode<t2,
+		TokenListNode<t2
 		> >
 	>
 	();
@@ -512,7 +512,7 @@ inline bool opNode::IgnoreUntil()
 	return IgnoreUntilBase< 
 		TokenListNode<t1,
 		TokenListNode<t2,
-		TokenListNode<t3,
+		TokenListNode<t3
 		> > >
 	>
 	();
@@ -525,7 +525,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t1,
 		TokenListNode<t2,
 		TokenListNode<t3,
-		TokenListNode<t4,
+		TokenListNode<t4
 		> > > >
 	>
 	();
@@ -539,7 +539,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t2,
 		TokenListNode<t3,
 		TokenListNode<t4,
-		TokenListNode<t5,
+		TokenListNode<t5
 		> > > > >
 	>
 	();
@@ -554,7 +554,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t3,
 		TokenListNode<t4,
 		TokenListNode<t5,
-		TokenListNode<t6,
+		TokenListNode<t6
 		> > > > > >
 	>
 	();
@@ -570,7 +570,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t4,
 		TokenListNode<t5,
 		TokenListNode<t6,
-		TokenListNode<t7,
+		TokenListNode<t7
 		> > > > > > >
 	>
 	();
@@ -587,7 +587,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t5,
 		TokenListNode<t6,
 		TokenListNode<t7,
-		TokenListNode<t8,
+		TokenListNode<t8
 		> > > > > > > >
 	>
 	();
@@ -605,7 +605,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t6,
 		TokenListNode<t7,
 		TokenListNode<t8,
-		TokenListNode<t9,
+		TokenListNode<t9
 		> > > > > > > > >
 	>
 	();
@@ -624,7 +624,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t7,
 		TokenListNode<t8,
 		TokenListNode<t9,
-		TokenListNode<t10,
+		TokenListNode<t10
 		> > > > > > > > > >
 	>
 	();
@@ -644,7 +644,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t8,
 		TokenListNode<t9,
 		TokenListNode<t10,
-		TokenListNode<t11,
+		TokenListNode<t11
 		> > > > > > > > > > >
 	>
 	();
@@ -665,7 +665,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t9,
 		TokenListNode<t10,
 		TokenListNode<t11,
-		TokenListNode<t12,
+		TokenListNode<t12
 		> > > > > > > > > > > >
 	>
 	();
@@ -687,7 +687,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t10,
 		TokenListNode<t11,
 		TokenListNode<t12,
-		TokenListNode<t13,
+		TokenListNode<t13
 		> > > > > > > > > > > > >
 	>
 	();
@@ -710,7 +710,7 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t11,
 		TokenListNode<t12,
 		TokenListNode<t13,
-		TokenListNode<t14,
+		TokenListNode<t14
 		> > > > > > > > > > > > > >
 	>
 	();
@@ -734,14 +734,13 @@ inline bool opNode::IgnoreUntil()
 		TokenListNode<t12,
 		TokenListNode<t13,
 		TokenListNode<t14,
-		TokenListNode<t15,
+		TokenListNode<t15
 		> > > > > > > > > > > > > > >
 	>
 	();
 }
 
 // ignore until
-
 
 /*
 inline bool opNode::IgnoreUntil(Token t)

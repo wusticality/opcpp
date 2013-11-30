@@ -100,7 +100,7 @@ private:
 	// private control
 	void ForceCompile();
 	
-	friend Globber;
+	friend class Globber;
 
 	static opSet<path> OhFiles;
 	static opSet<path> DohFiles;
