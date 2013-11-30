@@ -618,7 +618,7 @@ public:
 
 private:
 
-	friend OPObjectNode;
+	friend class OPObjectNode;
 	
 	opArray<Parent> Parents;
 
@@ -661,7 +661,7 @@ private:
 public:
 	OPObjectNode* Object;
 
-	friend OPObjectNode;
+	friend class OPObjectNode;
 };
 
 ///==========================================

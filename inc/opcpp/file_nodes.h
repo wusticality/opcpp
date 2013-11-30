@@ -144,8 +144,8 @@ private:
 	static void		 UnRegisterLoadedFiles();
 	static void      DeleteLoadedFiles();
 	
-	friend opDriver;
-	friend opMemoryTracker;
+	friend class opDriver;
+	friend class opMemoryTracker;
 };
 
 ///==========================================

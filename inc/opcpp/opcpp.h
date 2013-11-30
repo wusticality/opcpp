@@ -64,6 +64,7 @@ using boost::filesystem::path;
 #include "opcpp/dialect_tracker.h"
 #include "opcpp/dialect_nodes.h"
 #include "opcpp/modifier_nodes.h"
+#include "opcpp/modifier_interfaces.h"
 #include "opcpp/dialect_modifier_nodes.h"
 #include "opcpp/extension_nodes.h"
 #include "opcpp/macro_nodes.h"
@@ -86,6 +87,7 @@ using boost::filesystem::path;
 #include "opcpp/statement_interfaces_inlines.h"
 #include "opcpp/dialect_interfaces_inlines.h"
 #include "opcpp/dialect_statement_interfaces_inlines.h"
+#include "opcpp/modifier_interfaces_inlines.h"
 #include "opcpp/context_inlines.h"
 
 
