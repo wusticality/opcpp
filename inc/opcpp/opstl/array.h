@@ -54,16 +54,6 @@ public:
 	opArray(InputIterator first, InputIterator last) 
 		: a(first, last) {}
 
-	//NOTE: fix for compiling opC++.
-#ifndef OPCPP
-	opArray(const vector<T>& inarray)
-	{
-		a.resize( inarray.size() );
-    
-		copy( inarray.begin(), inarray.end(), a.begin() );
-	}
-#endif
-
 	/**** destruction ****/
 
 	~opArray()

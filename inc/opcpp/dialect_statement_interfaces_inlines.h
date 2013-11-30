@@ -42,7 +42,7 @@ namespace interfaces
 			statement->AppendNode(node);
 
 			Statements.push_back(*statement);
-			InsertNodeAtCurrent(statement);
+			this->InsertNodeAtCurrent(statement);
 
 			return true;
 		}

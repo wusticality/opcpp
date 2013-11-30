@@ -1563,7 +1563,7 @@ namespace interfaces
 
 				while (!bDone)
 				{
-					PushUntilOrAdd(*newNode, T_NEWLINE, T_COMMENT, T_CCOMMENT, T_EOF, T_CONTINUELINE);
+					this->PushUntilOrAdd(*newNode, T_NEWLINE, T_COMMENT, T_CCOMMENT, T_EOF, T_CONTINUELINE);
 					
 					if(this->CurrentNode())
 					{

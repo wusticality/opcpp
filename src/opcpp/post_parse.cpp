@@ -81,69 +81,98 @@ void OPObjectNode::RegisterAutoModifiers()
 {
 	Super::RegisterAutoModifiers();
 
+    // kevin: All of the following are hacked
+    // to work using boost::bind ..
+
 	/*=== class (instance) ===*/
 	
-	ModifierDelegate class_name(this,&OPObjectNode::ModifierClassName);
-	RegisterModifier("class_name",class_name);	
+	// ModifierDelegate class_name(this,&OPObjectNode::ModifierClassName);
+	// RegisterModifier("class_name",class_name);	
+	RegisterModifier("class_name",
+                     boost::bind(&OPObjectNode::ModifierClassName, this, _1));
 	
-	ModifierDelegate alt_class_name(this,&OPObjectNode::ModifierAltClassName);
-	RegisterModifier("alt_class_name",alt_class_name);	
+	// ModifierDelegate alt_class_name(this,&OPObjectNode::ModifierAltClassName);
+	// RegisterModifier("alt_class_name",alt_class_name);	
+	RegisterModifier("alt_class_name",
+                     boost::bind(&OPObjectNode::ModifierAltClassName, this, _1));
 	
-	ModifierDelegate parent_name(this,&OPObjectNode::ModifierParentName);
-	RegisterModifier("parent_name",parent_name);
+	// ModifierDelegate parent_name(this,&OPObjectNode::ModifierParentName);
+	// RegisterModifier("parent_name",parent_name);
+	RegisterModifier("parent_name",
+                     boost::bind(&OPObjectNode::ModifierParentName, this, _1));
 	
 	/*=== category ===*/
 	
-	ModifierDelegate category_statement(this,&OPObjectNode::ModifierCategoryStatement);
-	RegisterModifier("category_statement",category_statement);
+	// ModifierDelegate category_statement(this,&OPObjectNode::ModifierCategoryStatement);
+	// RegisterModifier("category_statement",category_statement);
+	RegisterModifier("category_statement",
+                     boost::bind(&OPObjectNode::ModifierCategoryStatement, this, _1));
 	
 	//if we have any pure functions, add category_abstract
 	if (HasPureFunctions())
 	{
-		ModifierDelegate category_abstract(this,&OPObjectNode::ModifierCategoryAbstract);
-		RegisterModifier("category_abstract",category_abstract);
+		// ModifierDelegate category_abstract(this,&OPObjectNode::ModifierCategoryAbstract);
+		// RegisterModifier("category_abstract",category_abstract);
+		RegisterModifier("category_abstract",
+                         boost::bind(&OPObjectNode::ModifierCategoryAbstract, this, _1));
 	}
 	
 	if (!GetInheritance())
 	{
-		ModifierDelegate category_baseclass(this,&OPObjectNode::ModifierCategoryBaseclass);
-		RegisterModifier("category_baseclass",category_baseclass);
+		// ModifierDelegate category_baseclass(this,&OPObjectNode::ModifierCategoryBaseclass);
+		// RegisterModifier("category_baseclass",category_baseclass);
+		RegisterModifier("category_baseclass",
+                         boost::bind(&OPObjectNode::ModifierCategoryBaseclass, this, _1));
 	}
 	
 	if (GetInheritance())
 	{
 		if (GetInheritance()->GetParents().Size() == 1)
 		{
-			ModifierDelegate category_single_inheritance(this,&OPObjectNode::ModifierCategorySingleInheritance);
-			RegisterModifier("category_single_inheritance",category_single_inheritance);
+			// ModifierDelegate category_single_inheritance(this,&OPObjectNode::ModifierCategorySingleInheritance);
+			// RegisterModifier("category_single_inheritance",category_single_inheritance);
+			RegisterModifier("category_single_inheritance",
+                             boost::bind(&OPObjectNode::ModifierCategorySingleInheritance, this, _1));
 		}
 		
-		ModifierDelegate category_multiple_inheritance(this,&OPObjectNode::ModifierCategoryMultipleInheritance);
-		RegisterModifier("category_multiple_inheritance",category_multiple_inheritance);
+		// ModifierDelegate category_multiple_inheritance(this,&OPObjectNode::ModifierCategoryMultipleInheritance);
+		// RegisterModifier("category_multiple_inheritance",category_multiple_inheritance);
+		RegisterModifier("category_multiple_inheritance",
+                         boost::bind(&OPObjectNode::ModifierCategoryMultipleInheritance, this, _1));
 	}
 	
 	if (HasConstructor())
 	{
-		ModifierDelegate category_has_constructor(this,&OPObjectNode::ModifierCategoryHasConstructor);
-		RegisterModifier("category_has_constructor",category_has_constructor);
+		// ModifierDelegate category_has_constructor(this,&OPObjectNode::ModifierCategoryHasConstructor);
+		// RegisterModifier("category_has_constructor",category_has_constructor);
+		RegisterModifier("category_has_constructor",
+                         boost::bind(&OPObjectNode::ModifierCategoryHasConstructor, this, _1));
 	}
 	
 	if (HasDestructor())
 	{
-		ModifierDelegate category_has_destructor(this,&OPObjectNode::ModifierCategoryHasDestructor);
-		RegisterModifier("category_has_destructor",category_has_destructor);
+		// ModifierDelegate category_has_destructor(this,&OPObjectNode::ModifierCategoryHasDestructor);
+		// RegisterModifier("category_has_destructor",category_has_destructor);
+		RegisterModifier("category_has_destructor",
+                         boost::bind(&OPObjectNode::ModifierCategoryHasDestructor, this, _1));
+
 	}
 	
 	if (HasSimpleConstructor())
 	{
-		ModifierDelegate category_has_simple_constructor(this,&OPObjectNode::ModifierCategoryHasSimpleConstructor);
-		RegisterModifier("category_has_simple_constructor",category_has_simple_constructor);
+		// ModifierDelegate category_has_simple_constructor(this,&OPObjectNode::ModifierCategoryHasSimpleConstructor);
+		// RegisterModifier("category_has_simple_constructor",category_has_simple_constructor);
+		RegisterModifier("category_has_simple_constructor",
+                         boost::bind(&OPObjectNode::ModifierCategoryHasSimpleConstructor, this, _1));
+
 	}
 	
 	if (HasComplexConstructor())
 	{
-		ModifierDelegate category_has_complex_constructor(this,&OPObjectNode::ModifierCategoryHasComplexConstructor);
-		RegisterModifier("category_has_complex_constructor",category_has_complex_constructor);
+		// ModifierDelegate category_has_complex_constructor(this,&OPObjectNode::ModifierCategoryHasComplexConstructor);
+		// RegisterModifier("category_has_complex_constructor",category_has_complex_constructor);
+		RegisterModifier("category_has_complex_constructor",
+                         boost::bind(&OPObjectNode::ModifierCategoryHasComplexConstructor, this, _1));
 	}
 }
 

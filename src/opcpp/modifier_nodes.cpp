@@ -343,12 +343,18 @@ ValuedModifierNode* ModifierSupportBase::AddValueModifier(const opString& modifi
 void FuncPointerStatementNode::RegisterAutoModifiers()
 {
 	/*=== function pointer ===*/
+
+    // kevin: hacked using boost::bind ..
+
+	// ModifierDelegate data_statement(this,&FuncPointerStatementNode::ModifierDataStatement);
+	// RegisterModifier("data_statement",data_statement);
+	RegisterModifier("data_statement",
+                     boost::bind(&FuncPointerStatementNode::ModifierDataStatement, this, _1));
 	
-	ModifierDelegate data_statement(this,&FuncPointerStatementNode::ModifierDataStatement);
-	RegisterModifier("data_statement",data_statement);
-	
-	ModifierDelegate function_pointer(this,&FuncPointerStatementNode::ModifierFunctionPointer);
-	RegisterModifier("function_pointer",function_pointer);	
+	// ModifierDelegate function_pointer(this,&FuncPointerStatementNode::ModifierFunctionPointer);
+	// RegisterModifier("function_pointer",function_pointer);	
+	RegisterModifier("function_pointer",
+                     boost::bind(&FuncPointerStatementNode::ModifierFunctionPointer, this, _1));
 	
 	//????
 // 	ModifierDelegate function_pointer_signature(this,&FuncPointerStatementNode::ModifierFunctionPointerSignature);
@@ -358,12 +364,16 @@ void FuncPointerStatementNode::RegisterAutoModifiers()
 void StatementModifierBase::GenerateStatementModifiers()
 {
 	// Register member_name	
-	ModifierDelegate member_name(this,&StatementModifierBase::ModifierMemberName);
-	RegisterModifier("member_name",member_name);
+	// ModifierDelegate member_name(this,&StatementModifierBase::ModifierMemberName);
+	// RegisterModifier("member_name",member_name);
+	RegisterModifier("member_name",
+                     boost::bind(&StatementModifierBase::ModifierMemberName, this, _1));
 	
 	// All modifiers
-	ModifierDelegate all_modifiers(this,&StatementModifierBase::ModifierAllModifiers);
-	RegisterModifier("all_modifiers",all_modifiers);
+	// ModifierDelegate all_modifiers(this,&StatementModifierBase::ModifierAllModifiers);
+	// RegisterModifier("all_modifiers",all_modifiers);
+	RegisterModifier("all_modifiers",
+                     boost::bind(&StatementModifierBase::ModifierAllModifiers, this, _1));
 }
 
 void DataStatementNode::RegisterAutoModifiers()
@@ -371,80 +381,107 @@ void DataStatementNode::RegisterAutoModifiers()
 	GenerateStatementModifiers();
 	
 	//Register data_statement
-	ModifierDelegate data_statement(this,&DataStatementNode::ModifierDataStatement);
-	RegisterModifier("data_statement",data_statement);
+	// ModifierDelegate data_statement(this,&DataStatementNode::ModifierDataStatement);
+	// RegisterModifier("data_statement",data_statement);
+	RegisterModifier("data_statement",
+                     boost::bind(&DataStatementNode::ModifierDataStatement, this, _1));
 	
 	//Register data_type
-	ModifierDelegate data_type(this,&DataStatementNode::ModifierDataType);
-	RegisterModifier("data_type",data_type);
-	
+	// ModifierDelegate data_type(this,&DataStatementNode::ModifierDataType);
+	// RegisterModifier("data_type",data_type);
+	RegisterModifier("data_type",
+                     boost::bind(&DataStatementNode::ModifierDataType, this, _1));
+
 	if(Declaration->GetBits())
 	{
-		ModifierDelegate data_bits(this,&DataStatementNode::ModifierDataBits);
-		RegisterModifier("data_bits",data_bits);
+		// ModifierDelegate data_bits(this,&DataStatementNode::ModifierDataBits);
+		// RegisterModifier("data_bits",data_bits);
+		RegisterModifier("data_bits",
+                         boost::bind(&DataStatementNode::ModifierDataBits, this, _1));
 	}
 	
 	if(Initialization)
 	{
-		ModifierDelegate data_initialized(this,&DataStatementNode::ModifierDataInitialized);
-		RegisterModifier("data_initialized",data_initialized);
+		// ModifierDelegate data_initialized(this,&DataStatementNode::ModifierDataInitialized);
+		// RegisterModifier("data_initialized",data_initialized);
+		RegisterModifier("data_initialized",
+                         boost::bind(&DataStatementNode::ModifierDataInitialized, this, _1));
 	}
 	
 	if(node_cast<ReferenceNode>(GetType())
 	|| node_cast<PointerNode>(GetType()))
 	{
-		ModifierDelegate data_base_type(this,&DataStatementNode::ModifierDataBaseType);
-		RegisterModifier("data_base_type",data_base_type);
+		// ModifierDelegate data_base_type(this,&DataStatementNode::ModifierDataBaseType);
+		// RegisterModifier("data_base_type",data_base_type);
+		RegisterModifier("data_base_type",
+                         boost::bind(&DataStatementNode::ModifierDataBaseType, this, _1));
 	}
 	
 	//type related
 	if(ReferenceNode* node = node_cast<ReferenceNode>(GetType()))
 	{
-		ModifierDelegate data_reference(this,&DataStatementNode::ModifierDataReference);	
-		RegisterModifier("data_reference",data_reference);
+		// ModifierDelegate data_reference(this,&DataStatementNode::ModifierDataReference);	
+		// RegisterModifier("data_reference",data_reference);
+		RegisterModifier("data_reference",
+                         boost::bind(&DataStatementNode::ModifierDataReference, this, _1));
 	}
 	if(PointerNode* node = node_cast<PointerNode>(GetType()))
 	{
-		ModifierDelegate data_pointer(this,&DataStatementNode::ModifierDataPointer);	
-		RegisterModifier("data_pointer",data_pointer);
+		// ModifierDelegate data_pointer(this,&DataStatementNode::ModifierDataPointer);	
+		// RegisterModifier("data_pointer",data_pointer);
+		RegisterModifier("data_pointer",
+                         boost::bind(&DataStatementNode::ModifierDataPointer, this, _1));
 		
-		ModifierDelegate data_pointer_level(this,&DataStatementNode::ModifierDataPointerLevel);
-		RegisterModifier("data_pointer_level",data_pointer_level);
+		// ModifierDelegate data_pointer_level(this,&DataStatementNode::ModifierDataPointerLevel);
+		// RegisterModifier("data_pointer_level",data_pointer_level);
+		RegisterModifier("data_pointer_level",
+                         boost::bind(&DataStatementNode::ModifierDataPointerLevel, this, _1));
 	}
 	if(ScopeNode* node = node_cast<ScopeNode>(GetType()))
 	{
-		ModifierDelegate data_qualified(this,&DataStatementNode::ModifierDataQualified);
-		RegisterModifier("data_qualified",data_qualified);
+		// ModifierDelegate data_qualified(this,&DataStatementNode::ModifierDataQualified);
+		// RegisterModifier("data_qualified",data_qualified);
+		RegisterModifier("data_qualified",
+                         boost::bind(&DataStatementNode::ModifierDataQualified, this, _1));
 	}
 	if(TemplateTypeNode* node = node_cast<TemplateTypeNode>(GetType()))
 	{
-		ModifierDelegate data_template(this,&DataStatementNode::ModifierDataTemplate);
-		RegisterModifier("data_template",data_template);
+		// ModifierDelegate data_template(this,&DataStatementNode::ModifierDataTemplate);
+		// RegisterModifier("data_template",data_template);
+		RegisterModifier("data_template",
+                         boost::bind(&DataStatementNode::ModifierDataTemplate, this, _1));
 	}
 	if(TerminalNode* node = node_cast<TerminalNode>(GetType()))
 	{
-		ModifierDelegate data_basic(this,&DataStatementNode::ModifierDataBasic);
-		RegisterModifier("data_basic",data_basic);
+		// ModifierDelegate data_basic(this,&DataStatementNode::ModifierDataBasic);
+		// RegisterModifier("data_basic",data_basic);
+		RegisterModifier("data_basic",
+                         boost::bind(&DataStatementNode::ModifierDataBasic, this, _1));
 	}
 	
-	ModifierDelegate data_full_type(this,&DataStatementNode::ModifierDataFullType);
-	RegisterModifier("data_full_type",data_full_type);
+	// ModifierDelegate data_full_type(this,&DataStatementNode::ModifierDataFullType);
+	// RegisterModifier("data_full_type",data_full_type);
+	RegisterModifier("data_full_type",
+                     boost::bind(&DataStatementNode::ModifierDataFullType, this, _1));
 	
 	//name related
 	if(ArrayNode* node = node_cast<ArrayNode>(GetName()))
 	{
-		ModifierDelegate data_array(this,&DataStatementNode::ModifierDataArray);
-		RegisterModifier("data_array",data_array);
+		// ModifierDelegate data_array(this,&DataStatementNode::ModifierDataArray);
+		// RegisterModifier("data_array",data_array);
+		RegisterModifier("data_array",
+                         boost::bind(&DataStatementNode::ModifierDataArray, this, _1));
 		
-		ModifierDelegate data_array_brackets(this,&DataStatementNode::ModifierDataArrayBrackets);
-		RegisterModifier("data_array_brackets",data_array_brackets);
+		// ModifierDelegate data_array_brackets(this,&DataStatementNode::ModifierDataArrayBrackets);
+		// RegisterModifier("data_array_brackets",data_array_brackets);
+		RegisterModifier("data_array_brackets",
+                         boost::bind(&DataStatementNode::ModifierDataArrayBrackets, this, _1));
 		
-		ModifierDelegate data_array_commas(this,&DataStatementNode::ModifierDataArrayCommas);
-		RegisterModifier("data_array_commas",data_array_commas);
+		// ModifierDelegate data_array_commas(this,&DataStatementNode::ModifierDataArrayCommas);
+		// RegisterModifier("data_array_commas",data_array_commas);
+		RegisterModifier("data_array_commas",
+                         boost::bind(&DataStatementNode::ModifierDataArrayCommas, this, _1));
 	}
-	
-	
-	
 }
 
 // Register common function modifiers.
@@ -454,35 +491,51 @@ void FunctionStatementBase::RegisterFunctionModifiers()
 
 	/*=== functions - common ===*/
 
-	ModifierDelegate function_statement(this,&FunctionStatementBase::ModifierFunctionStatement);
-	RegisterModifier("function_statement",function_statement);	
+	// ModifierDelegate function_statement(this,&FunctionStatementBase::ModifierFunctionStatement);
+	// RegisterModifier("function_statement",function_statement);	
+	RegisterModifier("function_statement",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionStatement, this, _1));
 	
 	if(GetFunction()->GetAssignment())
 	{
-		ModifierDelegate function_pure(this,&FunctionStatementBase::ModifierFunctionPure);
-		RegisterModifier("function_pure",function_pure);	
+		// ModifierDelegate function_pure(this,&FunctionStatementBase::ModifierFunctionPure);
+		// RegisterModifier("function_pure",function_pure);	
+		RegisterModifier("function_pure",
+                         boost::bind(&FunctionStatementBase::ModifierFunctionPure, this, _1));
 	}
 
 	if(GetFunction()->IsConst())
 	{
-		ModifierDelegate function_const(this,&FunctionStatementBase::ModifierFunctionConst);
-		RegisterModifier("function_const",function_const);
+		// ModifierDelegate function_const(this,&FunctionStatementBase::ModifierFunctionConst);
+		// RegisterModifier("function_const",function_const);
+		RegisterModifier("function_const",
+                         boost::bind(&FunctionStatementBase::ModifierFunctionConst, this, _1));
 	}
 	
-	ModifierDelegate function_arguments(this,&FunctionStatementBase::ModifierFunctionArguments);
-	RegisterModifier("function_arguments",function_arguments);
+	// ModifierDelegate function_arguments(this,&FunctionStatementBase::ModifierFunctionArguments);
+	// RegisterModifier("function_arguments",function_arguments);
+	RegisterModifier("function_arguments",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionArguments, this, _1));
 	
-	ModifierDelegate function_return_type(this,&FunctionStatementBase::ModifierFunctionReturnType);
-	RegisterModifier("function_return_type",function_return_type);
+	// ModifierDelegate function_return_type(this,&FunctionStatementBase::ModifierFunctionReturnType);
+	// RegisterModifier("function_return_type",function_return_type);
+	RegisterModifier("function_return_type",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionReturnType, this, _1));
 	
-	ModifierDelegate function_arguments_count(this,&FunctionStatementBase::ModifierFunctionArgumentCount);
-	RegisterModifier("function_arguments_count",function_arguments_count);
+	// ModifierDelegate function_arguments_count(this,&FunctionStatementBase::ModifierFunctionArgumentCount);
+	// RegisterModifier("function_arguments_count",function_arguments_count);
+	RegisterModifier("function_arguments_count",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionArgumentCount, this, _1));
 	
-	ModifierDelegate function_signature(this,&FunctionStatementBase::ModifierFunctionSignature);
-	RegisterModifier("function_signature",function_signature);
+	// ModifierDelegate function_signature(this,&FunctionStatementBase::ModifierFunctionSignature);
+	// RegisterModifier("function_signature",function_signature);
+	RegisterModifier("function_signature",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionSignature, this, _1));
 	
-	ModifierDelegate function_arguments_signature(this,&FunctionStatementBase::ModifierFunctionArgumentSignature);
-	RegisterModifier("function_arguments_signature",function_arguments_signature);
+	// ModifierDelegate function_arguments_signature(this,&FunctionStatementBase::ModifierFunctionArgumentSignature);
+	// RegisterModifier("function_arguments_signature",function_arguments_signature);
+	RegisterModifier("function_arguments_signature",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionArgumentSignature, this, _1));
 	
 // 	ModifierDelegate function_pointer_signature(this,&FunctionStatementBase::ModifierFunctionPointerSignature);
 // 	RegisterModifier("function_pointer_signature",function_pointer_signature);
@@ -490,8 +543,10 @@ void FunctionStatementBase::RegisterFunctionModifiers()
 // 	ModifierDelegate function_signature_defaults(this,&FunctionStatementBase::ModifierFunctionSignatureDefaults);
 // 	RegisterModifier("function_signature_defaults",function_signature_defaults);
 	
-	ModifierDelegate function_arguments_defaults(this,&FunctionStatementBase::ModifierFunctionArgumentsDefaults);
-	RegisterModifier("function_arguments_defaults",function_arguments_defaults);
+	// ModifierDelegate function_arguments_defaults(this,&FunctionStatementBase::ModifierFunctionArgumentsDefaults);
+	// RegisterModifier("function_arguments_defaults",function_arguments_defaults);
+	RegisterModifier("function_arguments_defaults",
+                     boost::bind(&FunctionStatementBase::ModifierFunctionArgumentsDefaults, this, _1));
 	
 	//operator modifiers
 	if(OperatorNode* op = node_cast<OperatorNode>(GetFunction()->GetName()))
@@ -500,9 +555,10 @@ void FunctionStatementBase::RegisterFunctionModifiers()
 		RegisterBasicModifier("function_operator");
 		
 		//whats its type
-		ModifierDelegate function_operator_type(this,&FunctionStatementBase::ModifierFunctionOperatorType);
-		RegisterModifier("function_operator_type",function_operator_type);
-		
+		// ModifierDelegate function_operator_type(this,&FunctionStatementBase::ModifierFunctionOperatorType);
+		// RegisterModifier("function_operator_type",function_operator_type);
+		RegisterModifier("function_operator_type",
+                         boost::bind(&FunctionStatementBase::ModifierFunctionOperatorType, this, _1));
 	}
 
 }
@@ -513,8 +569,10 @@ void FuncPrototypeStatementNode::RegisterAutoModifiers()
 
 	//prototype specific registrations
 
-	ModifierDelegate function_prototype(this,&FuncPrototypeStatementNode::ModifierFunctionPrototype);
-	RegisterModifier("function_prototype",function_prototype);
+	// ModifierDelegate function_prototype(this,&FuncPrototypeStatementNode::ModifierFunctionPrototype);
+	// RegisterModifier("function_prototype",function_prototype);
+	RegisterModifier("function_prototype",
+                     boost::bind(&FuncPrototypeStatementNode::ModifierFunctionPrototype, this, _1));
 }
 
 // Register modifiers for function definitions.
@@ -526,8 +584,10 @@ void FunctionDefinitionStatementNode::RegisterAutoModifiers()
 
 	RegisterBasicModifier("function_definition");
 
-	ModifierDelegate function_body(this,&FunctionDefinitionStatementNode::ModifierFunctionBody);
-	RegisterModifier("function_body",function_body);
+	// ModifierDelegate function_body(this,&FunctionDefinitionStatementNode::ModifierFunctionBody);
+	// RegisterModifier("function_body",function_body);
+	RegisterModifier("function_body",
+                     boost::bind(&FunctionDefinitionStatementNode::ModifierFunctionBody, this, _1));
 }
 
 void ConstructorStatementBase::RegisterConstructorModifiers()
@@ -541,12 +601,13 @@ void ConstructorDefinitionStatementNode::RegisterAutoModifiers()
 {
 	RegisterConstructorModifiers();
 
-
 	RegisterBasicModifier("function_definition");
 
 	//TODO: add normal definition modifiers
-	ModifierDelegate function_body(this,&ConstructorDefinitionStatementNode::ModifierFunctionBody);
-	RegisterModifier("function_body",function_body);
+	// ModifierDelegate function_body(this,&ConstructorDefinitionStatementNode::ModifierFunctionBody);
+	// RegisterModifier("function_body",function_body);
+	RegisterModifier("function_body",
+                     boost::bind(&ConstructorDefinitionStatementNode::ModifierFunctionBody, this, _1));
 }
 
 void ConstructorPrototypeStatementNode::RegisterAutoModifiers()
@@ -561,8 +622,10 @@ void DestructorStatementBase::RegisterDestructorModifiers()
 {
 	RegisterFunctionModifiers();
 
-	ModifierDelegate function_destructor(this,&DestructorStatementBase::ModifierFunctionDestructor);
-	RegisterModifier("function_destructor",function_destructor);
+	// ModifierDelegate function_destructor(this,&DestructorStatementBase::ModifierFunctionDestructor);
+	// RegisterModifier("function_destructor",function_destructor);
+	RegisterModifier("function_destructor",
+                     boost::bind(&DestructorStatementBase::ModifierFunctionDestructor, this, _1));
 }
 
 void DestructorDefinitionStatementNode::RegisterAutoModifiers()
@@ -572,11 +635,11 @@ void DestructorDefinitionStatementNode::RegisterAutoModifiers()
 	//TODO: add normal definition modifiers
 	RegisterBasicModifier("function_definition");
 
-	ModifierDelegate function_body(this,&DestructorDefinitionStatementNode::ModifierFunctionBody);
-	RegisterModifier("function_body",function_body);
-
+	// ModifierDelegate function_body(this,&DestructorDefinitionStatementNode::ModifierFunctionBody);
+	// RegisterModifier("function_body",function_body);
+	RegisterModifier("function_body",
+                     boost::bind(&DestructorDefinitionStatementNode::ModifierFunctionBody, this, _1));
 }
-
 
 void DestructorPrototypeStatementNode::RegisterAutoModifiers()
 {
@@ -586,33 +649,46 @@ void DestructorPrototypeStatementNode::RegisterAutoModifiers()
 	RegisterBasicModifier("function_prototype");
 }
 
-
 // Register modifiers for opTypes (opObject, opEnum)
 void OPTypeBase::RegisterAutoModifiers()
 {
 	if(IsInside(G_OPOBJECT))
 	{
-		ModifierDelegate inner_type(this,&OPTypeBase::ModifierInnerType);
-		RegisterModifier("inner_type",inner_type);
+		// ModifierDelegate inner_type(this,&OPTypeBase::ModifierInnerType);
+		// RegisterModifier("inner_type",inner_type);
+		RegisterModifier("inner_type",
+                         boost::bind(&OPTypeBase::ModifierInnerType, this, _1));
 	}
 	
-	ModifierDelegate scope(this,&OPTypeBase::ModifierScope);
-	RegisterModifier("scope",scope);
+	// ModifierDelegate scope(this,&OPTypeBase::ModifierScope);
+	// RegisterModifier("scope",scope);
+	RegisterModifier("scope",
+                     boost::bind(&OPTypeBase::ModifierScope, this, _1));
 	
-	ModifierDelegate alt_scope(this,&OPTypeBase::ModifierAltScope);
-	RegisterModifier("alt_scope",alt_scope);
+	// ModifierDelegate alt_scope(this,&OPTypeBase::ModifierAltScope);
+	// RegisterModifier("alt_scope",alt_scope);
+	RegisterModifier("alt_scope",
+                     boost::bind(&OPTypeBase::ModifierAltScope, this, _1));
 	
-	ModifierDelegate namespace_start(this,&OPTypeBase::ModifierNamespaceStart);
-	RegisterModifier("namespace_start",namespace_start);
+	// ModifierDelegate namespace_start(this,&OPTypeBase::ModifierNamespaceStart);
+	// RegisterModifier("namespace_start",namespace_start);
+	RegisterModifier("namespace_start",
+                     boost::bind(&OPTypeBase::ModifierNamespaceStart, this, _1));
 	
-	ModifierDelegate namespace_end(this,&OPTypeBase::ModifierNamespaceEnd);
-	RegisterModifier("namespace_end",namespace_end);
+	// ModifierDelegate namespace_end(this,&OPTypeBase::ModifierNamespaceEnd);
+	// RegisterModifier("namespace_end",namespace_end);
+	RegisterModifier("namespace_end",
+                     boost::bind(&OPTypeBase::ModifierNamespaceEnd, this, _1));
 	
-	ModifierDelegate alt_namespace_start(this,&OPTypeBase::ModifierAltNamespaceStart);
-	RegisterModifier("alt_namespace_start",alt_namespace_start);
+	// ModifierDelegate alt_namespace_start(this,&OPTypeBase::ModifierAltNamespaceStart);
+	// RegisterModifier("alt_namespace_start",alt_namespace_start);
+	RegisterModifier("alt_namespace_start",
+                     boost::bind(&OPTypeBase::ModifierAltNamespaceStart, this, _1));
 	
-	ModifierDelegate alt_namespace_end(this,&OPTypeBase::ModifierAltNamespaceEnd);
-	RegisterModifier("alt_namespace_end",alt_namespace_end);
+	// ModifierDelegate alt_namespace_end(this,&OPTypeBase::ModifierAltNamespaceEnd);
+	// RegisterModifier("alt_namespace_end",alt_namespace_end);
+	RegisterModifier("alt_namespace_end",
+                     boost::bind(&OPTypeBase::ModifierAltNamespaceEnd, this, _1));
 }
 
 ///==========================================
