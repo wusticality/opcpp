@@ -22,7 +22,7 @@ INC += -I ../src/
 SRC =
 SRC += ../src/opcpp/opcpp_source.cpp
 SRC += ../src/opcpp/regex_source.cpp
-SRC += ../src/opcpp/linux_source.cpp
+SRC += ../src/opcpp/mac_source.cpp
 
 # libraries
 LIB =
