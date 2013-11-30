@@ -22,14 +22,14 @@ namespace interfaces
 	///==========================================
 
 	//is current an unknown statement? transform stuff
-	inline bool BasicStatementsBase::UnknownStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::UnknownStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(T_SEMICOLON))
 		{
 			stacked<StatementNode> statement = opNode::Transform<StatementNode>(stuff);
 			
 			if(statement->IsEmpty())
-				statement->CopyBasics(CurrentNode());
+				statement->CopyBasics(this->CurrentNode());
 			
 			this->Erase(T_SEMICOLON);
 			
@@ -45,7 +45,7 @@ namespace interfaces
 	///==========================================
 
 	//is current an openum statement? transform stuff
-	inline bool BasicStatementsBase::OPEnumStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::OPEnumStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_OPENUM))
 		{
@@ -77,7 +77,7 @@ namespace interfaces
 	///==========================================
 
 	//is current an opclass statement? transform stuff
-	inline bool BasicStatementsBase::OPObjectStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::OPObjectStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_OPOBJECT))
 		{
@@ -109,7 +109,7 @@ namespace interfaces
 	///==========================================
 
 	//is current an opstate statement? transform stuff
-	inline bool BasicStatementsBase::StateStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::StateStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_STATE))
 		{
@@ -141,7 +141,7 @@ namespace interfaces
 	///==========================================
 
 	//is current a visibility statement? transform stuff
-	inline bool BasicStatementsBase::VisibilityStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::VisibilityStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_VISIBILITY_LABEL))
 		{
@@ -156,7 +156,7 @@ namespace interfaces
 			visstatement->SetLabel(*vislabel);
 			visstatement->AppendNode(vislabel);
 
-			CollapseNodeAtCurrent(stuff);
+			this->CollapseNodeAtCurrent(stuff);
 
 			this->InsertNodeAtCurrent(visstatement);
 			return true;
@@ -171,7 +171,7 @@ namespace interfaces
 	///==========================================
 
 	//is current a function definition? transform stuff
-	inline bool BasicStatementsBase::FunctionDefinitionStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::FunctionDefinitionStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_FUNCTION_DEFINITION))
 		{
@@ -205,7 +205,7 @@ namespace interfaces
 	/// ConstructorStatement
 	///==========================================
 	
-	inline bool BasicStatementsBase::ConstructorStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::ConstructorStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_CONSTRUCTOR_DEFINITION))
 		{
@@ -241,7 +241,7 @@ namespace interfaces
 	/// DestructorStatement
 	///==========================================
 	
-	inline bool BasicStatementsBase::DestructorStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::DestructorStatement(stacked<opNode>& stuff)
 	{
 		if(this->IsCurrent(G_DESTRUCTOR_DEFINITION))
 		{
@@ -277,7 +277,7 @@ namespace interfaces
 	/// PreprocessorStatement
 	///==========================================
 	
-	inline bool BasicStatementsBase::ConditionalPreprocessorStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::ConditionalPreprocessorStatement(stacked<opNode>& stuff)
 	{
 		if (this->IsCurrent(G_POUND_ELIF)
 		||  this->IsCurrent(G_POUND_ELSE)
@@ -286,7 +286,7 @@ namespace interfaces
 		||  this->IsCurrent(G_POUND_IFDEF)
 		||  this->IsCurrent(G_POUND_IFNDEF))
 		{
-			Token                                     id           = CurrentNode()->GetId();
+			Token                                     id           = this->CurrentNode()->GetId();
 			stackedcontext<PreprocessorStatementNode> statement    = opNode::Make<PreprocessorStatementNode>(id);
 			stacked<PreprocessorNode>                 preprocessor = opNode::Expect<PreprocessorNode>(id);
 
@@ -310,14 +310,14 @@ namespace interfaces
 	/// CPPConstructStatement
 	///==========================================
 	
-	inline bool BasicStatementsBase::CPPConstructStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::CPPConstructStatement(stacked<opNode>& stuff)
 	{
 		if (this->IsCurrent(G_CLASS)
 		||  this->IsCurrent(G_STRUCT)
 		||  this->IsCurrent(G_ENUM)
 		||  this->IsCurrent(G_UNION))
 		{
-			Token                                     id        = CurrentNode()->GetId();
+			Token                                     id        = this->CurrentNode()->GetId();
 			stackedcontext<CPPConstructStatementNode> statement = opNode::Make<CPPConstructStatementNode>(id);
 			stacked<CPPConstructNode>                 construct = opNode::Expect<CPPConstructNode>(id);
 
@@ -345,7 +345,7 @@ namespace interfaces
 	// FriendStatements
 	//==========================================
 
-	inline bool BasicStatementsBase::FriendStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::FriendStatement(stacked<opNode>& stuff)
 	{
 		if ( this->IsCurrent( G_FRIEND ) )
 		{
@@ -372,7 +372,7 @@ namespace interfaces
 	// TypedefStatements
 	//==========================================
 
-	inline bool BasicStatementsBase::TypedefStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::TypedefStatement(stacked<opNode>& stuff)
 	{
 		if ( this->IsCurrent( G_TYPEDEF ) )
 		{
@@ -403,7 +403,7 @@ namespace interfaces
 	/// TemplateStatements
 	///==========================================
 
-	inline bool BasicStatementsBase::TemplateStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool BasicStatementsBase<Parent>::TemplateStatement(stacked<opNode>& stuff)
 	{
 		if ( this->IsCurrent(G_TEMPLATED) )
 		{
@@ -435,7 +435,7 @@ namespace interfaces
 /// BasicStatements
 ///
 
-	inline bool BasicStatements::Parse()
+	template<class Parent> inline bool BasicStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -444,19 +444,19 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool BasicStatements::PostParse()
+	template<class Parent> inline bool BasicStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyBasicStatements();
+			this->AllowOnlyBasicStatements();
 		}
 		POSTPARSE_END;
 	}
 	
 	// Only allow the following statements in opobjects.
-	inline void BasicStatements::AllowOnlyBasicStatements()
+	template<class Parent> inline void BasicStatements<Parent>::AllowOnlyBasicStatements()
 	{
-		AllowOnly(G_STATEMENT,
+		this->AllowOnly(G_STATEMENT,
 				  G_OPENUM_STATEMENT,
 				  G_OPOBJECT_STATEMENT,
 				  G_FUNCTION_DEFINITION_STATEMENT,
@@ -471,7 +471,7 @@ namespace interfaces
 				  G_TEMPLATE_STATEMENT);
 	}
 	
-	inline stacked<opNode> BasicStatements::PushUntilStatementEnd()
+	template<class Parent> inline stacked<opNode> BasicStatements<Parent>::PushUntilStatementEnd()
 	{
 		return opNode::PushUntilOr<opNode>(T_SEMICOLON,
 										   G_OPOBJECT,
@@ -497,7 +497,7 @@ namespace interfaces
 	}
 	
 	// Find all statements except preprocessor ones.
-	inline void BasicStatements::FindBasicStatements()
+	template<class Parent> inline void BasicStatements<Parent>::FindBasicStatements()
 	{
 		bool bFinished = false;
 
@@ -513,21 +513,21 @@ namespace interfaces
 			if (bFinished)
 				break;
 			
-			if		(FunctionDefinitionStatement(stuff));
-			else if	(VisibilityStatement(stuff));
-			else if (OPObjectStatement(stuff));
-			else if	(OPEnumStatement(stuff));
-			else if (ConstructorStatement(stuff));
-			else if (DestructorStatement(stuff));
-			else if (TemplateStatement(stuff));
-			else if (TypedefStatement(stuff));
-			else if (FriendStatement(stuff));
-			else if (CPPConstructStatement(stuff));
-			else if (ConditionalPreprocessorStatement(stuff));
-			else if	(UnknownStatement(stuff));
+			if		(this->FunctionDefinitionStatement(stuff));
+			else if	(this->VisibilityStatement(stuff));
+			else if (this->OPObjectStatement(stuff));
+			else if	(this->OPEnumStatement(stuff));
+			else if (this->ConstructorStatement(stuff));
+			else if (this->DestructorStatement(stuff));
+			else if (this->TemplateStatement(stuff));
+			else if (this->TypedefStatement(stuff));
+			else if (this->FriendStatement(stuff));
+			else if (this->CPPConstructStatement(stuff));
+			else if (this->ConditionalPreprocessorStatement(stuff));
+			else if	(this->UnknownStatement(stuff));
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 				
 				//I think this function should never error.
 				bFinished = true;
@@ -542,7 +542,7 @@ namespace interfaces
 	//TODO: split up the utility function interface
 	//		so we don't have all these extra gathering vectors.
 
-	inline void BasicStateStatements::FindStateStatements()
+	template<class Parent> inline void BasicStateStatements<Parent>::FindStateStatements()
 	{
 		//for now we only look for function definitions
 		//later we can add a new statement type (G_STATEMENT_FUNCTIONSONLY)
@@ -562,14 +562,13 @@ namespace interfaces
 			if(this->IsCurrent(T_SEMICOLON))
 			{
 				this->Erase(T_SEMICOLON);
-
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 			}
-			else if	(FunctionDefinitionStatement(stuff));
-			else if (StateStatement(stuff));
+			else if	(this->FunctionDefinitionStatement(stuff));
+			else if (this->StateStatement(stuff));
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				//I think this function should never error.
 				bfinished = true;
@@ -577,17 +576,17 @@ namespace interfaces
 		}
 	}
 
-	inline void BasicStateStatements::AllowOnlyStateStatements()
+	template<class Parent> inline void BasicStateStatements<Parent>::AllowOnlyStateStatements()
 	{
-		AllowOnly(G_FUNCTION_DEFINITION_STATEMENT,
-				  G_STATE_STATEMENT);
+		this->AllowOnly(G_FUNCTION_DEFINITION_STATEMENT,
+                        G_STATE_STATEMENT);
 	}
 
 ///==========================================
 /// UsingStatements
 ///==========================================
 
-	inline bool UsingStatements::Parse()
+	template<class Parent> inline bool UsingStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -596,16 +595,16 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool UsingStatements::FindUsingStatements()
+	template<class Parent> inline bool UsingStatements<Parent>::FindUsingStatements()
 	{
 		INSPECT_START(G_USING_STATEMENT);
 		{
-			if (PeekStart(G_USING))
+			if (this->PeekStart(G_USING))
 			{
 				stacked<UsingStatementNode> newNode = opNode::PushUntilEnd<UsingStatementNode>();
 
-				SetInnerStatement(*newNode);
-				AppendNode(newNode);
+				this->SetInnerStatement(*newNode);
+				this->AppendNode(newNode);
 			}
 		}
 		INSPECT_END;
@@ -615,7 +614,7 @@ namespace interfaces
 /// NullStatements
 ///
 
-	inline bool NullStatements::Parse()
+	template<class Parent> inline bool NullStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -624,18 +623,18 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool NullStatements::FindNullStatements()
+	template<class Parent> inline bool NullStatements<Parent>::FindNullStatements()
 	{
 		INSPECT_START(G_NULL_STATEMENT);
 		{
-			if (IsEmpty())
+			if (this->IsEmpty())
 			{
 				stacked<NullStatementNode> newNode = NEWNODE(NullStatementNode());
 
 				newNode->CopyBasics(this);
 
-				SetInnerStatement(*newNode);
-				AppendNode(newNode);
+				this->SetInnerStatement(*newNode);
+				this->AppendNode(newNode);
 
 				return true;
 			}
@@ -647,7 +646,7 @@ namespace interfaces
 /// FuncPointerStatements
 ///
 
-	inline bool FuncPointerStatements::Parse()
+	template<class Parent> inline bool FuncPointerStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -656,11 +655,11 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool FuncPointerStatements::FindFuncPointerStatements()
+	template<class Parent> inline bool FuncPointerStatements<Parent>::FindFuncPointerStatements()
 	{
 		INSPECT_START(G_FUNCTION_POINTER_STATEMENT);
 		{
-			if (PeekEnd(G_FUNCTION_POINTER))
+			if (this->PeekEnd(G_FUNCTION_POINTER))
 			{
 				stackedcontext<FuncPointerStatementNode> newNode = NEWNODE(FuncPointerStatementNode());
 				newNode->CopyBasics(this);
@@ -680,8 +679,8 @@ namespace interfaces
 				newNode->SetFunctionPointer(*fpn);
 				newNode->AppendNode(fpn);
 				
-				SetInnerStatement(*newNode);
-				AppendNode(newNode);
+				this->SetInnerStatement(*newNode);
+				this->AppendNode(newNode);
 				
 				return true;
 			}
@@ -693,7 +692,7 @@ namespace interfaces
 /// FuncPrototypeStatements
 ///
 
-	inline bool FuncPrototypeStatements::Parse()
+	template<class Parent> inline bool FuncPrototypeStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -702,11 +701,11 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool FuncPrototypeStatements::FindFuncPrototypeStatements()
+	template<class Parent> inline bool FuncPrototypeStatements<Parent>::FindFuncPrototypeStatements()
 	{
 		INSPECT_START(G_FUNCTION_PROTOTYPE_STATEMENT);
 		{
-			if (PeekEnd(G_FUNCTION_PROTOTYPE))
+			if (this->PeekEnd(G_FUNCTION_PROTOTYPE))
 			{
 				stackedcontext<FuncPrototypeStatementNode> newNode = NEWNODE(FuncPrototypeStatementNode());
 				newNode->CopyBasics(this);
@@ -726,8 +725,8 @@ namespace interfaces
 				newNode->SetFunctionPrototype(*fpn);
 				newNode->AppendNode(fpn);
 
-				SetInnerStatement(*newNode);
-				AppendNode(newNode);
+				this->SetInnerStatement(*newNode);
+				this->AppendNode(newNode);
 
 				return true;
 			}
@@ -739,11 +738,11 @@ namespace interfaces
 /// ConstructorPrototypeStatements
 ///
 
-	inline bool ConstructorPrototypeStatements::FindConstructorPrototypeStatements()
+	template<class Parent> inline bool ConstructorPrototypeStatements<Parent>::FindConstructorPrototypeStatements()
 	{
 		INSPECT_START(G_CONSTRUCTOR_PROTOTYPE_STATEMENT);
 		{
-			if (PeekEnd(G_CONSTRUCTOR_PROTOTYPE))
+			if (this->PeekEnd(G_CONSTRUCTOR_PROTOTYPE))
 			{
 				stackedcontext<ConstructorPrototypeStatementNode> newNode = NEWNODE(ConstructorPrototypeStatementNode());
 				
@@ -764,8 +763,8 @@ namespace interfaces
 				newNode->SetConstructorPrototype(*cpn);
 				newNode->AppendNode(cpn);
 				
-				SetInnerStatement(*newNode);
-				AppendNode(newNode);
+				this->SetInnerStatement(*newNode);
+				this->AppendNode(newNode);
 				
 				return true;
 			}
@@ -777,11 +776,11 @@ namespace interfaces
 /// DestructorPrototypeStatements
 ///
 
-    inline bool DestructorPrototypeStatements::FindDestructorPrototypeStatements()
+    template<class Parent> inline bool DestructorPrototypeStatements<Parent>::FindDestructorPrototypeStatements()
 	{
 		INSPECT_START(G_DESTRUCTOR_PROTOTYPE_STATEMENT);
 		{
-			if (PeekEnd(G_DESTRUCTOR_PROTOTYPE))
+			if (this->PeekEnd(G_DESTRUCTOR_PROTOTYPE))
 			{
 				stackedcontext<DestructorPrototypeStatementNode> newNode = NEWNODE(DestructorPrototypeStatementNode());
 
@@ -802,8 +801,8 @@ namespace interfaces
 				newNode->SetDestructorPrototype(*cpn);
 				newNode->AppendNode(cpn);
 
-				SetInnerStatement(*newNode);
-				AppendNode(newNode);
+				this->SetInnerStatement(*newNode);
+				this->AppendNode(newNode);
 
 				return true;
 			}
@@ -815,7 +814,7 @@ namespace interfaces
 /// DataStatements
 ///
 
-	inline bool DataStatements::Parse()
+	template<class Parent> inline bool DataStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -824,7 +823,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool DataStatements::FindDataStatements()
+	template<class Parent> inline bool DataStatements<Parent>::FindDataStatements()
 	{
 		INSPECT_START(G_DATA_STATEMENT);
 		{
@@ -833,39 +832,39 @@ namespace interfaces
 		INSPECT_END;
 	}
 
-    inline bool DataStatements::FindDataStatementOnly()
+    template<class Parent> inline bool DataStatements<Parent>::FindDataStatementOnly()
     {
-    	if (!HasNumChildren(2))
+    	if (!this->HasNumChildren(2))
     		return false;
 
     	stackedcontext<DataStatementNode> newNode = NEWNODE(DataStatementNode());
-    	newNode->CopyBasics(FirstChild());
+    	newNode->CopyBasics(this->FirstChild());
     	
     	stacked<DataDeclarationNode> declaration = opNode::PushUntil<DataDeclarationNode>(T_ASSIGN,false);
 
     	newNode->SetDeclaration(*declaration);
     	newNode->AppendNode(declaration);
 
-    	if(IsCurrent(T_ASSIGN))
+    	if(this->IsCurrent(T_ASSIGN))
     	{
-    		Erase(T_ASSIGN);
+    		this->Erase(T_ASSIGN);
     		stacked<DataInitializationNode> initialization = opNode::PushUntilEnd<DataInitializationNode>();
     		
     		newNode->SetInitialization(*initialization);
     		newNode->AppendNode(initialization);
     	}
     	
-    	SetInnerStatement(*newNode);
-    	AppendNode(newNode);
+    	this->SetInnerStatement(*newNode);
+    	this->AppendNode(newNode);
     	
     	return true;
     }    
 
-	inline bool DataStatementOnly::Parse()
+	template<class Parent> inline bool DataStatementOnly<Parent>::Parse()
 	{
 		PARSE_START;
 		{
-			if(!FindDataStatementOnly())
+			if(!this->FindDataStatementOnly())
 			{
 				opError::MessageError(this,"Unnamed data declarations not allowed.");
 				//GenericError("unnamed data declarations not allowed");
@@ -878,7 +877,7 @@ namespace interfaces
 /// ConditionalPreprocessorStatements
 ///==========================================
 
-	inline bool ConditionalPreprocessorStatements::Parse()
+	template<class Parent> inline bool ConditionalPreprocessorStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -887,7 +886,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void ConditionalPreprocessorStatements::FindConditionalPreprocessorStatements()
+	template<class Parent> inline void ConditionalPreprocessorStatements<Parent>::FindConditionalPreprocessorStatements()
 	{
 		FindConditionalPreprocessorStatement<G_POUND_ELIF>();
 		FindConditionalPreprocessorStatement<G_POUND_ELSE>();
@@ -897,8 +896,9 @@ namespace interfaces
 		FindConditionalPreprocessorStatement<G_POUND_IFNDEF>();
 	}
 
+	template<class Parent> 
 	template<Token hittoken>
-	inline void ConditionalPreprocessorStatements::FindConditionalPreprocessorStatement()
+    inline void ConditionalPreprocessorStatements<Parent>::FindConditionalPreprocessorStatement()
 	{
 		LOOP_START(G_PREPROCESSOR_STATEMENT);
 		{

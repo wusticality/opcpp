@@ -18,7 +18,7 @@ namespace interfaces
 /// Categories Interface
 ///==========================================
 
-	inline bool Categories::Parse()
+	template<class Parent> inline bool Categories<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -27,7 +27,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Categories::FindCategories()
+	template<class Parent> inline void Categories<Parent>::FindCategories()
 	{
 		LOOP_START(G_CATEGORY)
 		{
@@ -35,13 +35,13 @@ namespace interfaces
 			{
 				stackedcontext<CategoryNode> newNode = opNode::Make<CategoryNode>(T_CATEGORY);
 				
-				Erase(T_CATEGORY);
+				this->Erase(T_CATEGORY);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 				
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
@@ -52,7 +52,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -62,7 +62,7 @@ namespace interfaces
 /// CodeLocations Interface
 ///==========================================
 
-	inline bool CodeLocations::PreParse()
+	template<class Parent> inline bool CodeLocations<Parent>::PreParse()
 	{
 		PREPARSE_START;
 		{
@@ -71,7 +71,7 @@ namespace interfaces
 		PREPARSE_END;
 	}
 
-	inline void CodeLocations::FindCodeLocations()
+	template<class Parent> inline void CodeLocations<Parent>::FindCodeLocations()
 	{
 		LOOP_START(G_CODE)
 		{
@@ -79,13 +79,13 @@ namespace interfaces
 			{
 				stackedcontext<CodeNode> newNode = opNode::Make<CodeNode>(T_CODE);
 
-				Erase(T_CODE);
+				this->Erase(T_CODE);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
@@ -96,7 +96,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -106,7 +106,7 @@ namespace interfaces
 /// Locations Interface
 ///==========================================
 
-	inline bool CategoryLocations::Parse()
+	template<class Parent> inline bool CategoryLocations<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -115,7 +115,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CategoryLocations::FindCategoryLocations()
+	template<class Parent> inline void CategoryLocations<Parent>::FindCategoryLocations()
 	{
 		LOOP_START(G_CATEGORY_LOCATION)
 		{
@@ -123,7 +123,7 @@ namespace interfaces
 			{
 				stackedcontext<CategoryLocationNode> newNode = opNode::Make<CategoryLocationNode>(T_LOCATION);
 				
-				Erase(T_LOCATION);
+				this->Erase(T_LOCATION);
 				
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
@@ -136,7 +136,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END
@@ -146,7 +146,7 @@ namespace interfaces
 /// Disallow Interface
 ///==========================================
 
-	inline bool Disallows::Parse()
+	template<class Parent> inline bool Disallows<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -155,7 +155,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Disallows::FindDisallows()
+	template<class Parent> inline void Disallows<Parent>::FindDisallows()
 	{
 		LOOP_START(G_DISALLOW)
 		{
@@ -163,7 +163,7 @@ namespace interfaces
 			{
 				stackedcontext<DisallowNode> newNode = opNode::Make<DisallowNode>(T_DISALLOW);
 
-				Erase(T_DISALLOW);
+				this->Erase(T_DISALLOW);
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
@@ -176,7 +176,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END
@@ -186,7 +186,7 @@ namespace interfaces
 /// Maps Interface
 ///==========================================
 
-    inline bool CategoryMaps::Parse()
+    template<class Parent> inline bool CategoryMaps<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -195,14 +195,15 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CategoryMaps::FindCategoryMaps()
+	template<class Parent> inline void CategoryMaps<Parent>::FindCategoryMaps()
 	{
 		FindCategoryMap<G_CATEGORY_DATAMAP,     T_DATAMAP,     CategoryDatamapNode>();
 		FindCategoryMap<G_CATEGORY_FUNCTIONMAP, T_FUNCTIONMAP, CategoryFunctionmapNode>();
 	}
-	
+
+	template<class Parent> 	
 	template<Token grammar, Token token, class NodeClass>
-	inline void CategoryMaps::FindCategoryMap()
+    inline void CategoryMaps<Parent>::FindCategoryMap()
 	{
 		LOOP_START(grammar)
 		{
@@ -210,14 +211,14 @@ namespace interfaces
 			{
 				stackedcontext<NodeClass> newNode = opNode::Make<NodeClass>(token);
 				
-				Erase(token);
+				this->Erase(token);
 				
 				stacked<TerminalNode>        name = opNode::Expect<TerminalNode>(T_ID);
 				
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 				
-				if(IsCurrent(G_BRACE_BLOCK))
+				if(this->IsCurrent(G_BRACE_BLOCK))
 				{
 					stacked<BraceBlockNode>      bbn  = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 					stacked<CategoryMapBodyNode> body = opNode::Transform<CategoryMapBodyNode>(bbn);
@@ -227,7 +228,7 @@ namespace interfaces
 				}
 
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -237,7 +238,7 @@ namespace interfaces
 /// DataModifiers Interface
 ///==========================================
 
-	inline bool DataModifiers::Parse()
+	template<class Parent> inline bool DataModifiers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -246,7 +247,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void DataModifiers::FindDataModifiers()
+	template<class Parent> inline void DataModifiers<Parent>::FindDataModifiers()
 	{
 		LOOP_START(G_DATAMODIFIER)
 		{
@@ -254,14 +255,14 @@ namespace interfaces
 			{
 				stackedcontext<DataModifierNode> newNode = opNode::Make<DataModifierNode>(T_DATAMODIFIER);
 				
-				Erase(T_DATAMODIFIER);
+				this->Erase(T_DATAMODIFIER);
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 				
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				if(IsCurrent(G_PAREN_BLOCK))
+				if(this->IsCurrent(G_PAREN_BLOCK))
 				{
 					stacked<ParenBlockNode> paren = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 					stacked<ModifierArgumentNode> args = opNode::Transform<ModifierArgumentNode>(paren);
@@ -270,9 +271,9 @@ namespace interfaces
 					newNode->AppendNode(args);
 				}
 
-				Erase(T_SEMICOLON);
+				this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -282,7 +283,7 @@ namespace interfaces
 /// FunctionModifiers Interface
 ///==========================================
 
-	inline bool FunctionModifiers::Parse()
+	template<class Parent> inline bool FunctionModifiers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -291,7 +292,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void FunctionModifiers::FindFunctionModifiers()
+	template<class Parent> inline void FunctionModifiers<Parent>::FindFunctionModifiers()
 	{
 		LOOP_START(G_FUNCTIONMODIFIER)
 		{
@@ -299,14 +300,14 @@ namespace interfaces
 			{
 				stackedcontext<FunctionModifierNode> newNode = opNode::Make<FunctionModifierNode>(T_FUNCTIONMODIFIER);
 
-				Erase(T_FUNCTIONMODIFIER);
+				this->Erase(T_FUNCTIONMODIFIER);
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				if(IsCurrent(G_PAREN_BLOCK))
+				if(this->IsCurrent(G_PAREN_BLOCK))
 				{
 					stacked<ParenBlockNode> paren = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 					stacked<ModifierArgumentNode> args = opNode::Transform<ModifierArgumentNode>(paren);
@@ -315,9 +316,9 @@ namespace interfaces
 					newNode->AppendNode(args);
 				}
 				
-				Erase(T_SEMICOLON);
+				this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -327,7 +328,7 @@ namespace interfaces
 /// CriteriaExpressions
 ///==========================================
 
-	inline bool CriteriaExpressions::Parse()
+	template<class Parent> inline bool CriteriaExpressions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -336,15 +337,16 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CriteriaExpressions::FindCriteriaExpressions()
+	template<class Parent> inline void CriteriaExpressions<Parent>::FindCriteriaExpressions()
 	{
 		FindIs<G_IS, T_IS, IsNode, IsBodyNode>();
 //		FindIs<G_ISNOT, T_ISNOT, IsnotNode, IsnotBodyNode>();
 //		FindEverything();
 	}
 
+	template<class Parent> 
 	template<Token grammar, Token token, class NodeClass, class NodeBodyClass>
-	inline void CriteriaExpressions::FindIs()
+    inline void CriteriaExpressions<Parent>::FindIs()
 	{
 		LOOP_START(grammar)
 		{
@@ -352,16 +354,16 @@ namespace interfaces
 			{
 				stackedcontext<NodeClass> newNode = opNode::Make<NodeClass>(token);
 				
-				Erase(token);
+				this->Erase(token);
 
 				stacked<NodeBodyClass> body = opNode::PushUntil<NodeBodyClass>(T_SEMICOLON);
 
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				Erase(T_SEMICOLON);
+				this->Erase(T_SEMICOLON);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END
@@ -371,7 +373,7 @@ namespace interfaces
 /// Notes
 ///==========================================
 
-	inline bool Notes::Parse()
+	template<class Parent> inline bool Notes<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -380,7 +382,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Notes::FindNotes()
+	template<class Parent> inline void Notes<Parent>::FindNotes()
 	{
 		LOOP_START(G_NOTE)
 		{
@@ -388,14 +390,14 @@ namespace interfaces
 			{
 				stackedcontext<NoteNode> newNode = opNode::Make<NoteNode>(T_NOTE);
 
-				Erase(T_NOTE);
+				this->Erase(T_NOTE);
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				if(IsCurrent(G_BRACE_BLOCK))
+				if(this->IsCurrent(G_BRACE_BLOCK))
 				{
 					stacked<BraceBlockNode> bbn = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 					stacked<NoteBodyNode> body = opNode::Transform<NoteBodyNode>(bbn);
@@ -404,9 +406,9 @@ namespace interfaces
 					newNode->AppendNode(body);
 				}
 				else
-					Erase(T_SEMICOLON);
+					this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -416,7 +418,7 @@ namespace interfaces
 /// NoteDefinitions
 ///==========================================
 
-	inline bool NoteDefinitions::Parse()
+	template<class Parent> inline bool NoteDefinitions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -425,7 +427,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void NoteDefinitions::FindNoteDefinitions()
+	template<class Parent> inline void NoteDefinitions<Parent>::FindNoteDefinitions()
 	{
 		LOOP_START(G_NOTE_DEFINITION)
 		{
@@ -433,16 +435,16 @@ namespace interfaces
 			{
 				stackedcontext<NoteDefinitionNode> newNode = opNode::Make<NoteDefinitionNode>(T_NOTE);
 				
-				Erase(T_NOTE);
+				this->Erase(T_NOTE);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<ScopeNode> pathnode = opNode::Expect<ScopeNode>(G_SCOPE);
 
 				newNode->SetPath(*pathnode);
 				newNode->AppendNode(pathnode);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<ParenBlockNode>       ppn  = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 				stacked<NoteArgumentListNode> args = opNode::Transform<NoteArgumentListNode>(ppn);
@@ -450,14 +452,14 @@ namespace interfaces
 				newNode->SetArguments(*args);
 				newNode->AppendNode(args);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<BraceBlockNode> body = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 				
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 				
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -467,7 +469,7 @@ namespace interfaces
 /// Enumerations Interface
 ///==========================================
 
-	inline bool Enumerations::Parse()
+	template<class Parent> inline bool Enumerations<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -476,7 +478,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Enumerations::FindEnumerations()
+	template<class Parent> inline void Enumerations<Parent>::FindEnumerations()
 	{
 		LOOP_START(G_ENUMERATION)
 		{
@@ -484,13 +486,13 @@ namespace interfaces
 			{
 				stackedcontext<EnumerationNode> newNode = opNode::Make<EnumerationNode>(T_ENUMERATION);
 
-				Erase(T_ENUMERATION);
+				this->Erase(T_ENUMERATION);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
@@ -501,7 +503,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -511,7 +513,7 @@ namespace interfaces
 /// EnumerationLocations
 ///==========================================
 
-	inline bool EnumerationLocations::Parse()
+	template<class Parent> inline bool EnumerationLocations<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -520,7 +522,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void EnumerationLocations::FindEnumerationLocations()
+	template<class Parent> inline void EnumerationLocations<Parent>::FindEnumerationLocations()
 	{
 		LOOP_START(G_ENUMERATION_LOCATION)
 		{
@@ -528,7 +530,7 @@ namespace interfaces
 			{
 				stackedcontext<EnumerationLocationNode> newNode = opNode::Make<EnumerationLocationNode>(T_LOCATION);
 
-				Erase(T_LOCATION);
+				this->Erase(T_LOCATION);
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
@@ -541,7 +543,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END
@@ -551,7 +553,7 @@ namespace interfaces
 /// EnumerationMaps
 ///==========================================
 
-	inline bool EnumerationMaps::Parse()
+	template<class Parent> inline bool EnumerationMaps<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -560,7 +562,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void EnumerationMaps::FindEnumerationMaps()
+	template<class Parent> inline void EnumerationMaps<Parent>::FindEnumerationMaps()
 	{
 		LOOP_START(G_ENUMERATION_MAP)
 		{
@@ -575,7 +577,7 @@ namespace interfaces
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -585,54 +587,56 @@ namespace interfaces
 /// Dialect Modifiers
 ///==========================================
 
+	template<class Parent> 
 	template<Token grammar, class ModifierClass>
-	inline void DialectModifiers::FindDialectModifier()
+    inline void DialectModifiers<Parent>::FindDialectModifier()
 	{
 		LOOP_START(grammar)
 		{
 			HIT(T_ID)
 			{
-				TerminalNode* t = node_cast<TerminalNode>(CurrentNode());
+				TerminalNode* t = node_cast<TerminalNode>(this->CurrentNode());
 
 				if (t->GetValue() == ModifierClass::StaticModifierName())
 				{
 					stackedcontext<ModifierClass> newNode = opNode::Make<ModifierClass>(T_ID);
 
-					Erase(T_ID);
+					this->Erase(T_ID);
 					
-					InsertNodeAtCurrent(newNode);
+					this->InsertNodeAtCurrent(newNode);
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END;
 	}
 
+	template<class Parent> 
 	template<Token grammar, class ModifierClass>
-	inline void DialectModifiers::FindValuedDialectModifier()
+    inline void DialectModifiers<Parent>::FindValuedDialectModifier()
 	{
 		LOOP_START(grammar)
 		{
 			HIT(T_ID)
 			{
-				TerminalNode* t = node_cast<TerminalNode>(CurrentNode());
+				TerminalNode* t = node_cast<TerminalNode>(this->CurrentNode());
 
 				if (t->GetValue() == ModifierClass::StaticModifierName())
 				{
 					stackedcontext<ModifierClass> newNode = opNode::Make<ModifierClass>(T_ID);
 
-					Erase(T_ID);
+					this->Erase(T_ID);
 
 					stacked<ParenBlockNode> value = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 
 					newNode->SetValue(*value);
 					newNode->AppendNode(value);
 
-					InsertNodeAtCurrent(newNode);
+					this->InsertNodeAtCurrent(newNode);
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END;
@@ -642,7 +646,7 @@ namespace interfaces
 /// CriteriaValueModifiers
 ///==========================================
 
-	inline bool CriteriaValueModifiers::Parse()
+	template<class Parent> inline bool CriteriaValueModifiers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -651,13 +655,13 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CriteriaValueModifiers::FindCriteriaValueModifiers()
+	template<class Parent> inline void CriteriaValueModifiers<Parent>::FindCriteriaValueModifiers()
 	{
 		LOOP_START(G_CRITERIA_VALUE_MODIFIER)
 		{
 			HIT(G_PAREN_BLOCK)
 			{
-				if (IsPrevious(T_ID))
+				if (this->IsPrevious(T_ID))
 				{
 					stackedcontext<CriteriaValueModifierNode> newNode = opNode::Make<CriteriaValueModifierNode>(G_PAREN_BLOCK);
 
@@ -675,10 +679,10 @@ namespace interfaces
 					newNode->AppendNode(id);
 					newNode->AppendNode(arg);
 
-					InsertNodeAtCurrent(newNode);
+					this->InsertNodeAtCurrent(newNode);
 				}
 				else
-					IncrementPosition();
+					this->IncrementPosition();
 			}
 		}
 		LOOP_END;
@@ -688,7 +692,7 @@ namespace interfaces
 /// CriteriaGroups
 ///==========================================
 
-	inline bool CriteriaGroups::Parse()
+	template<class Parent> inline bool CriteriaGroups<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -697,7 +701,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CriteriaGroups::FindCriteriaGroups()
+	template<class Parent> inline void CriteriaGroups<Parent>::FindCriteriaGroups()
 	{
 		LOOP_START(G_CRITERIA_GROUP)
 		{
@@ -705,18 +709,17 @@ namespace interfaces
 			{
 				stacked<ParenBlockNode> paren = opNode::Expect<ParenBlockNode>(G_PAREN_BLOCK);
 				stacked<CriteriaGroupNode> newNode = opNode::Transform<CriteriaGroupNode>(paren);
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
 	}
-};
 
 //==========================================
 // Extensions
 //==========================================
 
-	inline bool Extensions::Parse()
+	template<class Parent> inline bool Extensions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -725,7 +728,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Extensions::FindExtensions()
+	template<class Parent> inline void Extensions<Parent>::FindExtensions()
 	{
 		LOOP_START(G_EXTENSION)
 		{
@@ -733,20 +736,20 @@ namespace interfaces
 			{
 				stackedcontext<ExtensionNode> newNode = opNode::Make<ExtensionNode>(T_EXTENSION);
 
-				Erase(T_EXTENSION);
+				this->Erase(T_EXTENSION);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				Erase(T_SEMICOLON);
+				this->Erase(T_SEMICOLON);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -756,7 +759,7 @@ namespace interfaces
 // ExtendPoints
 //==========================================
 
-	inline bool ExtendPoints::Parse()
+	template<class Parent> inline bool ExtendPoints<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -765,7 +768,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void ExtendPoints::FindExtendPoints()
+	template<class Parent> inline void ExtendPoints<Parent>::FindExtendPoints()
 	{
 		LOOP_START(G_EXTEND_POINT)
 		{
@@ -773,13 +776,13 @@ namespace interfaces
 			{
 				stackedcontext<ExtendPointNode> newNode = opNode::Make<ExtendPointNode>(T_EXTEND_POINT);
 
-				Erase(T_EXTEND_POINT);
+				this->Erase(T_EXTEND_POINT);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
@@ -789,7 +792,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -799,7 +802,7 @@ namespace interfaces
 // ExtensionPoints
 //==========================================
 
-	inline bool ExtensionPoints::Parse()
+	template<class Parent> inline bool ExtensionPoints<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -808,7 +811,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void ExtensionPoints::FindExtensionPoints()
+	template<class Parent> inline void ExtensionPoints<Parent>::FindExtensionPoints()
 	{
 		LOOP_START(G_EXTENSION_POINT)
 		{
@@ -816,16 +819,16 @@ namespace interfaces
 			{
 				stackedcontext<ExtensionPointNode> newNode = opNode::Make<ExtensionPointNode>(T_EXTENSION_POINT);
 
-				Erase(T_EXTENSION_POINT);
+				this->Erase(T_EXTENSION_POINT);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -835,7 +838,7 @@ namespace interfaces
 // FileDeclarationLocations
 //==========================================
 
-	inline bool FileDeclarationLocations::Parse()
+	template<class Parent> inline bool FileDeclarationLocations<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -844,7 +847,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void FileDeclarationLocations::FindFileDeclarationLocations()
+	template<class Parent> inline void FileDeclarationLocations<Parent>::FindFileDeclarationLocations()
 	{
 		LOOP_START(G_FILE_DECLARATION_LOCATION)
 		{
@@ -852,14 +855,14 @@ namespace interfaces
 			{
 				stackedcontext<FileDeclarationLocationNode> newNode = opNode::Make<FileDeclarationLocationNode>(T_LOCATION);
 
-				Erase(T_LOCATION);
+				this->Erase(T_LOCATION);
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END
@@ -869,7 +872,7 @@ namespace interfaces
 // FileDeclarations
 //==========================================
 
-	inline bool FileDeclarations::Parse()
+	template<class Parent> inline bool FileDeclarations<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -878,7 +881,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void FileDeclarations::FindFileDeclarations()
+	template<class Parent> inline void FileDeclarations<Parent>::FindFileDeclarations()
 	{
 		LOOP_START(G_FILE_DECLARATION)
 		{
@@ -886,16 +889,16 @@ namespace interfaces
 			{
 				stackedcontext<FileDeclarationNode> newNode = opNode::Make<FileDeclarationNode>(T_FILE_DECLARATION);
 
-				Erase(T_FILE_DECLARATION);
+				this->Erase(T_FILE_DECLARATION);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<BraceBlockNode>          bbn  = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 				stacked<FileDeclarationBodyNode> body = opNode::Transform<FileDeclarationBodyNode>(bbn);
@@ -903,7 +906,7 @@ namespace interfaces
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;
@@ -913,7 +916,7 @@ namespace interfaces
 // DialectNamespaces
 //==========================================
 
-	inline bool DialectNamespaces::Parse()
+	template<class Parent> inline bool DialectNamespaces<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -922,7 +925,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void DialectNamespaces::FindDialectNamespaces()
+	template<class Parent> inline void DialectNamespaces<Parent>::FindDialectNamespaces()
 	{
 		LOOP_START(G_DIALECT_NAMESPACE)
 		{
@@ -930,23 +933,23 @@ namespace interfaces
 			{
 				stackedcontext<DialectNamespaceNode> newNode = opNode::Make<DialectNamespaceNode>(T_NAMESPACE);
 
-				Erase(T_NAMESPACE);
+				this->Erase(T_NAMESPACE);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<TerminalNode> name = opNode::Expect<TerminalNode>(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
 
-				EatWhitespaceAndComments();
+				this->EatWhitespaceAndComments();
 
 				stacked<BraceBlockNode> body = opNode::Expect<BraceBlockNode>(G_BRACE_BLOCK);
 
 				newNode->SetBody(*body);
 				newNode->AppendNode(body);
 
-				InsertNodeAtCurrent(newNode);
+				this->InsertNodeAtCurrent(newNode);
 			}
 		}
 		LOOP_END;

@@ -19,10 +19,11 @@ namespace interfaces
 ///==========================================
 
 	// This method checks for a statement + modifiers based on the template args.
+	template<class Parent> 
 	template<Token grammar, class StatementNodeClass, class NodeClass>
-	inline bool DialectStatementsBase::HandleStatement(stacked<opNode>& stuff)
+    inline bool DialectStatementsBase<Parent>::HandleStatement(stacked<opNode>& stuff)
 	{
-		if (IsCurrent(grammar))
+		if (this->IsCurrent(grammar))
 		{
 			stackedcontext<StatementNodeClass> statement = opNode::Make<StatementNodeClass>(grammar);
 			stacked<NodeClass>                 node      = opNode::Expect<NodeClass>(grammar);
@@ -50,133 +51,133 @@ namespace interfaces
 	}
 
 	// Is the current statement a datamodifier statement?
-	inline bool DialectStatementsBase::DataModifierStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::DataModifierStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_DATAMODIFIER, DataModifierStatementNode, DataModifierNode>(stuff);
 	}
 
 	// Is the current statement a functionmodifier statement?
-	inline bool DialectStatementsBase::FunctionModifierStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::FunctionModifierStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_FUNCTIONMODIFIER, FunctionModifierStatementNode, FunctionModifierNode>(stuff);
 	}
 
 	// Is the current statement a category location statement?
-	inline bool DialectStatementsBase::CategoryLocationStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::CategoryLocationStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_CATEGORY_LOCATION, CategoryLocationStatementNode, CategoryLocationNode>(stuff);
 	}
 
 	// Is the current statement a note statement?
-	inline bool DialectStatementsBase::NoteStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::NoteStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_NOTE, NoteStatementNode, NoteNode>(stuff);
 	}
 
 	// Is the current statement a datamap statement?
-	inline bool DialectStatementsBase::DatamapStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::DatamapStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_CATEGORY_DATAMAP, CategoryDatamapStatementNode, CategoryDatamapNode>(stuff);
 	}
 
 	// Is the current statement a functionmap statement?
-	inline bool DialectStatementsBase::FunctionmapStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::FunctionmapStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_CATEGORY_FUNCTIONMAP, CategoryFunctionmapStatementNode, CategoryFunctionmapNode>(stuff);
 	}
 
 	// Is the current statement a disallow statement?
-	inline bool DialectStatementsBase::DisallowStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::DisallowStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_DISALLOW, DisallowStatementNode, DisallowNode>(stuff);
 	}
 
 	// Is the current statement an is statement?
-	inline bool DialectStatementsBase::IsStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::IsStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_IS, IsStatementNode, IsNode>(stuff);
 	}
 
 	// Is the current statement an enum location statement?
-	inline bool DialectStatementsBase::EnumLocationStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::EnumLocationStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_ENUMERATION_LOCATION, EnumerationLocationStatementNode, EnumerationLocationNode>(stuff);
 	}
 
 	// Is the current statement an enummap statement?
-	inline bool DialectStatementsBase::EnumMapStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::EnumMapStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_ENUMERATION_MAP, EnumerationMapStatementNode, EnumerationMapNode>(stuff);
 	}
 
 	// Is the current statement a file declaration location statement?
-	inline bool DialectStatementsBase::FileDeclarationLocationStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::FileDeclarationLocationStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_FILE_DECLARATION_LOCATION, FileDeclarationLocationStatementNode, FileDeclarationLocationNode>(stuff);
 	}
 
 	// Is the current statement a note definition statement?
-	inline bool DialectStatementsBase::NoteDefinitionStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::NoteDefinitionStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_NOTE_DEFINITION, NoteDefinitionStatementNode, NoteDefinitionNode>(stuff);
 	}
 
 	// Is the current statement an opmacro statement?
-	inline bool DialectStatementsBase::OPMacroStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::OPMacroStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_OPMACRO, DialectOPMacroStatementNode, OPMacroNode>(stuff);
 	}
 
 	// Is the current statement a category statement?
-	inline bool DialectStatementsBase::CategoryStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::CategoryStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_CATEGORY, CategoryStatementNode, CategoryNode>(stuff);
 	}
 
 	// Is the current statement a dialect namespace statement?
-	inline bool DialectStatementsBase::DialectNamespaceStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::DialectNamespaceStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_DIALECT_NAMESPACE, DialectNamespaceStatementNode, DialectNamespaceNode>(stuff);
 	}
 
 	// Is the current statement an opinclude statement?
-	inline bool DialectStatementsBase::OPIncludeStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::OPIncludeStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_OPINCLUDE, DialectOPIncludeStatementNode, OPIncludeNode>(stuff);
 	}
 
 	// Is the current statement a code statement?
-	inline bool DialectStatementsBase::CodeStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::CodeStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_CODE, CodeStatementNode, CodeNode>(stuff);
 	}
 
 	// Is the current statement an enumeration statement?
-	inline bool DialectStatementsBase::EnumerationStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::EnumerationStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_ENUMERATION, EnumerationStatementNode, EnumerationNode>(stuff);
 	}
 
 	// Is the current statement a file declaration statement?
-	inline bool DialectStatementsBase::FileDeclarationStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::FileDeclarationStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_FILE_DECLARATION, FileDeclarationStatementNode, FileDeclarationNode>(stuff);
 	}
 
 	// Is the current statement an extension statement?
-	inline bool DialectStatementsBase::ExtensionStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::ExtensionStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_EXTENSION, ExtensionStatementNode, ExtensionNode>(stuff);
 	}
 
 	// Is the current statement an extend point statement?
-	inline bool DialectStatementsBase::ExtendPointStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::ExtendPointStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_EXTEND_POINT, ExtendPointStatementNode, ExtendPointNode>(stuff);
 	}
 
 	// Is the current statement an opdefine statement?
-	inline bool DialectStatementsBase::OPDefineStatement(stacked<opNode>& stuff)
+	template<class Parent> inline bool DialectStatementsBase<Parent>::OPDefineStatement(stacked<opNode>& stuff)
 	{
 		return HandleStatement<G_OPDEFINE, DialectOPDefineStatementNode, OPDefineNode>(stuff);
 	}
@@ -185,7 +186,7 @@ namespace interfaces
 /// DialectCategoryStatements
 ///==========================================
 
-	inline bool DialectCategoryStatements::Parse()
+	template<class Parent> inline bool DialectCategoryStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -194,7 +195,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool DialectCategoryStatements::PostParse()
+	template<class Parent> inline bool DialectCategoryStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -204,7 +205,7 @@ namespace interfaces
 	}
 
 	// Finds dialect category statements.
-	inline void DialectCategoryStatements::FindDialectCategoryStatements()
+	template<class Parent> inline void DialectCategoryStatements<Parent>::FindDialectCategoryStatements()
 	{
 		bool bFinished = false;
 
@@ -226,7 +227,7 @@ namespace interfaces
 			else if (FunctionModifierStatement(stuff));
 			else if (CategoryLocationStatement(stuff));
 			else if (DisallowStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -242,7 +243,7 @@ namespace interfaces
 
 	// Makes sure that only valid dialect category statements
 	// remain after statement parsing.
-	inline void DialectCategoryStatements::AllowOnlyDialectCategoryStatements()
+	template<class Parent> inline void DialectCategoryStatements<Parent>::AllowOnlyDialectCategoryStatements()
 	{
 		AllowOnly( G_DATAMODIFIER_STATEMENT,
 				   G_FUNCTIONMODIFIER_STATEMENT,
@@ -254,7 +255,7 @@ namespace interfaces
 /// DialectEnumerationStatements
 ///==========================================
 
-	inline bool DialectEnumerationStatements::Parse()
+	template<class Parent> inline bool DialectEnumerationStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -263,7 +264,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool DialectEnumerationStatements::PostParse()
+	template<class Parent> inline bool DialectEnumerationStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -273,7 +274,7 @@ namespace interfaces
 	}
 
 	// Finds dialect category statements.
-	inline void DialectEnumerationStatements::FindDialectEnumStatements()
+	template<class Parent> inline void DialectEnumerationStatements<Parent>::FindDialectEnumStatements()
 	{
 		bool bFinished = false;
 
@@ -291,7 +292,7 @@ namespace interfaces
 
 			if      (EnumLocationStatement(stuff));
 			else if (DisallowStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -307,7 +308,7 @@ namespace interfaces
 
 	// Makes sure that only valid dialect category statements
 	// remain after statement parsing.
-	inline void DialectEnumerationStatements::AllowOnlyDialectEnumStatements()
+	template<class Parent> inline void DialectEnumerationStatements<Parent>::AllowOnlyDialectEnumStatements()
 	{
 		AllowOnly( G_ENUMERATION_LOCATION_STATEMENT,
 			       G_DISALLOW_STATEMENT );
@@ -317,7 +318,7 @@ namespace interfaces
 /// EnumerationLocationStatements
 ///==========================================
 
-	inline bool EnumerationLocationStatements::Parse()
+	template<class Parent> inline bool EnumerationLocationStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -326,7 +327,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool EnumerationLocationStatements::PostParse()
+	template<class Parent> inline bool EnumerationLocationStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -336,7 +337,7 @@ namespace interfaces
 	}
 
 	// Finds dialect category statements.
-	inline void EnumerationLocationStatements::FindEnumerationLocationStatements()
+	template<class Parent> inline void EnumerationLocationStatements<Parent>::FindEnumerationLocationStatements()
 	{
 		bool bFinished = false;
 
@@ -354,7 +355,7 @@ namespace interfaces
 
 			if      (EnumMapStatement(stuff));
 			else if (NoteStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -370,7 +371,7 @@ namespace interfaces
 
 	// Makes sure that only valid dialect category statements
 	// remain after statement parsing.
-	inline void EnumerationLocationStatements::AllowOnlyEnumerationLocationStatements()
+	template<class Parent> inline void EnumerationLocationStatements<Parent>::AllowOnlyEnumerationLocationStatements()
 	{
 		AllowOnly( G_ENUMERATIONMAP_STATEMENT,
 			       G_NOTE_STATEMENT );
@@ -380,7 +381,7 @@ namespace interfaces
 /// CategoryLocationStatements
 ///==========================================
 
-	inline bool CategoryLocationStatements::Parse()
+	template<class Parent> inline bool CategoryLocationStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -389,7 +390,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool CategoryLocationStatements::PostParse()
+	template<class Parent> inline bool CategoryLocationStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -399,7 +400,7 @@ namespace interfaces
 	}
 
 	// Finds dialect location statements.
-	inline void CategoryLocationStatements::FindCategoryLocationStatements()
+	template<class Parent> inline void CategoryLocationStatements<Parent>::FindCategoryLocationStatements()
 	{
 		bool bFinished = false;
 
@@ -419,7 +420,7 @@ namespace interfaces
 			if      (NoteStatement(stuff));
 			else if (DatamapStatement(stuff));
 			else if (FunctionmapStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -435,7 +436,7 @@ namespace interfaces
 
 	// Makes sure that only valid dialect location statements
 	// remain after statement parsing.
-	inline void CategoryLocationStatements::AllowOnlyCategoryLocationStatements()
+	template<class Parent> inline void CategoryLocationStatements<Parent>::AllowOnlyCategoryLocationStatements()
 	{
 		AllowOnly( G_NOTE_STATEMENT,
 				   G_CATEGORY_DATAMAP_STATEMENT,
@@ -446,7 +447,7 @@ namespace interfaces
 /// DialectCriteriaStatements
 ///==========================================
 
-	inline bool DialectCriteriaStatements::Parse()
+	template<class Parent> inline bool DialectCriteriaStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -455,7 +456,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool DialectCriteriaStatements::PostParse()
+	template<class Parent> inline bool DialectCriteriaStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -465,7 +466,7 @@ namespace interfaces
 	}
 
 	// Finds dialect criteria statements.
-	inline void DialectCriteriaStatements::FindCriteriaStatements()
+	template<class Parent> inline void DialectCriteriaStatements<Parent>::FindCriteriaStatements()
 	{
 		bool bFinished = false;
 
@@ -481,7 +482,7 @@ namespace interfaces
 				break;
 
 			if      (IsStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -497,7 +498,7 @@ namespace interfaces
 
 	// Makes sure that only valid dialect criteria statements
 	// remain after statement parsing.
-	inline void DialectCriteriaStatements::AllowOnlyDialectCriteriaStatements()
+	template<class Parent> inline void DialectCriteriaStatements<Parent>::AllowOnlyDialectCriteriaStatements()
 	{
 		AllowOnly( G_IS_STATEMENT );
 	}
@@ -506,7 +507,7 @@ namespace interfaces
 // DialectFileDeclarationLocationStatements
 //==========================================
 
-	inline bool FileDeclarationLocationStatements::Parse()
+	template<class Parent> inline bool FileDeclarationLocationStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -515,7 +516,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool FileDeclarationLocationStatements::PostParse()
+	template<class Parent> inline bool FileDeclarationLocationStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -525,7 +526,7 @@ namespace interfaces
 	}
 
 	// Finds dialect location statements.
-	inline void FileDeclarationLocationStatements::FindFileDeclarationLocationStatements()
+	template<class Parent> inline void FileDeclarationLocationStatements<Parent>::FindFileDeclarationLocationStatements()
 	{
 		bool bFinished = false;
 
@@ -541,7 +542,7 @@ namespace interfaces
 				break;
 
 			if (FileDeclarationLocationStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -557,7 +558,7 @@ namespace interfaces
 
 	// Makes sure that only valid dialect location statements
 	// remain after statement parsing.
-	inline void FileDeclarationLocationStatements::AllowOnlyFileDeclarationLocationStatements()
+	template<class Parent> inline void FileDeclarationLocationStatements<Parent>::AllowOnlyFileDeclarationLocationStatements()
 	{
 		AllowOnly( G_FILE_DECLARATION_LOCATION_STATEMENT );
 	}
@@ -566,7 +567,7 @@ namespace interfaces
 /// GlobalDialectStatements
 ///==========================================
 
-	inline bool GlobalDialectStatements::Parse()
+	template<class Parent> inline bool GlobalDialectStatements<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -575,7 +576,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline bool GlobalDialectStatements::PostParse()
+	template<class Parent> inline bool GlobalDialectStatements<Parent>::PostParse()
 	{
 		POSTPARSE_START;
 		{
@@ -585,7 +586,7 @@ namespace interfaces
 	}
 
 	// Finds statements in the global dialect context.
-	inline void GlobalDialectStatements::FindGlobalDialectStatements()
+	template<class Parent> inline void GlobalDialectStatements<Parent>::FindGlobalDialectStatements()
 	{
 		bool bFinished = false;
 
@@ -621,7 +622,7 @@ namespace interfaces
 			else if (ExtensionStatement(stuff));
 			else if (ExtendPointStatement(stuff));
 			else if (OPDefineStatement(stuff));
-			else if (IsCurrent(T_SEMICOLON))
+			else if (this->IsCurrent(T_SEMICOLON))
 			{
 				Erase(T_SEMICOLON);
 				CollapseNodeAtCurrent(stuff);
@@ -636,7 +637,7 @@ namespace interfaces
 	}
 
 	// Makes sure that only valid global dialect statements are allowed.
-	inline void GlobalDialectStatements::AllowOnlyGlobalDialectStatements()
+	template<class Parent> inline void GlobalDialectStatements<Parent>::AllowOnlyGlobalDialectStatements()
 	{
 		AllowOnly( G_NOTE_DEFINITION_STATEMENT,
 				   G_DIALECT_OPMACRO_STATEMENT,
