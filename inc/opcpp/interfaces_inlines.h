@@ -21,7 +21,7 @@ namespace interfaces
 /// Namespace interface
 ///==========================================
 
-	inline bool Namespaces::Parse()
+	template<class Parent> inline bool Namespaces<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -30,7 +30,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Namespaces::FindNamespaces()
+	template<class Parent> inline void Namespaces<Parent>::FindNamespaces()
 	{
 		LOOP_START(G_NAMESPACE);
 		{
@@ -98,7 +98,7 @@ namespace interfaces
 // UsingNamespaces
 //==========================================
 
-	inline bool UsingNamespaceKeywords::Parse()
+	template<class Parent> inline bool UsingNamespaceKeywords<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -107,13 +107,13 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void UsingNamespaceKeywords::FindUsingNamespaceKeywords()
+	template<class Parent> inline void UsingNamespaceKeywords<Parent>::FindUsingNamespaceKeywords()
 	{
 		LOOP_START(G_USING_NAMESPACE_KEYWORD)
 		{
 			HIT(T_USING)
 			{
-				if ( PeekUncleaned(T_NAMESPACE) )
+				if ( this->PeekUncleaned(T_NAMESPACE) )
 				{
 					stackedcontext<UsingNamespaceKeywordNode> newNode = opNode::Make<UsingNamespaceKeywordNode>(T_USING);
 
@@ -136,7 +136,7 @@ namespace interfaces
 /// Usings
 ///==========================================
 
-	inline bool Usings::Parse()
+	template<class Parent> inline bool Usings<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -145,7 +145,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Usings::FindUsings()
+	template<class Parent> inline void Usings<Parent>::FindUsings()
 	{
 		LOOP_START(G_USING)
 		{
@@ -172,13 +172,16 @@ namespace interfaces
 
 	//TODO:
 	//FIXME: this is unsafe
-	template<Token Grammar, Token Left, Token Right, class T>
-	inline void Blocks::FindMatching()
+	// template<Token Grammar, Token Left, Token Right, class T>
+	// template<class Parent> inline void Blocks<Parent>::FindMatching()
+    template<class Parent>
+    template<Token Grammar, Token Left, Token Right, class T>
+    inline void Blocks< Parent >::FindMatching()
 	{
 		//change the throw mode
 		setexceptionmode mode(opException::ParseException);//TEST: I don't know that we actually want this :)
 
-		iterator end = GetEnd();
+		iterator end = this->GetEnd();
 		
 		LOOP_START(Grammar);
 		{
@@ -189,16 +192,16 @@ namespace interfaces
 				int        numLeft = 1;  
 
 				// we must delete the current node (Left), our position has moved forward by one
-				//DeleteCurrentNode();
+				//Deletethis->CurrentNode();
 				stacked<opNode> leftnode = opNode::PopCurrentNode();
 
 				Token last = Left;
 
-				while (numLeft && GetPosition() != end)
+				while (numLeft && this->GetPosition() != end)
 				{            
 					// now we need to peek at the current position node
 					// if the nodes type is Left
-					Token currentToken = CurrentNode()->GetId();
+					Token currentToken = this->CurrentNode()->GetId();
 
 					last = currentToken;
 
@@ -210,7 +213,7 @@ namespace interfaces
 					// if there are numLeft still, just push this node in
 					if (numLeft)
 					{
-						stacked<opNode> tempstacked = PopCurrentNode();
+						stacked<opNode> tempstacked = this->PopCurrentNode();
 						newNode->AppendNode(tempstacked);
 					}
 				}
@@ -224,7 +227,7 @@ namespace interfaces
 				leftnode.Delete();
 
 				// we must delete the current node (Right)
-				DeleteCurrentNode();
+				this->DeleteCurrentNode();
 				
 				// add the new node
 				this->InsertNodeAtCurrent(newNode);
@@ -235,22 +238,22 @@ namespace interfaces
 	}
 
 	// stuff we actually care about
-	inline void Blocks::FindBraces()
+	template<class Parent> inline void Blocks<Parent>::FindBraces()
 	{
 		FindMatching<G_BRACE_BLOCK, T_LEFT_BRACE, T_RIGHT_BRACE, BraceBlockNode>();      
 	}
 
-	inline void Blocks::FindParentheses()
+	template<class Parent> inline void Blocks<Parent>::FindParentheses()
 	{
 		FindMatching<G_PAREN_BLOCK, T_LEFT_PAREN, T_RIGHT_PAREN, ParenBlockNode>();
 	}
 
-	inline void Blocks::FindBrackets()
+	template<class Parent> inline void Blocks<Parent>::FindBrackets()
 	{
 		FindMatching<G_BRACKET_BLOCK, T_LEFT_BRACKET, T_RIGHT_BRACKET, BracketBlockNode>();
 	}
 
-	inline void Blocks::FindAngles()
+	template<class Parent> inline void Blocks<Parent>::FindAngles()
 	{
 		FindMatching<G_ANGLED_BLOCK, T_LESS_THAN, T_GREATER_THAN, AngledBlockNode>();
 	}
@@ -259,7 +262,7 @@ namespace interfaces
 /// Pointer interface
 ///==========================================
 
-	inline bool Pointers::Parse()
+	template<class Parent> inline bool Pointers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -268,7 +271,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Pointers::FindPointers()
+	template<class Parent> inline void Pointers<Parent>::FindPointers()
 	{
 		LOOP_START(G_POINTER);
 		{
@@ -319,7 +322,7 @@ namespace interfaces
 					newNode->AddStar(type);
 				}
 
-				stacked<opNode> type = ReverseExpectOr(G_TEMPLATE_TYPE,
+				stacked<opNode> type = this->ReverseExpectOr(G_TEMPLATE_TYPE,
 													   G_SCOPE,
 													   T_ID,
 													   T_BASIC_TYPE,
@@ -341,7 +344,7 @@ namespace interfaces
 /// Member Pointer Interface
 ///==========================================
 
-	inline bool MemberPointers::Parse()
+	template<class Parent> inline bool MemberPointers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -350,7 +353,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void MemberPointers::FindMemberPointers()
+	template<class Parent> inline void MemberPointers<Parent>::FindMemberPointers()
 	{
 		LOOP_START(G_POINTER_MEMBER);
 		{
@@ -362,9 +365,11 @@ namespace interfaces
 				//what order? before pointer? scope? or after?
 				//what about G_SCOPE_POINTER? should we do it that way?
 				//scope::*
-				ScopeNode* scope = node_cast<ScopeNode>(CurrentNode());
+				ScopeNode* scope = node_cast<ScopeNode>(this->CurrentNode());
 
-				if(scope->Is)
+                // kevin: I found this like this, pretty bad lol.
+                // lazy evaluation for the lose
+				//if(scope->Is)
 			}
 		}
 		LOOP_END;
@@ -374,7 +379,7 @@ namespace interfaces
 /// Operators interface
 ///==========================================
 
-	inline bool Operators::Parse()
+	template<class Parent> inline bool Operators<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -383,7 +388,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Operators::FindOperators()
+	template<class Parent> inline void Operators<Parent>::FindOperators()
 	{
 		LOOP_START(G_OPERATOR);
 		{
@@ -405,7 +410,7 @@ namespace interfaces
 				}
 				else
 				{
-					PushUntilAdd(*newNode,G_PAREN_BLOCK);
+					this->PushUntilAdd(*newNode,G_PAREN_BLOCK);
 					//just to be safe?
 					//Check(G_PAREN_BLOCK);
 				}
@@ -422,7 +427,7 @@ namespace interfaces
 // Modifiers
 //==========================================
 
-	inline bool Modifiers::Parse()
+	template<class Parent> inline bool Modifiers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -431,13 +436,13 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Modifiers::FindModifiers()
+	template<class Parent> inline void Modifiers<Parent>::FindModifiers()
 	{
 		OPObjectNode*    parent   = opNode::FindParent<OPObjectNode>();
 		DialectCategory* category = parent->GetCategorySettings();
 
-		iterator i   = GetBegin();
-		iterator end = GetEnd();
+		iterator i   = this->GetBegin();
+		iterator end = this->GetEnd();
 
 		while (i != end)
 		{
@@ -457,7 +462,7 @@ namespace interfaces
 /// ValuedModifiers
 ///==========================================
 
-	inline bool ValuedModifiers::Parse()
+	template<class Parent> inline bool ValuedModifiers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -466,7 +471,7 @@ namespace interfaces
 		PARSE_END;
 	}
 	
-	inline void ValuedModifiers::FindValuedModifiers()
+	template<class Parent> inline void ValuedModifiers<Parent>::FindValuedModifiers()
 	{
 		OPObjectNode*    parent   = opNode::FindParent<OPObjectNode>();
 		DialectCategory* category = parent->GetCategorySettings();
@@ -475,9 +480,9 @@ namespace interfaces
 		{
 			HIT(T_ID)
 			{
-				TerminalNode* id = node_cast<TerminalNode>( CurrentNode() );
+				TerminalNode* id = node_cast<TerminalNode>( this->CurrentNode() );
 
-				if ( Peek(G_PAREN_BLOCK)
+				if ( this->Peek(G_PAREN_BLOCK)
 				&&   category->HasValueModifier( id->GetValue() ) )
 				{
  					stackedcontext<ValuedModifierNode> newNode = opNode::Make<ValuedModifierNode>(T_ID);
@@ -506,7 +511,7 @@ namespace interfaces
 /// Function interface
 ///==========================================
 
-	inline bool Functions::Parse()
+	template<class Parent> inline bool Functions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -515,7 +520,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Functions::FindFunctions()
+	template<class Parent> inline void Functions<Parent>::FindFunctions()
 	{
 		LOOP_START(G_FUNCTION);
 		{
@@ -529,7 +534,7 @@ namespace interfaces
 				newNode->SetArguments(*Arguments);
 
 				// now look backwards
-				stacked<opNode> Name = ReverseExpectOr(G_OPERATOR,
+				stacked<opNode> Name = this->ReverseExpectOr(G_OPERATOR,
 													   G_TEMPLATE_TYPE,
 													   T_ID,
 													   *Arguments);
@@ -568,7 +573,7 @@ namespace interfaces
 /// Interface for function declarations
 ///==========================================
 
-	inline bool FunctionDefinitions::Parse()
+	template<class Parent> inline bool FunctionDefinitions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -577,7 +582,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void FunctionDefinitions::FindFunctionDefinitions()
+	template<class Parent> inline void FunctionDefinitions<Parent>::FindFunctionDefinitions()
 	{
 		LOOP_START(G_FUNCTION_PROTOTYPE);
 		{
@@ -633,10 +638,10 @@ namespace interfaces
 		LOOP_END;
 	}
 
-	inline stacked<opNode> FunctionDefinitions::GetReturnType(opNode* after)
+	template<class Parent> inline stacked<opNode> FunctionDefinitions<Parent>::GetReturnType(opNode* after)
 	{
 		//find the return type
-		return ReverseExpectOr(G_TEMPLATE_TYPE,
+		return this->ReverseExpectOr(G_TEMPLATE_TYPE,
 							   G_SCOPE,
 							   G_POINTER,
 							   G_POINTER_MEMBER,
@@ -651,7 +656,7 @@ namespace interfaces
 /// Interface for constructors
 ///==========================================
 
-	inline bool ConstructorDefinitions::Parse()
+	template<class Parent> inline bool ConstructorDefinitions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -660,7 +665,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void ConstructorDefinitions::FindConstructorDefinitions()
+	template<class Parent> inline void ConstructorDefinitions<Parent>::FindConstructorDefinitions()
 	{
 		LOOP_START(G_CONSTRUCTOR_DEFINITION);
 		{
@@ -720,7 +725,7 @@ namespace interfaces
 /// Interface for Destructors
 ///==========================================
 
-	inline bool DestructorDefinitions::Parse()
+	template<class Parent> inline bool DestructorDefinitions<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -729,7 +734,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void DestructorDefinitions::FindDestructorDefinitions()
+	template<class Parent> inline void DestructorDefinitions<Parent>::FindDestructorDefinitions()
 	{
 		LOOP_START(G_DESTRUCTOR_DEFINITION);
 		{
@@ -780,7 +785,7 @@ namespace interfaces
 /// OPEnum interface
 ///==========================================
 
-	inline bool OPEnums::Parse()
+	template<class Parent> inline bool OPEnums<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -789,7 +794,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void OPEnums::FindOPEnums()
+	template<class Parent> inline void OPEnums<Parent>::FindOPEnums()
 	{
 		LOOP_START(G_OPENUM);
 		{
@@ -827,7 +832,7 @@ namespace interfaces
 /// OPObject interface
 ///==========================================
 
-	inline bool OPObjects::Parse()
+	template<class Parent> inline bool OPObjects<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -836,7 +841,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void OPObjects::FindOPObjects()
+	template<class Parent> inline void OPObjects<Parent>::FindOPObjects()
 	{
 		LOOP_START(G_OPOBJECT);
 		{
@@ -912,7 +917,7 @@ namespace interfaces
 /// States interface
 ///==========================================
 
-	inline bool States::Parse()
+	template<class Parent> inline bool States<Parent>::Parse()
 	{
 		PARSE_START;
 
@@ -921,7 +926,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void States::FindStates()
+	template<class Parent> inline void States<Parent>::FindStates()
 	{
 		LOOP_START(G_STATE);
 
@@ -957,7 +962,7 @@ namespace interfaces
 /// TemplateTypes
 ///==========================================
 
-	inline bool TemplateTypes::Parse()
+	template<class Parent> inline bool TemplateTypes<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -966,7 +971,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void TemplateTypes::FindTemplateTypes()
+	template<class Parent> inline void TemplateTypes<Parent>::FindTemplateTypes()
 	{
 		LOOP_START(G_TEMPLATE_TYPE);
 		{
@@ -1000,7 +1005,7 @@ namespace interfaces
 /// References header
 ///==========================================
 
-	inline bool References::Parse()
+	template<class Parent> inline bool References<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1009,7 +1014,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void References::FindReferences()
+	template<class Parent> inline void References<Parent>::FindReferences()
 	{
 		LOOP_START(G_REFERENCE)
 		{
@@ -1019,7 +1024,7 @@ namespace interfaces
 
 				stacked<TerminalNode> ampersand = opNode::Expect<TerminalNode>(T_AMPERSAND);
 				
-				stacked<opNode> Type = ReverseExpectOr(G_POINTER,
+				stacked<opNode> Type = this->ReverseExpectOr(G_POINTER,
 													   G_SCOPE,
 													   G_TEMPLATE_TYPE,
 													   T_ID,
@@ -1042,7 +1047,7 @@ namespace interfaces
 /// Arrays interface
 ///==========================================
 
-	inline bool Arrays::Parse()
+	template<class Parent> inline bool Arrays<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1051,7 +1056,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Arrays::FindArrays()
+	template<class Parent> inline void Arrays<Parent>::FindArrays()
 	{
 		LOOP_START(G_ARRAY)
 		{
@@ -1114,8 +1119,9 @@ namespace interfaces
 		LOOP_END;
 	}
 
+    template<class Parent>
 	template<typename T>
-	inline void Arrays::AppendBrackets(opArray< stacked<BracketBlockNode> >& brackets, T* node)
+	inline void Arrays<Parent>::AppendBrackets(opArray< stacked<BracketBlockNode> >& brackets, T* node)
 	{
 		int num = brackets.Size();
 		for(int i = 0; i < num; i++)
@@ -1129,7 +1135,7 @@ namespace interfaces
 /// Visibility interface
 ///==========================================
 
-	inline bool VisibilityLabels::Parse()
+	template<class Parent> inline bool VisibilityLabels<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1138,21 +1144,22 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void VisibilityLabels::FindVisibilityLabels()
+	template<class Parent> inline void VisibilityLabels<Parent>::FindVisibilityLabels()
 	{
 		FindVisibilityLabel<T_PUBLIC>();
 		FindVisibilityLabel<T_PRIVATE>();
 		FindVisibilityLabel<T_PROTECTED>();
 	}
 
+    template<class Parent>
 	template< Token token >
-	inline void VisibilityLabels::FindVisibilityLabel()
+	inline void VisibilityLabels<Parent>::FindVisibilityLabel()
 	{
 		LOOP_START(G_VISIBILITY_LABEL)
 		{
 			HIT(token)
 			{
-				if(this->IsCurrent(token) && Peek(T_COLON))
+				if(this->IsCurrent(token) && this->Peek(T_COLON))
 				{
 					stackedcontext<VisibilityLabelNode> newNode = opNode::Make<VisibilityLabelNode>(token);
 					
@@ -1178,7 +1185,7 @@ namespace interfaces
 /// Scope interface
 ///==========================================
 
-	inline bool Scopes::Parse()
+	template<class Parent> inline bool Scopes<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1187,7 +1194,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Scopes::FindScopes()
+	template<class Parent> inline void Scopes<Parent>::FindScopes()
 	{
 		LOOP_START(G_SCOPE)
 		{
@@ -1212,7 +1219,7 @@ namespace interfaces
 				if(this->IsPrevious(T_ID) || this->IsPrevious(G_TEMPLATE_TYPE))
 				{
 					// get the name/initial scope
-					stacked<opNode> name = ReverseExpectOr(T_ID, G_TEMPLATE_TYPE, *scoperesolution);
+					stacked<opNode> name = this->ReverseExpectOr(T_ID, G_TEMPLATE_TYPE, *scoperesolution);
 					scopes.PushBack(name);
 				}
 				else
@@ -1237,7 +1244,7 @@ namespace interfaces
 				while (bContinue)
 				{
 					//grab first forward scope
-					stacked<opNode> name = ExpectOr(T_ID, G_TEMPLATE_TYPE);
+					stacked<opNode> name = this->ExpectOr(T_ID, G_TEMPLATE_TYPE);
 					scopes.PushBack(name);
 					
 					if(this->IsCurrent(T_SCOPE_RESOLUTION))
@@ -1273,7 +1280,7 @@ namespace interfaces
 		LOOP_END;
 	}
 
-	inline bool Scopes::CheckScopePointer( stacked<ScopeNode>& scope, opArray< stacked< opNode > >& scopes, bool bGlobal)
+	template<class Parent> inline bool Scopes<Parent>::CheckScopePointer( stacked<ScopeNode>& scope, opArray< stacked< opNode > >& scopes, bool bGlobal)
 	{
 		if(this->IsCurrent(T_STAR))
 		{
@@ -1308,7 +1315,7 @@ namespace interfaces
 /// PointerMembers Interface
 ///==========================================
 
-	inline bool PointerMembers::Parse()
+	template<class Parent> inline bool PointerMembers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1317,7 +1324,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void PointerMembers::FindPointerMembers()
+	template<class Parent> inline void PointerMembers<Parent>::FindPointerMembers()
 	{
 		LOOP_START(G_POINTER_MEMBER);
 		{
@@ -1353,7 +1360,7 @@ namespace interfaces
 /// Typenames interface
 ///==========================================
 
-	inline bool Typenames::Parse()
+	template<class Parent> inline bool Typenames<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1362,7 +1369,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Typenames::FindTypenames()
+	template<class Parent> inline void Typenames<Parent>::FindTypenames()
 	{
 		LOOP_START(G_TYPENAME)
 		{
@@ -1372,7 +1379,7 @@ namespace interfaces
 
 				this->Erase(T_TYPENAME);
 
-				opNode* name = ExpectOr(T_ID,G_TEMPLATE_TYPE,G_SCOPE,G_POINTER,G_REFERENCE);
+				opNode* name = this->ExpectOr(T_ID,G_TEMPLATE_TYPE,G_SCOPE,G_POINTER,G_REFERENCE);
 
 				newNode->SetName(name);
 				newNode->AppendNode(name);
@@ -1387,7 +1394,7 @@ namespace interfaces
 /// Function pointers
 ///==========================================
 
-	inline bool FunctionPointers::Parse()
+	template<class Parent> inline bool FunctionPointers<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1396,14 +1403,14 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void FunctionPointers::FindFunctionPointers()
+	template<class Parent> inline void FunctionPointers<Parent>::FindFunctionPointers()
 	{
 		LOOP_START(G_FUNCTION_POINTER)
 		{
 			HIT(G_PAREN_BLOCK)
 			{
 				//function pointers are always double paren blocks
-				if(!Peek(G_PAREN_BLOCK))
+				if(!this->Peek(G_PAREN_BLOCK))
 				{
 					//not a function pointer, move past it
 					this->IncrementPosition();
@@ -1421,10 +1428,10 @@ namespace interfaces
 				newNode->SetArguments(*Args);
 				newNode->AppendNode(Args);
 
-				DecrementPosition();
+				this->DecrementPosition();
 
 				//TODO: we will want to have G_CONST_TYPE maybe
-				stacked<opNode> ReturnType = ExpectOr(G_SCOPE,
+				stacked<opNode> ReturnType = this->ExpectOr(G_SCOPE,
 													  G_TEMPLATE_TYPE,
 													  G_POINTER,
 													  G_REFERENCE,
@@ -1448,7 +1455,7 @@ namespace interfaces
 /// OPDefines interface
 ///==========================================
 
-	inline bool OPDefines::Parse()
+	template<class Parent> inline bool OPDefines<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1457,7 +1464,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void OPDefines::FindOPDefines()
+	template<class Parent> inline void OPDefines<Parent>::FindOPDefines()
 	{
 		LOOP_START(G_OPDEFINE)
 		{
@@ -1499,7 +1506,7 @@ namespace interfaces
 /// Define interface
 ///==========================================
 
-	inline bool Preprocessors::Parse()
+	template<class Parent> inline bool Preprocessors<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1508,7 +1515,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Preprocessors::FindAllPounds()
+	template<class Parent> inline void Preprocessors<Parent>::FindAllPounds()
 	{
 		FindPoundDefines();
 		FindPoundIf();
@@ -1530,8 +1537,9 @@ namespace interfaces
 	//		we need to make sure this starts on a newline only
 	//		and we need to know what happens if you have a #define name \, 
 	//		followed immediately by another directive 
-	template<Token Grammar, Token HitToken, class NodeType>
-	inline void Preprocessors::FindDirective(const string& directivename)
+	template<class Parent> 
+    template<Token Grammar, Token HitToken, class NodeType>
+	inline void Preprocessors<Parent>::FindDirective(const string& directivename)
 	{
 		LOOP_START(Grammar)
 		{
@@ -1546,7 +1554,7 @@ namespace interfaces
 				if (this->IsPrevious(T_WHITESPACE))
 					this->ReverseErase(T_WHITESPACE);
 
-				if (!this->IsPrevious(T_NEWLINE) && GetPosition() != GetBegin())
+				if (!this->IsPrevious(T_NEWLINE) && this->GetPosition() != this->GetBegin())
 					opError::MessageError(*newNode, "Preprocessor definitions must not be preceeded by any tokens on a line except whitespace.");
 
 				newNode->SetDirectiveName(directivename);
@@ -1557,12 +1565,12 @@ namespace interfaces
 				{
 					PushUntilOrAdd(*newNode, T_NEWLINE, T_COMMENT, T_CCOMMENT, T_EOF, T_CONTINUELINE);
 					
-					if(CurrentNode())
+					if(this->CurrentNode())
 					{
-						if(CurrentNode()->GetId() == T_NEWLINE
-						|| CurrentNode()->GetId() == T_COMMENT
-						|| CurrentNode()->GetId() == T_CCOMMENT
-						|| CurrentNode()->GetId() == T_EOF)
+						if(this->CurrentNode()->GetId() == T_NEWLINE
+						|| this->CurrentNode()->GetId() == T_COMMENT
+						|| this->CurrentNode()->GetId() == T_CCOMMENT
+						|| this->CurrentNode()->GetId() == T_EOF)
 							bDone = true;
 						else
 						{
@@ -1580,72 +1588,72 @@ namespace interfaces
 		LOOP_END;
 	}
 
-	inline void Preprocessors::FindPoundDefines()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundDefines()
 	{
 		FindDirective<G_POUND_DEFINE,T_POUND_DEFINE,PoundDefineNode>("define");
 	}
 
-	inline void Preprocessors::FindPoundIf()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundIf()
 	{
 		FindDirective<G_POUND_IF,T_POUND_IF,PoundIfNode>("if");
 	}
 
-	inline void Preprocessors::FindPoundIfDef()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundIfDef()
 	{
 		FindDirective<G_POUND_IFDEF,T_POUND_IFDEF,PoundIfdefNode>("ifdef");
 	}
 
-	inline void Preprocessors::FindPoundIfnDef()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundIfnDef()
 	{
 		FindDirective<G_POUND_IFNDEF,T_POUND_IFNDEF,PoundIfndefNode>("ifndef");
 	}
 
-	inline void Preprocessors::FindPoundEndIf()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundEndIf()
 	{
 		FindDirective<G_POUND_ENDIF,T_POUND_ENDIF,PoundEndifNode>("endif");
 	}
 
-	inline void Preprocessors::FindPoundInclude()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundInclude()
 	{
 		FindDirective<G_POUND_INCLUDE,T_POUND_INCLUDE,PoundIncludeNode>("include");
 	}
 
-	inline void Preprocessors::FindPoundElse()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundElse()
 	{
 		FindDirective<G_POUND_ELSE,T_POUND_ELSE,PoundElseNode>("else");
 	}
 
-	inline void Preprocessors::FindPoundError()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundError()
 	{
 		FindDirective<G_POUND_ERROR,T_POUND_ERROR,PoundErrorNode>("error");
 	}
 
-	inline void Preprocessors::FindPoundImport()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundImport()
 	{
 		FindDirective<G_POUND_IMPORT,T_POUND_IMPORT,PoundImportNode>("import");
 	}
 
-	inline void Preprocessors::FindPoundLine()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundLine()
 	{
 		FindDirective<G_POUND_LINE,T_POUND_LINE,PoundLineNode>("line");
 	}
 
-	inline void Preprocessors::FindPoundPragma()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundPragma()
 	{
 		FindDirective<G_POUND_PRAGMA,T_POUND_PRAGMA,PoundPragmaNode>("pragma");
 	}
 
-	inline void Preprocessors::FindPoundUnDef()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundUnDef()
 	{
 		FindDirective<G_POUND_UNDEF,T_POUND_UNDEF,PoundUndefNode>("undef");
 	}
 
-	inline void Preprocessors::FindPoundUsing()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundUsing()
 	{
 		FindDirective<G_POUND_USING,T_POUND_USING,PoundUsingNode>("using");
 	}
 
-	inline void Preprocessors::FindPoundWarning()
+	template<class Parent> inline void Preprocessors<Parent>::FindPoundWarning()
 	{
 		FindDirective<G_POUND_WARNING,T_POUND_WARNING,PoundWarningNode>("warning");
 	}
@@ -1655,7 +1663,7 @@ namespace interfaces
 ///==========================================
 
 	//NOTE: this is now a preparse option
-	inline bool OPIncludes::PreParse()
+	template<class Parent> inline bool OPIncludes<Parent>::PreParse()
 	{
 		PREPARSE_START;
 		{
@@ -1664,7 +1672,7 @@ namespace interfaces
 		PREPARSE_END;
 	}
 
-	inline void OPIncludes::FindOPIncludes()
+	template<class Parent> inline void OPIncludes<Parent>::FindOPIncludes()
 	{
 		LOOP_START(G_OPINCLUDE)
 		{
@@ -1693,7 +1701,7 @@ namespace interfaces
 ///==========================================
 
 	//NOTE: this is a pre-parse interface
-	inline bool ExpandCalls::PreParse()
+	template<class Parent> inline bool ExpandCalls<Parent>::PreParse()
 	{
 		PREPARSE_START;
 		{
@@ -1702,7 +1710,7 @@ namespace interfaces
 		PREPARSE_END;
 	}
 
-	inline void ExpandCalls::FindExpandCalls()
+	template<class Parent> inline void ExpandCalls<Parent>::FindExpandCalls()
 	{
 		LOOP_START(G_EXPAND_CALL);
 		{
@@ -1714,7 +1722,7 @@ namespace interfaces
 
 				this->EatWhitespaceAndComments();
 
-				stacked<opNode> name = Expect(T_ID);
+				stacked<opNode> name = this->Expect(T_ID);
 
 				newNode->SetName(*name);
 				newNode->AppendNode(name);
@@ -1740,7 +1748,7 @@ namespace interfaces
 /// OPMacros interface
 ///==========================================
 
-	inline bool OPMacros::PreParse()
+	template<class Parent> inline bool OPMacros<Parent>::PreParse()
 	{
 		PREPARSE_START;
 		{
@@ -1749,7 +1757,7 @@ namespace interfaces
 		PREPARSE_END;
 	}
 
-	inline void OPMacros::FindOPMacros()
+	template<class Parent> inline void OPMacros<Parent>::FindOPMacros()
 	{
 		LOOP_START(G_OPMACRO)
 		{
@@ -1793,7 +1801,7 @@ namespace interfaces
 /// CPlusPluses
 ///==========================================
 
-	inline bool CPlusPluses::Parse()
+	template<class Parent> inline bool CPlusPluses<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1802,7 +1810,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CPlusPluses::FindCPlusPluses()
+	template<class Parent> inline void CPlusPluses<Parent>::FindCPlusPluses()
 	{
 		LOOP_START(G_CPLUSPLUS)
 		{
@@ -1830,7 +1838,7 @@ namespace interfaces
 /// BasicTypes
 ///==========================================
 
-	inline bool FundamentalTypes::PreParse()
+	template<class Parent> inline bool FundamentalTypes<Parent>::PreParse()
 	{
 		PREPARSE_START;
 		{
@@ -1840,7 +1848,7 @@ namespace interfaces
 		PREPARSE_END;
 	}
 
-	inline void FundamentalTypes::FindSigned()
+	template<class Parent> inline void FundamentalTypes<Parent>::FindSigned()
 	{
 		LOOP_START(G_FUNDAMENTAL_TYPE)
 		{
@@ -1869,7 +1877,7 @@ namespace interfaces
 		LOOP_END;
 	}
 
-	inline void FundamentalTypes::FindUnsigned()
+	template<class Parent> inline void FundamentalTypes<Parent>::FindUnsigned()
 	{
 		LOOP_START(G_FUNDAMENTAL_TYPE)
 		{
@@ -1898,13 +1906,13 @@ namespace interfaces
 /// Constructors
 ///==========================================
 
-	inline void Constructors::FindConstructors(const opString& classname)
+	template<class Parent> inline void Constructors<Parent>::FindConstructors(const opString& classname)
 	{
 		LOOP_START(G_CONSTRUCTOR)
 		{
 			HIT(G_FUNCTION)
 			{
-				FunctionNode* function = node_cast<FunctionNode>(CurrentNode());
+				FunctionNode* function = node_cast<FunctionNode>(this->CurrentNode());
 				TerminalNode* fname = node_cast<TerminalNode>(function->GetName());
 				
 				if(fname && fname->GetValue() == classname)
@@ -1928,13 +1936,13 @@ namespace interfaces
 /// Destructors
 ///==========================================
 
-	inline void Destructors::FindDestructors(const opString& classname)
+	template<class Parent> inline void Destructors<Parent>::FindDestructors(const opString& classname)
 	{
 		LOOP_START(G_DESTRUCTOR)
 		{
 			HIT(G_FUNCTION)
 			{
-				FunctionNode* function = node_cast<FunctionNode>(CurrentNode());
+				FunctionNode* function = node_cast<FunctionNode>(this->CurrentNode());
 				TerminalNode* fname = node_cast<TerminalNode>(function->GetName());
 
 				if(fname 
@@ -1971,7 +1979,7 @@ namespace interfaces
 /// Friends
 ///==========================================
 
-	inline bool Friends::Parse()
+	template<class Parent> inline bool Friends<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -1980,7 +1988,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Friends::FindFriends()
+	template<class Parent> inline void Friends<Parent>::FindFriends()
 	{
 		LOOP_START(G_FRIEND);
 		{
@@ -2051,7 +2059,7 @@ namespace interfaces
 /// Typedefs
 ///==========================================
 
-	inline bool Typedefs::Parse()
+	template<class Parent> inline bool Typedefs<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -2060,7 +2068,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Typedefs::FindTypedefs()
+	template<class Parent> inline void Typedefs<Parent>::FindTypedefs()
 	{
 		LOOP_START(G_TYPEDEF);
 		{
@@ -2110,7 +2118,7 @@ namespace interfaces
 // TemplateDecls
 //==========================================
 
-	inline bool TemplateDecls::Parse()
+	template<class Parent> inline bool TemplateDecls<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -2119,7 +2127,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void TemplateDecls::FindTemplateDecls()
+	template<class Parent> inline void TemplateDecls<Parent>::FindTemplateDecls()
 	{
 		LOOP_START(G_TEMPLATE_DECL);
 		{
@@ -2143,7 +2151,7 @@ namespace interfaces
 /// CPPConstructs
 ///==========================================
 
-	inline bool CPPConstructs::Parse()
+	template<class Parent> inline bool CPPConstructs<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -2152,7 +2160,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void CPPConstructs::FindCPPConstructs()
+	template<class Parent> inline void CPPConstructs<Parent>::FindCPPConstructs()
 	{
 		FindCPPConstructs<EnumNode,  G_ENUM,  T_ENUM>();
 		FindCPPConstructs<UnionNode, G_UNION, T_UNION>();
@@ -2162,8 +2170,9 @@ namespace interfaces
 	}
 
 	// Find cpp constructs (enum/union).
-	template<class NodeClass, Token Grammar, Token Hit>
-	inline void CPPConstructs::FindCPPConstructs()
+	template<class Parent> 
+    template<class NodeClass, Token Grammar, Token Hit>
+	inline void CPPConstructs<Parent>::FindCPPConstructs()
 	{
 		LOOP_START(Grammar);
 		{
@@ -2198,8 +2207,9 @@ namespace interfaces
 	}
 
 	// Find cpp object constructs (struct/class).
-	template<class NodeClass, Token Grammar, Token Hit>
-	inline void CPPConstructs::FindCPPConstructObjects()
+	template<class Parent> 
+    template<class NodeClass, Token Grammar, Token Hit>
+	inline void CPPConstructs<Parent>::FindCPPConstructObjects()
 	{
 		LOOP_START(Grammar);
 		{
@@ -2246,7 +2256,7 @@ namespace interfaces
 /// Templated
 ///==========================================
 
-	inline bool Templated::Parse()
+	template<class Parent> inline bool Templated<Parent>::Parse()
 	{
 		PARSE_START;
 		{
@@ -2255,7 +2265,7 @@ namespace interfaces
 		PARSE_END;
 	}
 
-	inline void Templated::FindTemplated()
+	template<class Parent> inline void Templated<Parent>::FindTemplated()
 	{
 		LOOP_START(G_TEMPLATED);
 		{

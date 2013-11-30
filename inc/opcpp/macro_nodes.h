@@ -96,7 +96,7 @@ public:
 	opString GetSignature();
 
 
-protected:
+// protected:
 	bool Expand(opSymbolTracker& tracker, opNode::iterator expandit, opNode* parent);
 
 	friend class opMacroExpander;
