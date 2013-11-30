@@ -22,17 +22,18 @@ INC += -I ../src/
 SRC =
 SRC += ../src/opcpp/opcpp_source.cpp
 SRC += ../src/opcpp/regex_source.cpp
+SRC += ../src/opcpp/linux_source.cpp
 
 # libraries
 LIB =
 LIB += -L ${BOOST_LIB}
 
 # linking
-LINK = -lboost_filesystem
+LINK = -lboost_filesystem -lboost_system
 
 # debug
 debug:
-	clang++ -g -O0 ${FLAGS} ${INC} ${LIB} -o opcpp ${SRC} ${LINK}
+	clang++ -g -v -O0 ${FLAGS} ${INC} ${LIB} -o opcpp ${SRC} ${LINK}
 
 # release
 release:
