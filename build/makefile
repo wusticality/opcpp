@@ -23,13 +23,20 @@ SRC =
 SRC += ../src/opcpp/opcpp_source.cpp
 SRC += ../src/opcpp/regex_source.cpp
 
+# libraries
+LIB =
+LIB += -L ${BOOST_LIB}
+
+# linking
+LINK = -lboost_filesystem
+
 # debug
 debug:
-	clang++ -g -O0 ${FLAGS} ${INC} -o opcpp ${SRC} -lboost_filesystem
+	clang++ -g -O0 ${FLAGS} ${INC} ${LIB} -o opcpp ${SRC} ${LINK}
 
 # release
 release:
-	clang++ -O0 ${FLAGS} ${INC} -o opcpp ${SRC} -lboost_filesystem
+	clang++ -O0 ${FLAGS} ${INC} ${LIB} -o opcpp ${SRC} ${LINK}
 
 clean:
 	rm -fr *.o opcpp
