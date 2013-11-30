@@ -512,7 +512,7 @@ private:
 };
 
 template<>
-opXmlStream& operator << <endlinestruct>(opXmlStream& stream, const endlinestruct& input)
+inline opXmlStream& operator << <endlinestruct>(opXmlStream& stream, const endlinestruct& input)
 {
 	stream.EndLine();
 	return stream;
@@ -520,7 +520,7 @@ opXmlStream& operator << <endlinestruct>(opXmlStream& stream, const endlinestruc
 
 // override << for opString - do escape replacement
 template<>
-opXmlStream& operator << <opString>(opXmlStream& stream, const opString& input)
+inline opXmlStream& operator << <opString>(opXmlStream& stream, const opString& input)
 {
 	opString in = input;
 	
@@ -533,7 +533,7 @@ opXmlStream& operator << <opString>(opXmlStream& stream, const opString& input)
 
 // override << for string - do escape replacement
 template<>
-opXmlStream& operator << <string>(opXmlStream& stream, const string& input)
+inline opXmlStream& operator << <string>(opXmlStream& stream, const string& input)
 {
 	opString in = input;
 

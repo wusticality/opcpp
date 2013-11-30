@@ -1366,21 +1366,21 @@ private:
 
 // Specialize for ints.
 template<>
-int opString::StringTo<int>(const opString& _s)
+inline int opString::StringTo<int>(const opString& _s)
 {
 	return _s.ToInt();
 }
 
 // Specialize for floats.
 template<>
-float opString::StringTo<float>(const opString& _s)
+inline float opString::StringTo<float>(const opString& _s)
 {
 	return _s.ToFloat();
 }
 
 // Specialize for doubles.
 template<>
-double opString::StringTo<double>(const opString& _s)
+inline double opString::StringTo<double>(const opString& _s)
 {
 	return _s.ToDouble();
 }

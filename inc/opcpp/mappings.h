@@ -14,7 +14,7 @@
 //mapping macros
 #define TOKENMAPPED(tokenid) template<> struct IsMapped<tokenid> { enum { value = true}; };
 
-#define TOKENSTRING(tokenid,tokenstring) template<> const char* TokenString<tokenid>() { return tokenstring; }
+#define TOKENSTRING(tokenid,tokenstring) template<> inline const char* TokenString<tokenid>() { return tokenstring; }
 
 #define TOKENNAME(tokenid) template<> struct IsName<tokenid> { enum { value = true}; };
 
@@ -26,24 +26,24 @@ template<> struct NodeTypeIsGrammar<nodetype> { enum { value = true}; };
 										
 #define TOKENNODEID(tokenid,nodetype) template<> struct NodeTypeToken<nodetype> { static const Token id = tokenid; };
 
-#define TOKENIDSTRING(tokenid,tokenidstring) template<> const char* TokenIdString<tokenid>() { return tokenidstring; }
+#define TOKENIDSTRING(tokenid,tokenidstring) template<> inline const char* TokenIdString<tokenid>() { return tokenidstring; }
 
 #define TOKENKEYWORD(tokenid)						\
 template<> struct IsKeyword<tokenid> { enum { value = true }; }; \
-template<> void RegisterMapping<tokenid>()			\
+template<> inline void RegisterMapping<tokenid>()			\
 {													\
 	RegisterKeyword<tokenid>();						\
 }
 
 #define TOKENOPERATOR(tokenid)							\
 template<> struct IsOperator<tokenid> { enum { value = true}; };	\
-template<> void RegisterMapping<tokenid>()				\
+template<> inline void RegisterMapping<tokenid>()				\
 {														\
 	RegisterOperator<tokenid>();						\
 }
 
 #define DIALECTMODIFIERSTRING(tokenid, modifierstring)	\
-	template<> const char* DialectModifierString<tokenid>() { return modifierstring; } \
+	template<> inline const char* DialectModifierString<tokenid>() { return modifierstring; } \
 	template<> struct IsDialectModifier<tokenid> { enum { value = true }; };
 
 //Add a name that is not a keyword (has no real associated string mapping)

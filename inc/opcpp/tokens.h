@@ -818,14 +818,14 @@ namespace tokenmapping
 
 	//TokenString - friendliest name, may be the node name, i.e. "TerminalNode"
 	template<Token TokenType>
-	const char* TokenString()
+	inline const char* TokenString()
 	{
 		return "";//unknown
 	}
 
 	//Actual stringized version of Token, i.e. "T_WHITESPACE"
 	template<Token TokenType>
-	const char* TokenIdString()
+	inline const char* TokenIdString()
 	{
 		return "";//unknown
 	}
@@ -873,19 +873,19 @@ namespace tokenmapping
 
 	//RegisterMappings
 	template<Token TokenType>
-	void RegisterMapping()
+	inline void RegisterMapping()
 	{
 
 	}
 
 	template<Token TokenType>
-	void RegisterOperator()
+	inline void RegisterOperator()
 	{
 		opTokenMap::AddPair(TokenType,TokenString<TokenType>());
 	}
 
 	template<Token TokenType>
-	void RegisterKeyword()
+	inline void RegisterKeyword()
 	{
 		opTokenMap::AddPair(TokenType,TokenString<TokenType>());
 	}
@@ -900,13 +900,13 @@ namespace tokenmapping
 
 	// Given something like G_OVERRIDE, returns "override".
 	template<Token TokenType>
-	const char* DialectModifierString()
+	inline const char* DialectModifierString()
 	{
 		return "";
 	}
 
 	template<Token TokenType>
-	void RegisterDialectModifier()
+	inline void RegisterDialectModifier()
 	{
 		opTokenMap::AddDialectModifierPair(TokenType, DialectModifierString<TokenType>());
 	}
