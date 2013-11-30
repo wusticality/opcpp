@@ -4,13 +4,13 @@ namespace interfaces
     /// ModifierSupport interface
     ///==========================================
 
-	inline void ModifierSupport::Init()
+	template<class Parent> inline void ModifierSupport<Parent>::Init()
 	{
 		InitModifierSupport();
 	}
 
 	// looks at auto and specified modifiers
-	inline virtual bool ModifierSupport::HasModifier(const opString& modifiername)
+	template<class Parent> inline bool ModifierSupport<Parent>::HasModifier(const opString& modifiername)
 	{
 		if(TerminalNode* node = FetchBasicModifier(modifiername))
 		{
@@ -31,7 +31,7 @@ namespace interfaces
 		//handle parent modifiers...
 		if( !node_cast<OPObjectNode>(this) )
 		{
-			if(OPObjectNode* p = this->FindParent<OPObjectNode>())
+			if(OPObjectNode* p = this->template FindParent<OPObjectNode>())
 			{
 				if(p->HasModifier(modifiername))
 					return true;
@@ -42,7 +42,7 @@ namespace interfaces
 	}
 
 	// only looks at special modifiers
-	inline virtual bool ModifierSupport::HasModifier(Token modifiertoken)
+	template<class Parent> inline bool ModifierSupport<Parent>::HasModifier(Token modifiertoken)
 	{
 		if(modifiers)
 		{
@@ -60,7 +60,7 @@ namespace interfaces
 		//handle parent modifiers...
 		if( !node_cast<OPObjectNode>(this) )
 		{
-			if(OPObjectNode* p = this->FindParent<OPObjectNode>())
+			if(OPObjectNode* p = this->template FindParent<OPObjectNode>())
 			{
 				if(p->HasModifier(modifiertoken))
 					return true;
@@ -70,14 +70,14 @@ namespace interfaces
 		return false;
 	}
 
-	inline virtual opNode* ModifierSupport::GetVisibility(const opString& name)
+	template<class Parent> inline opNode* ModifierSupport<Parent>::GetVisibility(const opString& name)
 	{
 		return NULL;
 	}
 
 	// calls to GetValuedModifier will look at current modifiers, but also
 	// attempt to fetch automatically generated modifiers
-	inline virtual ValuedModifierNode* ModifierSupport::GetValuedModifier(const opString& modifiername)
+	template<class Parent> inline ValuedModifierNode* ModifierSupport<Parent>::GetValuedModifier(const opString& modifiername)
 	{
 		if(ValuedModifierNode* node = FetchValueModifier(modifiername))
 		{
@@ -93,7 +93,7 @@ namespace interfaces
 		//handle parent modifiers...
 		if( !node_cast<OPObjectNode>(this) )
 		{
-			if(OPObjectNode* p = this->FindParent<OPObjectNode>())
+			if(OPObjectNode* p = this->template FindParent<OPObjectNode>())
 			{
 				return p->GetValuedModifier(modifiername);
 			}
@@ -102,17 +102,17 @@ namespace interfaces
 		return NULL;
 	}
 
-	inline opNode* ModifierSupport::FetchModifier(const opString& name)
+	template<class Parent> inline opNode* ModifierSupport<Parent>::FetchModifier(const opString& name)
 	{
 		return ModifierSupportBase::FetchModifier(name);
 	}
 
-	inline void ModifierSupport::FetchAllModifiers()
+	template<class Parent> inline void ModifierSupport<Parent>::FetchAllModifiers()
 	{
 		return ModifierSupportBase::FetchAllModifiers();
 	}
 
-	inline void ModifierSupport::CreateModifiersNode()
+	template<class Parent> inline void ModifierSupport<Parent>::CreateModifiersNode()
 	{
 		if(automodifiers)
 			return;
@@ -123,27 +123,27 @@ namespace interfaces
 
 		automodifiers = *modnode;
 
-		AppendNode(modnode);
+		this->AppendNode(modnode);
 	}
 
     ///==========================================
     /// ConditionalSupport interface
     ///==========================================
 
-	inline void ConditionalSupport::Init()
+	template<class Parent> inline void ConditionalSupport<Parent>::Init()
 	{
 		Condition = NULL;
 	}
 	
 	//returns how many levels printed
-	inline int ConditionalSupport::PrintConditions(opSectionStream& section)
+	template<class Parent> inline int ConditionalSupport<Parent>::PrintConditions(opSectionStream& section)
 	{
 		if(Condition)
 			return Condition->PrintCondition(section);
 		return 0;
 	}
 	
-	inline void ConditionalSupport::PrintConditionEnd(int number, opSectionStream& stream)
+	template<class Parent> inline void ConditionalSupport<Parent>::PrintConditionEnd(int number, opSectionStream& stream)
 	{
 		if(!number)
 			return;
@@ -154,7 +154,7 @@ namespace interfaces
 			stream << "#endif" << endl;
 	}
 	
-	inline void ConditionalSupport::SetCondition(PreprocessorStatementNode* condition)
+	template<class Parent> inline void ConditionalSupport<Parent>::SetCondition(PreprocessorStatementNode* condition)
 	{
 		Condition = condition;
 	}

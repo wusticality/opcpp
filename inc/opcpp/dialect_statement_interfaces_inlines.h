@@ -199,7 +199,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyDialectCategoryStatements();
+			this->AllowOnlyDialectCategoryStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -223,18 +223,18 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if      (DataModifierStatement(stuff));
-			else if (FunctionModifierStatement(stuff));
-			else if (CategoryLocationStatement(stuff));
-			else if (DisallowStatement(stuff));
+			if      (this->DataModifierStatement(stuff));
+			else if (this->FunctionModifierStatement(stuff));
+			else if (this->CategoryLocationStatement(stuff));
+			else if (this->DisallowStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				bFinished = true;
 			}
@@ -245,7 +245,7 @@ namespace interfaces
 	// remain after statement parsing.
 	template<class Parent> inline void DialectCategoryStatements<Parent>::AllowOnlyDialectCategoryStatements()
 	{
-		AllowOnly( G_DATAMODIFIER_STATEMENT,
+		this->AllowOnly( G_DATAMODIFIER_STATEMENT,
 				   G_FUNCTIONMODIFIER_STATEMENT,
 				   G_CATEGORY_LOCATION_STATEMENT,
 				   G_DISALLOW_STATEMENT );
@@ -268,7 +268,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyDialectEnumStatements();
+			this->AllowOnlyDialectEnumStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -290,16 +290,16 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if      (EnumLocationStatement(stuff));
-			else if (DisallowStatement(stuff));
+			if      (this->EnumLocationStatement(stuff));
+			else if (this->DisallowStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				bFinished = true;
 			}
@@ -310,7 +310,7 @@ namespace interfaces
 	// remain after statement parsing.
 	template<class Parent> inline void DialectEnumerationStatements<Parent>::AllowOnlyDialectEnumStatements()
 	{
-		AllowOnly( G_ENUMERATION_LOCATION_STATEMENT,
+		this->AllowOnly( G_ENUMERATION_LOCATION_STATEMENT,
 			       G_DISALLOW_STATEMENT );
 	}
 
@@ -331,7 +331,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyEnumerationLocationStatements();
+			this->AllowOnlyEnumerationLocationStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -353,16 +353,16 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if      (EnumMapStatement(stuff));
-			else if (NoteStatement(stuff));
+			if      (this->EnumMapStatement(stuff));
+			else if (this->NoteStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				bFinished = true;
 			}
@@ -373,7 +373,7 @@ namespace interfaces
 	// remain after statement parsing.
 	template<class Parent> inline void EnumerationLocationStatements<Parent>::AllowOnlyEnumerationLocationStatements()
 	{
-		AllowOnly( G_ENUMERATIONMAP_STATEMENT,
+		this->AllowOnly( G_ENUMERATIONMAP_STATEMENT,
 			       G_NOTE_STATEMENT );
 	}
 
@@ -394,7 +394,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyCategoryLocationStatements();
+			this->AllowOnlyCategoryLocationStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -417,17 +417,17 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if      (NoteStatement(stuff));
-			else if (DatamapStatement(stuff));
-			else if (FunctionmapStatement(stuff));
+			if      (this->NoteStatement(stuff));
+			else if (this->DatamapStatement(stuff));
+			else if (this->FunctionmapStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 				
 				bFinished = true;
 			}
@@ -438,7 +438,7 @@ namespace interfaces
 	// remain after statement parsing.
 	template<class Parent> inline void CategoryLocationStatements<Parent>::AllowOnlyCategoryLocationStatements()
 	{
-		AllowOnly( G_NOTE_STATEMENT,
+		this->AllowOnly( G_NOTE_STATEMENT,
 				   G_CATEGORY_DATAMAP_STATEMENT,
 				   G_CATEGORY_FUNCTIONMAP_STATEMENT );
 	}
@@ -451,7 +451,7 @@ namespace interfaces
 	{
 		PARSE_START;
 		{
-			FindCriteriaStatements();
+			this->FindCriteriaStatements();
 		}
 		PARSE_END;
 	}
@@ -460,7 +460,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyDialectCriteriaStatements();
+			this->AllowOnlyDialectCriteriaStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -481,15 +481,15 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if      (IsStatement(stuff));
+			if      (this->IsStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				bFinished = true;
 			}
@@ -500,7 +500,7 @@ namespace interfaces
 	// remain after statement parsing.
 	template<class Parent> inline void DialectCriteriaStatements<Parent>::AllowOnlyDialectCriteriaStatements()
 	{
-		AllowOnly( G_IS_STATEMENT );
+		this->AllowOnly( G_IS_STATEMENT );
 	}
 
 //==========================================
@@ -511,7 +511,7 @@ namespace interfaces
 	{
 		PARSE_START;
 		{
-			FindFileDeclarationLocationStatements();
+			this->FindFileDeclarationLocationStatements();
 		}
 		PARSE_END;
 	}
@@ -520,7 +520,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyFileDeclarationLocationStatements();
+			this->AllowOnlyFileDeclarationLocationStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -541,15 +541,15 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if (FileDeclarationLocationStatement(stuff));
+			if (this->FileDeclarationLocationStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				bFinished = true;
 			}
@@ -560,7 +560,7 @@ namespace interfaces
 	// remain after statement parsing.
 	template<class Parent> inline void FileDeclarationLocationStatements<Parent>::AllowOnlyFileDeclarationLocationStatements()
 	{
-		AllowOnly( G_FILE_DECLARATION_LOCATION_STATEMENT );
+		this->AllowOnly( G_FILE_DECLARATION_LOCATION_STATEMENT );
 	}
 
 ///==========================================
@@ -571,7 +571,7 @@ namespace interfaces
 	{
 		PARSE_START;
 		{
-			FindGlobalDialectStatements();
+			this->FindGlobalDialectStatements();
 		}
 		PARSE_END;
 	}
@@ -580,7 +580,7 @@ namespace interfaces
 	{
 		POSTPARSE_START;
 		{
-			AllowOnlyGlobalDialectStatements();
+			this->AllowOnlyGlobalDialectStatements();
 		}
 		POSTPARSE_END;
 	}
@@ -611,25 +611,25 @@ namespace interfaces
 			if (bFinished)
 				break;
 
-			if      (NoteDefinitionStatement(stuff));
-			else if (OPMacroStatement(stuff));
-			else if (CategoryStatement(stuff));
-			else if (DialectNamespaceStatement(stuff));
-			else if (OPIncludeStatement(stuff));
-			else if (CodeStatement(stuff));
-			else if (EnumerationStatement(stuff));
-			else if (FileDeclarationStatement(stuff));
-			else if (ExtensionStatement(stuff));
-			else if (ExtendPointStatement(stuff));
-			else if (OPDefineStatement(stuff));
+			if      (this->NoteDefinitionStatement(stuff));
+			else if (this->OPMacroStatement(stuff));
+			else if (this->CategoryStatement(stuff));
+			else if (this->DialectNamespaceStatement(stuff));
+			else if (this->OPIncludeStatement(stuff));
+			else if (this->CodeStatement(stuff));
+			else if (this->EnumerationStatement(stuff));
+			else if (this->FileDeclarationStatement(stuff));
+			else if (this->ExtensionStatement(stuff));
+			else if (this->ExtendPointStatement(stuff));
+			else if (this->OPDefineStatement(stuff));
 			else if (this->IsCurrent(T_SEMICOLON))
 			{
-				Erase(T_SEMICOLON);
-				CollapseNodeAtCurrent(stuff);
+				this->Erase(T_SEMICOLON);
+				this->CollapseNodeAtCurrent(stuff);
 			}
 			else
 			{
-				CollapseNodeAtCurrent(stuff);
+				this->CollapseNodeAtCurrent(stuff);
 
 				bFinished = true;
 			}
@@ -639,7 +639,7 @@ namespace interfaces
 	// Makes sure that only valid global dialect statements are allowed.
 	template<class Parent> inline void GlobalDialectStatements<Parent>::AllowOnlyGlobalDialectStatements()
 	{
-		AllowOnly( G_NOTE_DEFINITION_STATEMENT,
+		this->AllowOnly( G_NOTE_DEFINITION_STATEMENT,
 				   G_DIALECT_OPMACRO_STATEMENT,
 				   G_CATEGORY_STATEMENT,
 				   G_DIALECT_NAMESPACE_STATEMENT,

@@ -21,7 +21,7 @@ namespace context
 	/// BasicTypes context
 	///==========================================
 
-    inline bool BasicTypes::Parse()
+    template<class Parent> inline bool BasicTypes<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -30,7 +30,7 @@ namespace context
         PARSE_END;
     }
 		
-    inline void BasicTypes::FindBasicTypes()
+    template<class Parent> inline void BasicTypes<Parent>::FindBasicTypes()
     {
         this->FindAngles();
 			
@@ -61,13 +61,13 @@ namespace context
 	/// Declaration context
 	///==========================================
 
-    inline virtual opString Declaration::GetClassName()
+    template<class Parent> inline opString Declaration<Parent>::GetClassName()
     {
         ABSTRACT_FUNCTION;
         return "";
     }
 
-    inline bool Declaration::Parse()
+    template<class Parent> inline bool Declaration<Parent>::Parse()
     {
         PARSE_START;
 			
@@ -136,7 +136,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool Declaration::PostParse()
+    template<class Parent> inline bool Declaration<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -149,7 +149,7 @@ namespace context
 	/// Argument context
 	///==========================================
 
-    inline bool Argument::Parse()
+    template<class Parent> inline bool Argument<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -162,7 +162,7 @@ namespace context
 	/// State context
 	///==========================================
 
-    inline bool State::Parse()
+    template<class Parent> inline bool State<Parent>::Parse()
     {
         PARSE_START;
 			
@@ -197,7 +197,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool State::PostParse()
+    template<class Parent> inline bool State<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -210,7 +210,7 @@ namespace context
 	/// Inheritance context
 	///==========================================
 
-    inline bool Inheritance::Parse()
+    template<class Parent> inline bool Inheritance<Parent>::Parse()
     {
         PARSE_START;
 
@@ -233,7 +233,7 @@ namespace context
 	/// this is like namespace A::B {}, not inside the braces
 	///==========================================
 
-    inline bool NamespaceDecl::Parse()
+    template<class Parent> inline bool NamespaceDecl<Parent>::Parse()
     {
         PARSE_START;
 
@@ -248,7 +248,7 @@ namespace context
 	/// Global
 	///==========================================
 
-    inline bool Global::PreParse()
+    template<class Parent> inline bool Global<Parent>::PreParse()
     {
         PREPARSE_START;
         {
@@ -257,7 +257,7 @@ namespace context
         PREPARSE_END;
     }
 
-    inline bool Global::Parse()
+    template<class Parent> inline bool Global<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -274,7 +274,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool Global::PostParse()
+    template<class Parent> inline bool Global<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -287,13 +287,13 @@ namespace context
 	/// Operator context
 	///==========================================
 
-    inline void Operator::Init()
+    template<class Parent> inline void Operator<Parent>::Init()
     {
         bCastOperator = false;
         OperatorType  = NULL;
     }
 
-    inline bool Operator::Parse()
+    template<class Parent> inline bool Operator<Parent>::Parse()
     {
         PARSE_START;
 
@@ -316,7 +316,7 @@ namespace context
             this->IncrementPosition();
         }
         else
-            OperatorType = CheckOverloadableOperator();
+            OperatorType = this->CheckOverloadableOperator();
 
         this->CheckNone();
 
@@ -327,7 +327,7 @@ namespace context
 	/// Dialect context
 	///==========================================
 	
-    inline bool Dialect::PreParse()
+    template<class Parent> inline bool Dialect<Parent>::PreParse()
     {
         PREPARSE_START;
         {
@@ -337,7 +337,7 @@ namespace context
         PREPARSE_END;
     }
 
-    inline bool Dialect::Parse()
+    template<class Parent> inline bool Dialect<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -363,7 +363,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool Dialect::PostParse()
+    template<class Parent> inline bool Dialect<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -376,7 +376,7 @@ namespace context
 	/// Category Context
 	///==========================================
 
-    inline bool Category::Parse()
+    template<class Parent> inline bool Category<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -391,7 +391,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool Category::PostParse()
+    template<class Parent> inline bool Category<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -404,7 +404,7 @@ namespace context
 	/// Category Location Context
 	///==========================================
 
-    inline bool CategoryLocation::Parse()
+    template<class Parent> inline bool CategoryLocation<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -419,7 +419,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool CategoryLocation::PostParse()
+    template<class Parent> inline bool CategoryLocation<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -432,7 +432,7 @@ namespace context
 	/// Map Context
 	///==========================================
 
-    inline bool CategoryMap::Parse()
+    template<class Parent> inline bool CategoryMap<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -446,7 +446,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool CategoryMap::PostParse()
+    template<class Parent> inline bool CategoryMap<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -459,7 +459,7 @@ namespace context
 	/// Enumeration Context
 	///==========================================
 
-    inline bool Enumeration::Parse()
+    template<class Parent> inline bool Enumeration<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -472,7 +472,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool Enumeration::PostParse()
+    template<class Parent> inline bool Enumeration<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -485,7 +485,7 @@ namespace context
 	/// Enumeration Location Context
 	///==========================================
 
-    inline bool EnumerationLocation::Parse()
+    template<class Parent> inline bool EnumerationLocation<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -499,7 +499,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool EnumerationLocation::PostParse()
+    template<class Parent> inline bool EnumerationLocation<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -512,7 +512,7 @@ namespace context
 	// FileDeclaration
 	//==========================================
 
-    inline bool FileDeclaration::Parse()
+    template<class Parent> inline bool FileDeclaration<Parent>::Parse()
     {
         PARSE_START;
         {
@@ -525,7 +525,7 @@ namespace context
         PARSE_END;
     }
 
-    inline bool FileDeclaration::PostParse()
+    template<class Parent> inline bool FileDeclaration<Parent>::PostParse()
     {
         POSTPARSE_START;
         {
@@ -538,7 +538,7 @@ namespace context
 	// TemplateType
 	//==========================================
 
-    inline bool TemplateType::Parse()
+    template<class Parent> inline bool TemplateType<Parent>::Parse()
     {
         PARSE_START;
         {

@@ -16,7 +16,7 @@
     ///==========================================
 
 	// Finds ID@ID
-	inline void MacroConcatenations::FindConcatenations()
+	template<class Parent> inline void MacroConcatenations<Parent>::FindConcatenations()
 	{
 		LOOP_START(G_CONCATENATION_OPERATOR);
 		{
@@ -57,7 +57,7 @@
     ///==========================================
 
 	// Finds `text`
-	inline void MacroSingleQuotes::FindSingleQuotes()
+	template<class Parent> inline void MacroSingleQuotes<Parent>::FindSingleQuotes()
 	{
 		LOOP_START(G_SINGLE_QUOTE_OPERATOR);
 		{
@@ -82,7 +82,7 @@
     ///==========================================
 
 	// Finds ``text``
-	inline void MacroDoubleQuotes::FindDoubleQuotes()
+	template<class Parent> inline void MacroDoubleQuotes<Parent>::FindDoubleQuotes()
 	{
 		LOOP_START(G_DOUBLE_QUOTE_OPERATOR);
 		{
