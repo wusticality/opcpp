@@ -429,22 +429,25 @@ namespace context
 			//TODO: validate this, its probably wrong.
 			this->FindScopes();
 
-			if(!IsCurrent(T_STAR))
+			if(!this->IsCurrent(T_STAR))
 				this->FindPointers();
 			
-			if(!IsCurrent(T_AMPERSAND))
+			if(!this->IsCurrent(T_AMPERSAND))
 				this->FindReferences();
 
-			if( IsCurrent(G_POINTER) || IsCurrent(T_ID) || IsCurrent(G_REFERENCE) || IsCurrent(G_SCOPE) )
+			if( this->IsCurrent(G_POINTER) || 
+                this->IsCurrent(T_ID) || 
+                this->IsCurrent(G_REFERENCE) || 
+                this->IsCurrent(G_SCOPE) )
 			{
 				bCastOperator = true;
-				OperatorType  = CurrentNode();
-				IncrementPosition();
+				OperatorType  = this->CurrentNode();
+				this->IncrementPosition();
 			}
 			else
 				OperatorType = CheckOverloadableOperator();
 
-			CheckNone();
+			this->CheckNone();
 
 			PARSE_END;
 		}
