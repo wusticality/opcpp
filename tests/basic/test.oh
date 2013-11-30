@@ -1,0 +1,18 @@
+namespace test
+{
+    //
+    // Test
+    //
+
+    opclass Test
+    {
+    public:
+
+		Test() 
+            : m_transient_member( 16 ),
+              m_native_member( 1337.0f ) {}
+
+        public transient int m_transient_member;
+        public native float m_native_member;
+    };
+}
