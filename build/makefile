@@ -40,4 +40,4 @@ release:
 	clang++ -O0 ${FLAGS} ${INC} ${LIB} -o opcpp ${SRC} ${LINK}
 
 clean:
-	rm -fr *.o opcpp
+	rm -fr *.o opcpp opcpp.dSYM
