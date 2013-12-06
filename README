@@ -2,3 +2,7 @@ opcpp
 =====
 
 A compiler that extends C++ header declarations through a custom dialect language.
+
+Additional information: http://www.opcpp.com
+
+See manual.pdf for usage.
