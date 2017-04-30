@@ -11,20 +11,18 @@
 /// Timer-related code.
 ///****************************************************************
 
-//Lucas: Special Timer Code
+// Lucas: Special Timer Code
 
-namespace timing
-{
+namespace timing {
 
-class opTimer
-{
-public:
-	static double GetTimeSeconds();
-	static void InitTimeSeconds();
-private:
-	static unsigned long timerstart;
-	static double        invtimerfrequency;
+class opTimer {
+   public:
+    static double GetTimeSeconds();
+    static void InitTimeSeconds();
+
+   private:
+    static unsigned long timerstart;
+    static double invtimerfrequency;
 };
 
-}; // end timing namespace
-
+};  // namespace timing

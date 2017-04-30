@@ -9,90 +9,76 @@
 /// Description:
 ///
 /// Path Utility Function Header
-/// 
-/// 
-/// 
+///
+///
+///
 ///****************************************************************
 
 using namespace boost::filesystem;
 
-inline bool paths_match(const path& a, const path& b)
-{
-	if(a == b)
-		return true;
+inline bool paths_match(const path& a, const path& b) {
+    if (a == b) return true;
 
 #ifdef WIN32
-	//case insensitive comparison for windows
-	opString astring = opString(a.string()).ToLower();
-	opString bstring = opString(b.string()).ToLower();
+    // case insensitive comparison for windows
+    opString astring = opString(a.string()).ToLower();
+    opString bstring = opString(b.string()).ToLower();
 
-	if(astring == bstring)
-		return true;
+    if (astring == bstring) return true;
 #endif
 
-	return false;
+    return false;
 }
 
+inline path to_relative_path(path p, path basepath) {
+    if (p.is_complete()) {
+        // we need to convert this path, since its complete
+        path workingpath = basepath;
 
-inline path to_relative_path(path p, path basepath)
-{
-	if(p.is_complete())
-	{
-		//we need to convert this path, since its complete
-		path workingpath = basepath;
+        // special case for windows (case insensitive)
 
-		//special case for windows (case insensitive)
+        // first make sure the begin are equal, or else return p (absolute)
+        // TODO: well...I need to handle the following cases:
+        // A - c:\blah.oh B - d:\blah.doh
+        //	well...generation is really machine dependent if you switch
+        //paths ever.  I'd say correct this, then make doh generation non-path
+        // based
 
+        path::iterator wend = workingpath.end();
+        path::iterator pend = p.end();
 
-		//first make sure the begin are equal, or else return p (absolute)
-		//TODO: well...I need to handle the following cases:
-		//A - c:\blah.oh B - d:\blah.doh
-		//	well...generation is really machine dependent if you switch paths ever.
-		//I'd say correct this, then make doh generation non-path based
+        path::iterator pit = p.begin();
+        path::iterator wit = workingpath.begin();
 
-		path::iterator wend = workingpath.end();
-		path::iterator pend = p.end();
+        if (!paths_match(*pit, *wit)) return p;
 
-		path::iterator pit = p.begin();
-		path::iterator wit = workingpath.begin();
+        while (paths_match(*pit, *wit) && wit != wend && pit != pend) {
+            // go until one is exhausted or a mismatch occurs.
 
-		if(!paths_match(*pit,*wit))
-			return p;
+            ++pit;
+            ++wit;
+        }
 
-		while(paths_match(*pit,*wit) && wit != wend && pit != pend)
-		{
-			//go until one is exhausted or a mismatch occurs.
+        path newpath;
 
-			++pit;
-			++wit;
-		}
+        // first add the remainder of wit (../'s)
+        while (wit != wend) {
+            newpath /= "..";
+            ++wit;
+        }
 
-		path newpath;
+        // then add the remainder of the targetted
+        while (pit != pend) {
+            newpath /= *pit;
+            ++pit;
+        }
 
-		//first add the remainder of wit (../'s)
-		while(wit != wend)
-		{
-			newpath /= "..";
-			++wit;
-		}
+        return newpath;
+    }
 
-		//then add the remainder of the targetted
-		while(pit != pend)
-		{
-			newpath /= *pit;
-			++pit;
-		}
-
-		return newpath;
-	}
-
-	return p;
+    return p;
 }
 
-inline path to_relative_path(path p)
-{
-	return to_relative_path(p,boost::filesystem::initial_path());
-
+inline path to_relative_path(path p) {
+    return to_relative_path(p, boost::filesystem::initial_path());
 }
-
-

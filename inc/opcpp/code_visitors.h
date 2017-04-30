@@ -11,7 +11,4 @@
 // Non-dialect visitors.
 //****************************************************************
 
-namespace visitors
-{
-
-} // end namespace visitors
+namespace visitors {}  // end namespace visitors

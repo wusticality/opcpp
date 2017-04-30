@@ -19,11 +19,10 @@
 
 // set beta stuff here!
 
-bool   opBetaSupport::isBetaBuild = false;
-time_t opBetaSupport::ExpireDate  = opTimeUtility::GetTime(5, 1, 2008);
+bool opBetaSupport::isBetaBuild = false;
+time_t opBetaSupport::ExpireDate = opTimeUtility::GetTime(5, 1, 2008);
 
 // returns true if this beta compiler is expired
-bool opBetaSupport::BetaExpired()
-{
-	return opTimeUtility::GetCurrentTime() > ExpireDate;
+bool opBetaSupport::BetaExpired() {
+    return opTimeUtility::GetCurrentTime() > ExpireDate;
 }

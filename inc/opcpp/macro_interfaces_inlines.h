@@ -11,94 +11,96 @@
 /// Macro interfaces.
 ///****************************************************************
 
-    ///==========================================
-    /// MacroConcatenations
-    ///==========================================
+///==========================================
+/// MacroConcatenations
+///==========================================
 
-	// Finds ID@ID
-	template<class Parent> inline void MacroConcatenations<Parent>::FindConcatenations()
-	{
-		LOOP_START(G_CONCATENATION_OPERATOR);
-		{
-			HIT(T_SPACER)
-			{
-				stackedcontext<ConcatenationOperatorNode> newNode = opNode::Make<ConcatenationOperatorNode>(T_SPACER);
-			
-				stacked<TerminalNode> spacer = opNode::Expect<TerminalNode>(T_SPACER);
+// Finds ID@ID
+template <class Parent>
+inline void MacroConcatenations<Parent>::FindConcatenations() {
+    LOOP_START(G_CONCATENATION_OPERATOR);
+    {
+        HIT(T_SPACER) {
+            stackedcontext<ConcatenationOperatorNode> newNode =
+                opNode::Make<ConcatenationOperatorNode>(T_SPACER);
 
-				stacked<opNode> left = opNode::ReverseExpectOr<opNode>(T_ID,
-					                                                   G_CONCATENATION_OPERATOR,
-																	   *spacer);
+            stacked<TerminalNode> spacer =
+                opNode::Expect<TerminalNode>(T_SPACER);
 
-				spacer.Delete();
-				
-				//manual reverse make (basically)
-				stacked<ConcatenationArgumentOperatorNode> leftop = NEWNODE(ConcatenationArgumentOperatorNode);
-				leftop->CopyBasics(*left);
+            stacked<opNode> left = opNode::ReverseExpectOr<opNode>(
+                T_ID, G_CONCATENATION_OPERATOR, *spacer);
 
-				leftop->AppendNode(left);
-				newNode->SetLeft(*leftop);
-				newNode->AppendNode(leftop);
+            spacer.Delete();
 
-				stacked<ConcatenationArgumentOperatorNode> rightop = opNode::Make<ConcatenationArgumentOperatorNode>(T_ID);
-				stacked<opNode> right = opNode::ExpectOr(T_ID,G_CONCATENATION_OPERATOR);
-				rightop->AppendNode(right);
-				newNode->SetRight(*rightop);
-				newNode->AppendNode(rightop);
-				
-				this->InsertNodeAtCurrent(newNode);
-			}
-		}
-		LOOP_END;
-	}
+            // manual reverse make (basically)
+            stacked<ConcatenationArgumentOperatorNode> leftop =
+                NEWNODE(ConcatenationArgumentOperatorNode);
+            leftop->CopyBasics(*left);
 
-    ///==========================================
-    /// MacroSingleQuotes
-    ///==========================================
+            leftop->AppendNode(left);
+            newNode->SetLeft(*leftop);
+            newNode->AppendNode(leftop);
 
-	// Finds `text`
-	template<class Parent> inline void MacroSingleQuotes<Parent>::FindSingleQuotes()
-	{
-		LOOP_START(G_SINGLE_QUOTE_OPERATOR);
-		{
-			HIT(T_ACCENT)
-			{
-				stackedcontext<SingleQuoteOperatorNode> newNode = opNode::Make<SingleQuoteOperatorNode>(T_ACCENT);
+            stacked<ConcatenationArgumentOperatorNode> rightop =
+                opNode::Make<ConcatenationArgumentOperatorNode>(T_ID);
+            stacked<opNode> right =
+                opNode::ExpectOr(T_ID, G_CONCATENATION_OPERATOR);
+            rightop->AppendNode(right);
+            newNode->SetRight(*rightop);
+            newNode->AppendNode(rightop);
 
-				this->Erase(T_ACCENT);
+            this->InsertNodeAtCurrent(newNode);
+        }
+    }
+    LOOP_END;
+}
 
-				opNode::PushUntilAdd(*newNode, T_ACCENT);
+///==========================================
+/// MacroSingleQuotes
+///==========================================
 
-				this->Erase(T_ACCENT);
+// Finds `text`
+template <class Parent>
+inline void MacroSingleQuotes<Parent>::FindSingleQuotes() {
+    LOOP_START(G_SINGLE_QUOTE_OPERATOR);
+    {
+        HIT(T_ACCENT) {
+            stackedcontext<SingleQuoteOperatorNode> newNode =
+                opNode::Make<SingleQuoteOperatorNode>(T_ACCENT);
 
-				this->InsertNodeAtCurrent(newNode);
-			}
-		}
-		LOOP_END;
-	}
+            this->Erase(T_ACCENT);
 
-    ///==========================================
-    /// MacroDoubleQuotes
-    ///==========================================
+            opNode::PushUntilAdd(*newNode, T_ACCENT);
 
-	// Finds ``text``
-	template<class Parent> inline void MacroDoubleQuotes<Parent>::FindDoubleQuotes()
-	{
-		LOOP_START(G_DOUBLE_QUOTE_OPERATOR);
-		{
-			HIT(T_DOUBLE_ACCENT)
-			{
-				stackedcontext<DoubleQuoteOperatorNode> newNode = opNode::Make<DoubleQuoteOperatorNode>(T_DOUBLE_ACCENT);
+            this->Erase(T_ACCENT);
 
-				this->Erase(T_DOUBLE_ACCENT);
+            this->InsertNodeAtCurrent(newNode);
+        }
+    }
+    LOOP_END;
+}
 
-				opNode::PushUntilAdd(*newNode, T_DOUBLE_ACCENT);
+///==========================================
+/// MacroDoubleQuotes
+///==========================================
 
-				this->Erase(T_DOUBLE_ACCENT);
+// Finds ``text``
+template <class Parent>
+inline void MacroDoubleQuotes<Parent>::FindDoubleQuotes() {
+    LOOP_START(G_DOUBLE_QUOTE_OPERATOR);
+    {
+        HIT(T_DOUBLE_ACCENT) {
+            stackedcontext<DoubleQuoteOperatorNode> newNode =
+                opNode::Make<DoubleQuoteOperatorNode>(T_DOUBLE_ACCENT);
 
-				this->InsertNodeAtCurrent(newNode);
-			}
-		}
-		LOOP_END;
-	}
+            this->Erase(T_DOUBLE_ACCENT);
 
+            opNode::PushUntilAdd(*newNode, T_DOUBLE_ACCENT);
+
+            this->Erase(T_DOUBLE_ACCENT);
+
+            this->InsertNodeAtCurrent(newNode);
+        }
+    }
+    LOOP_END;
+}

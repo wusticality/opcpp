@@ -11,213 +11,161 @@
 /// Exception-related code.
 ///****************************************************************
 
-namespace exceptions
-{
+namespace exceptions {
 
 // base exception class
-class opException
-{
-public:
-	/**** construction / destruction ****/
+class opException {
+   public:
+    /**** construction / destruction ****/
 
-	opException() {}
-	~opException() {}
+    opException() {}
+    ~opException() {}
 
+    /**** exception types ****/
 
-	/**** exception types ****/
+    // macros/exceptions for nodes, etc.
+    // stops looking for a certain grammar because it errored
+    struct opCPP_Exception {
+       private:
+        opCPP_Exception() { opException::Throw(); }
 
-	// macros/exceptions for nodes, etc.
-	// stops looking for a certain grammar because it errored
-	struct opCPP_Exception
-	{
-	private:
-		opCPP_Exception()
-		{
-			opException::Throw();
-		}
+        friend class opException;
+    };
 
-		friend class opException;
-	};
+    // throws out to end the compiling
+    struct opCPP_FatalException {
+       private:
+        opCPP_FatalException() { opException::Throw(); }
 
-	//throws out to end the compiling
-	struct opCPP_FatalException
-	{
-	private:
-		opCPP_FatalException()
-		{
-			opException::Throw();
-		}
+        friend class opException;
+    };
 
-		friend class opException;
-	};
+    // throws out to Parse()
+    struct opCPP_ParseException {
+       private:
+        opCPP_ParseException() { opException::Throw(); }
 
-	//throws out to Parse()
-	struct opCPP_ParseException
-	{
-	private:
-		opCPP_ParseException()
-		{
-			opException::Throw();
-		}
+        friend class opException;
+    };
 
-		friend class opException;
-	};
+    // throws
+    struct opCPP_AssertException {
+       private:
+        opCPP_AssertException(const string& estring)
+            : exceptionstring(estring) {
+            opException::Throw();
+        }
 
-	//throws
-	struct opCPP_AssertException
-	{
-	private:
-		opCPP_AssertException(const string& estring) : exceptionstring(estring)
-		{
-			opException::Throw();
-		}
-	public:
-		string exceptionstring;
+       public:
+        string exceptionstring;
 
-		friend class opException;
-	};
+        friend class opException;
+    };
 
-	/**** utility ****/
+    /**** utility ****/
 
-	static void Throw()
-	{
-		ExceptionCount++;
-		
-		//NOTE: question is, are there actual scenarios where this is outside [0,1]?
-		//		if not we should assert(ExceptionCount <= 1)
-		assert(ExceptionCount <= 1);//???
-	}
+    static void Throw() {
+        ExceptionCount++;
 
-	static bool InException()
-	{
-		return ExceptionCount > 0;
-	}
+        // NOTE: question is, are there actual scenarios where this is outside
+        // [0,1]? 		if not we should assert(ExceptionCount <= 1)
+        assert(ExceptionCount <= 1);  //???
+    }
 
-	// called immediately AFTER the catch block
-	static int CaughtException(opCPP_Exception& e)
-	{
-		return CaughtException();
-	}
+    static bool InException() { return ExceptionCount > 0; }
 
-	static int CaughtException(opCPP_ParseException& e)
-	{
-		return CaughtException();
-	}
-	
-	static int CaughtException()
-	{
-		return ExceptionCount = 0;
-	}
+    // called immediately AFTER the catch block
+    static int CaughtException(opCPP_Exception& e) { return CaughtException(); }
 
-	static inline int GetExceptionCount()
-	{
-		return ExceptionCount;
-	}
+    static int CaughtException(opCPP_ParseException& e) {
+        return CaughtException();
+    }
 
+    static int CaughtException() { return ExceptionCount = 0; }
 
+    static inline int GetExceptionCount() { return ExceptionCount; }
 
-	/**** exception throwing functions ****/
+    /**** exception throwing functions ****/
 
-	static void ThrowException()
-	{
-		DispatchException<opCPP_Exception>();
-	}
+    static void ThrowException() { DispatchException<opCPP_Exception>(); }
 
-	static void ThrowFatalException()
-	{
-		DispatchException<opCPP_FatalException>();
-	}
+    static void ThrowFatalException() {
+        DispatchException<opCPP_FatalException>();
+    }
 
-	static void ThrowParseException()
-	{
-		DispatchException<opCPP_ParseException>();
-	}
+    static void ThrowParseException() {
+        DispatchException<opCPP_ParseException>();
+    }
 
-	static void ThrowAssertException(const opString& assertstring, const char* file, int line)
-	{
-		//no dispatch
-		//TODO: add file and line
-		throw opCPP_AssertException(assertstring);
-	}
+    static void ThrowAssertException(const opString& assertstring,
+                                     const char* file, int line) {
+        // no dispatch
+        // TODO: add file and line
+        throw opCPP_AssertException(assertstring);
+    }
 
-	enum ExceptionType
-	{
-		DefaultException,
-		Exception,
-		ParseException,
-		AssertException,
-		FatalException,
-	};
+    enum ExceptionType {
+        DefaultException,
+        Exception,
+        ParseException,
+        AssertException,
+        FatalException,
+    };
 
-private:
-	static int ExceptionCount;
+   private:
+    static int ExceptionCount;
 
-	//exception override
-	static ExceptionType ExceptionOverride;
-	
-	//handles override dispatching
-	template<class defaulttype>
-	static void DispatchException()
-	{
-		if(ExceptionOverride == DefaultException)
-			throw defaulttype();
-		else if(ExceptionOverride == Exception)
-			throw opCPP_Exception();
-		else if(ExceptionOverride == ParseException)
-			throw opCPP_ParseException();
-		else if(ExceptionOverride == FatalException)
-			throw opCPP_FatalException();
-	}
+    // exception override
+    static ExceptionType ExceptionOverride;
 
-	friend class setexceptionmode;
+    // handles override dispatching
+    template <class defaulttype>
+    static void DispatchException() {
+        if (ExceptionOverride == DefaultException)
+            throw defaulttype();
+        else if (ExceptionOverride == Exception)
+            throw opCPP_Exception();
+        else if (ExceptionOverride == ParseException)
+            throw opCPP_ParseException();
+        else if (ExceptionOverride == FatalException)
+            throw opCPP_FatalException();
+    }
+
+    friend class setexceptionmode;
 };
 
-//NOTE: this is necessary for resetting the exception counter
+// NOTE: this is necessary for resetting the exception counter
 //		only when you return within a catch block
 //		(otherwise call opException::CaughtException())
-class ExceptionCatchHandler
-{
-public:
-	ExceptionCatchHandler() : bReset(false)
-	{
-	}
-	
-	void CaughtException()
-	{
-		bReset = true;
-	}
+class ExceptionCatchHandler {
+   public:
+    ExceptionCatchHandler() : bReset(false) {}
 
-	~ExceptionCatchHandler()
-	{
-		//NOTE: two scenarios...
-		//		1. caught an exception, should reset upon return
-		//		2. didn't catch it here! falls through w/o resetting
+    void CaughtException() { bReset = true; }
 
-		if(bReset)
-			opException::CaughtException();
-	}
+    ~ExceptionCatchHandler() {
+        // NOTE: two scenarios...
+        //		1. caught an exception, should reset upon return
+        //		2. didn't catch it here! falls through w/o resetting
 
-private:
-	bool bReset;
+        if (bReset) opException::CaughtException();
+    }
+
+   private:
+    bool bReset;
 };
 
-class setexceptionmode
-{
-public:
-	setexceptionmode(opException::ExceptionType exceptiontype)
-	{
-		oldoverride = opException::ExceptionOverride;
-		opException::ExceptionOverride = exceptiontype;
-	}
+class setexceptionmode {
+   public:
+    setexceptionmode(opException::ExceptionType exceptiontype) {
+        oldoverride = opException::ExceptionOverride;
+        opException::ExceptionOverride = exceptiontype;
+    }
 
-	~setexceptionmode()
-	{
-		opException::ExceptionOverride = oldoverride;
-	}
+    ~setexceptionmode() { opException::ExceptionOverride = oldoverride; }
 
-private:
-	opException::ExceptionType oldoverride;
+   private:
+    opException::ExceptionType oldoverride;
 };
 
-} // end namespace exceptions
-
+}  // end namespace exceptions

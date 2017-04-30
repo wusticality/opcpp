@@ -10,164 +10,162 @@
 ///
 ///****************************************************************
 
-namespace interfaces
-{
+namespace interfaces {
 
 ///
 /// BasicStatementsBase
 ///
 
-template<class Parent>
-class BasicStatementsBase : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(BasicStatementsBase)
+template <class Parent>
+class BasicStatementsBase : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(BasicStatementsBase)
 
-	///==========================================
-	/// UnknownStatement
-	///==========================================
+    ///==========================================
+    /// UnknownStatement
+    ///==========================================
 
-	//is current an unknown statement? transform stuff
-	bool UnknownStatement(stacked<opNode>& stuff);
+    // is current an unknown statement? transform stuff
+    bool UnknownStatement(stacked<opNode>& stuff);
 
-	//list of all unknown statements gathered
-	vector<StatementNode*> UnknownStatements;
+    // list of all unknown statements gathered
+    vector<StatementNode*> UnknownStatements;
 
-	///==========================================
-	/// OPEnumStatement
-	///==========================================
+    ///==========================================
+    /// OPEnumStatement
+    ///==========================================
 
-	//is current an openum statement? transform stuff
-	bool OPEnumStatement(stacked<opNode>& stuff);
+    // is current an openum statement? transform stuff
+    bool OPEnumStatement(stacked<opNode>& stuff);
 
-	//list of openum statements gathered
-	vector<OPEnumStatementNode*> OPEnumStatements;
+    // list of openum statements gathered
+    vector<OPEnumStatementNode*> OPEnumStatements;
 
-	///==========================================
-	/// OPObjectStatement
-	///==========================================
+    ///==========================================
+    /// OPObjectStatement
+    ///==========================================
 
-	//is current an opclass statement? transform stuff
-	bool OPObjectStatement(stacked<opNode>& stuff);
+    // is current an opclass statement? transform stuff
+    bool OPObjectStatement(stacked<opNode>& stuff);
 
-	//list of opobject statements gathered
-	vector<OPObjectStatementNode*> OPObjectStatements;
+    // list of opobject statements gathered
+    vector<OPObjectStatementNode*> OPObjectStatements;
 
-	///==========================================
-	/// StateStatement
-	///==========================================
+    ///==========================================
+    /// StateStatement
+    ///==========================================
 
-	//is current an opstate statement? transform stuff
-	bool StateStatement(stacked<opNode>& stuff);
+    // is current an opstate statement? transform stuff
+    bool StateStatement(stacked<opNode>& stuff);
 
-	//list of state statements gathered
-	vector<StateStatementNode*> StateStatements;
+    // list of state statements gathered
+    vector<StateStatementNode*> StateStatements;
 
-	///==========================================
-	/// VisibilityStatement
-	///==========================================
+    ///==========================================
+    /// VisibilityStatement
+    ///==========================================
 
-	//is current a visibility statement? transform stuff
-	bool VisibilityStatement(stacked<opNode>& stuff);
+    // is current a visibility statement? transform stuff
+    bool VisibilityStatement(stacked<opNode>& stuff);
 
-	//we don't gather a list of visibility statements since they're order dependent
+    // we don't gather a list of visibility statements since they're order
+    // dependent
 
-	///==========================================
-	/// FunctionDefinitionStatement
-	///==========================================
+    ///==========================================
+    /// FunctionDefinitionStatement
+    ///==========================================
 
-	//is current a function definition? transform stuff
-	bool FunctionDefinitionStatement(stacked<opNode>& stuff);
-	
-	//list of function definition statements gathered (not function prototypes!)
-	vector<FunctionDefinitionStatementNode*> FunctionDefinitionStatements;
+    // is current a function definition? transform stuff
+    bool FunctionDefinitionStatement(stacked<opNode>& stuff);
 
-	///==========================================
-	/// ConstructorStatement
-	///==========================================
-	
-	bool ConstructorStatement(stacked<opNode>& stuff);
-	
-	//list of constructor definition statements gathered (not prototypes)
-	vector<ConstructorDefinitionStatementNode*> ConstructorDefinitionStatements;
-	
-	///==========================================
-	/// DestructorStatement
-	///==========================================
-	
-	bool DestructorStatement(stacked<opNode>& stuff);
-	
-	//list of constructor definition statements gathered (not prototypes)
-	vector<DestructorDefinitionStatementNode*> DestructorDefinitionStatements;
-	
-	///==========================================
-	/// PreprocessorStatement
-	///==========================================
-	
-	bool ConditionalPreprocessorStatement(stacked<opNode>& stuff);
-	
-	///==========================================
-	/// CPPConstructStatement
-	///==========================================
-	
-	bool CPPConstructStatement(stacked<opNode>& stuff);
+    // list of function definition statements gathered (not function
+    // prototypes!)
+    vector<FunctionDefinitionStatementNode*> FunctionDefinitionStatements;
 
-	//==========================================
-	// FriendStatements
-	//==========================================
+    ///==========================================
+    /// ConstructorStatement
+    ///==========================================
 
-	bool FriendStatement(stacked<opNode>& stuff);
+    bool ConstructorStatement(stacked<opNode>& stuff);
 
-	//==========================================
-	// TypedefStatements
-	//==========================================
+    // list of constructor definition statements gathered (not prototypes)
+    vector<ConstructorDefinitionStatementNode*> ConstructorDefinitionStatements;
 
-	bool TypedefStatement(stacked<opNode>& stuff);
+    ///==========================================
+    /// DestructorStatement
+    ///==========================================
 
-	///==========================================
-	/// TemplateStatements
-	///==========================================
+    bool DestructorStatement(stacked<opNode>& stuff);
 
-	bool TemplateStatement(stacked<opNode>& stuff);
+    // list of constructor definition statements gathered (not prototypes)
+    vector<DestructorDefinitionStatementNode*> DestructorDefinitionStatements;
+
+    ///==========================================
+    /// PreprocessorStatement
+    ///==========================================
+
+    bool ConditionalPreprocessorStatement(stacked<opNode>& stuff);
+
+    ///==========================================
+    /// CPPConstructStatement
+    ///==========================================
+
+    bool CPPConstructStatement(stacked<opNode>& stuff);
+
+    //==========================================
+    // FriendStatements
+    //==========================================
+
+    bool FriendStatement(stacked<opNode>& stuff);
+
+    //==========================================
+    // TypedefStatements
+    //==========================================
+
+    bool TypedefStatement(stacked<opNode>& stuff);
+
+    ///==========================================
+    /// TemplateStatements
+    ///==========================================
+
+    bool TemplateStatement(stacked<opNode>& stuff);
 };
 
 ///
 /// BasicStatements
 ///
 
-template<class Parent>
-class BasicStatements : public BasicStatementsBase<Parent>
-{
-public:
-	IMPLEMENTS_INTERFACE(BasicStatements)
+template <class Parent>
+class BasicStatements : public BasicStatementsBase<Parent> {
+   public:
+    IMPLEMENTS_INTERFACE(BasicStatements)
 
-	bool Parse();
-	bool PostParse();
-	
-	// Only allow the following statements in opobjects.
-	void AllowOnlyBasicStatements();
-	
-	stacked<opNode> PushUntilStatementEnd();
-	
-	// Find all statements except preprocessor ones.
-	void FindBasicStatements();
+    bool Parse();
+    bool PostParse();
+
+    // Only allow the following statements in opobjects.
+    void AllowOnlyBasicStatements();
+
+    stacked<opNode> PushUntilStatementEnd();
+
+    // Find all statements except preprocessor ones.
+    void FindBasicStatements();
 };
 
 ///
 /// BasicStateStatements
 ///
 
-template<class Parent>
-class BasicStateStatements : public BasicStatementsBase<Parent>
-{
-public:
-	IMPLEMENTS_INTERFACE(BasicStateStatements)
-	
-	//TODO: split up the utility function interface
-	//		so we don't have all these extra gathering vectors.
+template <class Parent>
+class BasicStateStatements : public BasicStatementsBase<Parent> {
+   public:
+    IMPLEMENTS_INTERFACE(BasicStateStatements)
 
-	void FindStateStatements();
-	void AllowOnlyStateStatements();
+    // TODO: split up the utility function interface
+    //		so we don't have all these extra gathering vectors.
+
+    void FindStateStatements();
+    void AllowOnlyStateStatements();
 };
 
 ///
@@ -179,7 +177,7 @@ public:
 // {
 // public:
 // 	IMPLEMENTS_INTERFACE(FriendStatements)
-// 
+//
 // 	bool Parse()
 // 	{
 // 		PARSE_START;
@@ -188,15 +186,16 @@ public:
 // 		}
 // 		PARSE_END;
 // 	}
-// 
+//
 // 	bool FindFriendStatements()
 // 	{
 // 		INSPECT_START(G_FRIEND_STATEMENT);
 // 		{
 // 			if (PeekStart(G_FRIEND))
 // 			{
-// 				stacked<FriendStatementNode> newNode = opNode::PushUntilEnd<FriendStatementNode>();
-// 				
+// 				stacked<FriendStatementNode> newNode =
+// opNode::PushUntilEnd<FriendStatementNode>();
+//
 // 				SetInnerStatement(*newNode);
 // 				AppendNode(newNode);
 // 			}
@@ -209,28 +208,26 @@ public:
 /// UsingStatements
 ///==========================================
 
-template<class Parent>
-class UsingStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(UsingStatements)
+template <class Parent>
+class UsingStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(UsingStatements)
 
-	bool Parse();
-	bool FindUsingStatements();
+    bool Parse();
+    bool FindUsingStatements();
 };
 
 ///
 /// NullStatements
 ///
 
-template<class Parent>
-class NullStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(NullStatements)
+template <class Parent>
+class NullStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(NullStatements)
 
-	bool Parse();
-	bool FindNullStatements();
+    bool Parse();
+    bool FindNullStatements();
 };
 
 ///
@@ -242,7 +239,7 @@ public:
 // {
 // public:
 // 	IMPLEMENTS_INTERFACE(TypedefStatements)
-// 
+//
 // 	bool Parse()
 // 	{
 // 		PARSE_START;
@@ -251,15 +248,16 @@ public:
 // 		}
 // 		PARSE_END;
 // 	}
-// 
+//
 // 	bool FindTypedefStatements()
 // 	{
 // 		INSPECT_START(G_TYPEDEF_STATEMENT);
 // 		{
 // 			if (PeekStart(G_TYPEDEF))
 // 			{
-// 				stacked<TypedefStatementNode> newNode = opNode::PushUntilEnd<TypedefStatementNode>();
-// 
+// 				stacked<TypedefStatementNode> newNode =
+// opNode::PushUntilEnd<TypedefStatementNode>();
+//
 // 				SetInnerStatement(*newNode);
 // 				AppendNode(newNode);
 // 			}
@@ -272,53 +270,49 @@ public:
 /// FuncPointerStatements
 ///
 
-//NOTE: may need to add initialization for this.
-template<class Parent>
-class FuncPointerStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(FuncPointerStatements)
+// NOTE: may need to add initialization for this.
+template <class Parent>
+class FuncPointerStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(FuncPointerStatements)
 
-	bool Parse();
-	bool FindFuncPointerStatements();
+    bool Parse();
+    bool FindFuncPointerStatements();
 };
 
 ///
 /// FuncPrototypeStatements
 ///
 
-template<class Parent>
-class FuncPrototypeStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(FuncPrototypeStatements)
+template <class Parent>
+class FuncPrototypeStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(FuncPrototypeStatements)
 
-	bool Parse();
-	bool FindFuncPrototypeStatements();
+    bool Parse();
+    bool FindFuncPrototypeStatements();
 };
 
 ///
 /// ConstructorPrototypeStatements
 ///
 
-template<class Parent>
-class ConstructorPrototypeStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(ConstructorPrototypeStatements)
+template <class Parent>
+class ConstructorPrototypeStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(ConstructorPrototypeStatements)
 
-	bool FindConstructorPrototypeStatements();
+    bool FindConstructorPrototypeStatements();
 };
 
 ///
 /// DestructorPrototypeStatements
 ///
 
-template<class Parent>
-class DestructorPrototypeStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(DestructorPrototypeStatements)
+template <class Parent>
+class DestructorPrototypeStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(DestructorPrototypeStatements)
 
     bool FindDestructorPrototypeStatements();
 };
@@ -332,7 +326,7 @@ public:
 // {
 // public:
 // 	IMPLEMENTS_INTERFACE(TemplateStatements)
-// 
+//
 // 	bool Parse()
 // 	{
 // 		PARSE_START;
@@ -341,7 +335,7 @@ public:
 // 		}
 // 		PARSE_END;
 // 	}
-// 	
+//
 // 	bool FindTemplateStatements()
 // 	{
 // 		INSPECT_START(G_TEMPLATE_STATEMENT)
@@ -349,19 +343,22 @@ public:
 // 			if(PeekStart(G_TEMPLATE_DECL))
 // 			{
 // 				//format: template<...> ...;
-// 				stackedcontext<TemplateStatementNode> newNode = opNode::Make<TemplateStatementNode>(G_TEMPLATE_DECL);
-// 				stacked<TemplateDeclNode> templatenode = opNode::Expect<TemplateDeclNode>(G_TEMPLATE_DECL);
-// 				
-// 				stacked<TemplateStatementBodyNode> body = opNode::PushUntilEnd<TemplateStatementBodyNode>();
-// 				
+// 				stackedcontext<TemplateStatementNode> newNode =
+// opNode::Make<TemplateStatementNode>(G_TEMPLATE_DECL);
+// 				stacked<TemplateDeclNode> templatenode =
+// opNode::Expect<TemplateDeclNode>(G_TEMPLATE_DECL);
+//
+// 				stacked<TemplateStatementBodyNode> body =
+// opNode::PushUntilEnd<TemplateStatementBodyNode>();
+//
 // 				newNode->SetTemplate(*templatenode);
 // 				newNode->SetBody(*body);
 // 				newNode->AppendNode(templatenode);
 // 				newNode->AppendNode(body);
-// 				
+//
 // 				SetInnerStatement(*newNode);
 // 				AppendNode(newNode);
-// 				
+//
 // 				return true;
 // 			}
 // 		}
@@ -373,42 +370,38 @@ public:
 /// DataStatements
 ///
 
-template<class Parent>
-class DataStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(DataStatements)
+template <class Parent>
+class DataStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(DataStatements)
 
-	bool Parse();
-	bool FindDataStatements();
-	bool FindDataStatementOnly();
+    bool Parse();
+    bool FindDataStatements();
+    bool FindDataStatementOnly();
 };
 
-template<class Parent>
-class DataStatementOnly : public DataStatements<Parent>
-{
-public:
-	IMPLEMENTS_INTERFACE(DataStatementOnly)
+template <class Parent>
+class DataStatementOnly : public DataStatements<Parent> {
+   public:
+    IMPLEMENTS_INTERFACE(DataStatementOnly)
 
-	bool Parse();
+    bool Parse();
 };
 
 ///==========================================
 /// ConditionalPreprocessorStatements
 ///==========================================
 
-template<class Parent>
-class ConditionalPreprocessorStatements : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(ConditionalPreprocessorStatements)
+template <class Parent>
+class ConditionalPreprocessorStatements : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(ConditionalPreprocessorStatements)
 
-	bool Parse();
-	void FindConditionalPreprocessorStatements();
+    bool Parse();
+    void FindConditionalPreprocessorStatements();
 
-	template<Token hittoken>
-	void FindConditionalPreprocessorStatement();
+    template <Token hittoken>
+    void FindConditionalPreprocessorStatement();
 };
 
-} // end namespace interfaces
-
+}  // end namespace interfaces

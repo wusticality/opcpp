@@ -19,5 +19,5 @@
 
 // Note: This is where you should set the compiler version!
 
-float    opVersion::Version       = 0.91f;
+float opVersion::Version = 0.91f;
 opString opVersion::VersionString = "0.9.1";

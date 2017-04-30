@@ -13,32 +13,26 @@
 
 #pragma once
 
-#include "opcpp/opstl/opstlcommon.h"
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
+#include "opcpp/opstl/opstlcommon.h"
 
-namespace opstl 
-{
-    using std::unordered_set;
-    using std::unordered_map;
-}
+namespace opstl {
+using std::unordered_set;
+using std::unordered_map;
+}  // namespace opstl
 
-namespace opstl
-{
+namespace opstl {
 
 //==========================================
 // opHasher
 //==========================================
 
-// Specialize this if you want to change 
+// Specialize this if you want to change
 // your hash function for type T.
-template<class T>
-struct opHashFunction
-{
-	static size_t Hash(const T& t) 
-	{
-		return (size_t) t;
-	}
+template <class T>
+struct opHashFunction {
+    static size_t Hash(const T& t) { return (size_t)t; }
 };
 
 // Specialize this if you want to change
@@ -46,607 +40,366 @@ struct opHashFunction
 // NOTE: This is different depending on your
 //       OS!  In Windows, it's <, in GNU Linux,
 //       it's ==.
-template<class T>
-struct opHashCompare
-{
-	static bool Compare(const T& t1, const T& t2) 
-	{
-		return t1 < t2;
-	}
+template <class T>
+struct opHashCompare {
+    static bool Compare(const T& t1, const T& t2) { return t1 < t2; }
 };
 
-// This class tells the hash classes how to 
+// This class tells the hash classes how to
 // hash a value and compare via '<'.
-template<class T>
-struct opHasher 
-{
-	// This function returns the hash value.
-	size_t operator()(const T& t) const
-	{
-		return opHashFunction<T>::Hash(t);
-	}
+template <class T>
+struct opHasher {
+    // This function returns the hash value.
+    size_t operator()(const T& t) const { return opHashFunction<T>::Hash(t); }
 
-	// This function returns true if t1 is < t2.
-	// t1 and t2 are keys.
-	bool operator()(const T& t1, const T& t2) const
-	{
-		return opHashCompare<T>::Compare(t1, t2);
-	}
-	
-	enum
-	{	// parameters for hash table
-		bucket_size = 4,	// 0 < bucket_size
-		min_buckets = 8		// min_buckets = must be a power of 2, and greater than 0
-	};
+    // This function returns true if t1 is < t2.
+    // t1 and t2 are keys.
+    bool operator()(const T& t1, const T& t2) const {
+        return opHashCompare<T>::Compare(t1, t2);
+    }
+
+    enum {                // parameters for hash table
+        bucket_size = 4,  // 0 < bucket_size
+        min_buckets =
+            8  // min_buckets = must be a power of 2, and greater than 0
+    };
 };
 
 //==========================================
 // opHashSet
 //==========================================
 
-template<class Key>
-class opHashSet
-{
-public:
-	/**** typedefs ****/
+template <class Key>
+class opHashSet {
+   public:
+/**** typedefs ****/
 
 #ifdef OPSTL_GNU_LINUX
-	typedef          unordered_set<Key, opHasher<Key>, opHasher<Key> > hash_set_type;
+    typedef unordered_set<Key, opHasher<Key>, opHasher<Key> > hash_set_type;
 #else
-	typedef          hash_set<Key, opHasher<Key> >                     hash_set_type;
+    typedef hash_set<Key, opHasher<Key> > hash_set_type;
 #endif
-	typedef typename hash_set_type::key_type                           key_type;
-	typedef typename hash_set_type::value_type                         value_type;
-	typedef typename hash_set_type::size_type                          size_type;
-	typedef typename hash_set_type::iterator					       iterator;
-	typedef typename hash_set_type::const_iterator				       const_iterator;
-	typedef typename hash_set_type::reference					       reference;
-	typedef typename hash_set_type::const_reference				       const_reference;
-	typedef          pointer_iterator<iterator, Key>			       pointer_iterator;
-	typedef          const_pointer_iterator<const_iterator, Key>       const_pointer_iterator;
+    typedef typename hash_set_type::key_type key_type;
+    typedef typename hash_set_type::value_type value_type;
+    typedef typename hash_set_type::size_type size_type;
+    typedef typename hash_set_type::iterator iterator;
+    typedef typename hash_set_type::const_iterator const_iterator;
+    typedef typename hash_set_type::reference reference;
+    typedef typename hash_set_type::const_reference const_reference;
+    typedef pointer_iterator<iterator, Key> pointer_iterator;
+    typedef const_pointer_iterator<const_iterator, Key> const_pointer_iterator;
 
-	/**** construction ****/
+    /**** construction ****/
 
-	opHashSet() {}
+    opHashSet() {}
 
-	opHashSet(const hash_set_type& inhashset)
-		: hs(inhashset) {}
+    opHashSet(const hash_set_type& inhashset) : hs(inhashset) {}
 
-	opHashSet(const opHashSet<Key>& inhashset)
-		: hs(inhashset.hs) {}
+    opHashSet(const opHashSet<Key>& inhashset) : hs(inhashset.hs) {}
 
-	template<class InputIterator>
-	opHashSet(InputIterator first, InputIterator last) 
-		: hs(first, last) {}
+    template <class InputIterator>
+    opHashSet(InputIterator first, InputIterator last) : hs(first, last) {}
 
-	/**** destruction ****/
+    /**** destruction ****/
 
-	~opHashSet() 
-	{
-		hs.clear();
-	}
+    ~opHashSet() { hs.clear(); }
 
-	/**** utility ****/
+    /**** utility ****/
 
-	iterator Begin() 
-	{
-		return hs.begin();
-	}
+    iterator Begin() { return hs.begin(); }
 
-	iterator Last()
-	{
-		if (IsEmpty())
-			return End();
+    iterator Last() {
+        if (IsEmpty()) return End();
 
-		return --End();
-	}
+        return --End();
+    }
 
-	iterator End() 
-	{
-		return hs.end();
-	}
+    iterator End() { return hs.end(); }
 
-	int Size() const
-	{
-		return (int) hs.size();
-	}
+    int Size() const { return (int)hs.size(); }
 
-	int Length() const
-	{
-		return (int) hs.size();
-	}
+    int Length() const { return (int)hs.size(); }
 
-	int MaxSize() const
-	{
-		return (int) hs.max_size();
-	}
+    int MaxSize() const { return (int)hs.max_size(); }
 
-	bool IsEmpty() const
-	{
-		return hs.empty();
-	}
+    bool IsEmpty() const { return hs.empty(); }
 
-	void Swap(opHashSet<Key>& inhashset)
-	{
-		hs.swap(inhashset.hs);
-	}
+    void Swap(opHashSet<Key>& inhashset) { hs.swap(inhashset.hs); }
 
-	iterator Insert(const Key& key)
-	{
-		pair<iterator, bool> r = hs.insert(key);
+    iterator Insert(const Key& key) {
+        pair<iterator, bool> r = hs.insert(key);
 
-		return r.first;
-	}
+        return r.first;
+    }
 
-	template<class InputIterator>
-	void Insert(InputIterator first, InputIterator last)
-	{
-		hs.insert(first, last);
-	}
+    template <class InputIterator>
+    void Insert(InputIterator first, InputIterator last) {
+        hs.insert(first, last);
+    }
 
-	void Erase(iterator position)
-	{
-		hs.erase(position);
-	}
+    void Erase(iterator position) { hs.erase(position); }
 
-	void Erase(const Key& key)
-	{
-		hs.erase(key);
-	}
+    void Erase(const Key& key) { hs.erase(key); }
 
-	void Erase(iterator first, iterator last)
-	{
-		hs.erase(first, last);
-	}
+    void Erase(iterator first, iterator last) { hs.erase(first, last); }
 
-	void Clear()
-	{
-		hs.clear();
-	}
+    void Clear() { hs.clear(); }
 
-	iterator Find(const Key& key) 
-	{
-		return hs.find(key);
-	}
+    iterator Find(const Key& key) { return hs.find(key); }
 
-	const_iterator Find(const Key& key) const
-	{
-		return hs.find(key);
-	}
+    const_iterator Find(const Key& key) const { return hs.find(key); }
 
-	bool Contains(const Key& key) const
-	{
-		return hs.find(key) != hs.end();
-	}
+    bool Contains(const Key& key) const { return hs.find(key) != hs.end(); }
 
-	int Count(const Key& key) const
-	{
-		return (int) hs.count(key);
-	}
+    int Count(const Key& key) const { return (int)hs.count(key); }
 
-	hash_set_type& GetHashSet()
-	{
-		return hs;
-	}
+    hash_set_type& GetHashSet() { return hs; }
 
-	const hash_set_type& GetHashSet() const
-	{
-		return hs;
-	}
+    const hash_set_type& GetHashSet() const { return hs; }
 
-	void DeleteAll()
-	{
-		iterator i   = hs.begin();
-		iterator end = hs.end();
+    void DeleteAll() {
+        iterator i = hs.begin();
+        iterator end = hs.end();
 
-		while (i != end)
-		{
-			delete *i;
-			++i;
-		}
-	}
+        while (i != end) {
+            delete *i;
+            ++i;
+        }
+    }
 
-	/**** operator overloads ****/
+    /**** operator overloads ****/
 
-	friend bool operator == (const opHashSet<Key>& ht1, const opHashSet<Key>& ht2)
-	{
-		return ht1.hs == ht2.hs;
-	}
+    friend bool operator==(const opHashSet<Key>& ht1,
+                           const opHashSet<Key>& ht2) {
+        return ht1.hs == ht2.hs;
+    }
 
-private:
-	hash_set_type hs;
+   private:
+    hash_set_type hs;
 
-public:
-	/**** original container functions for stl compatibility ****/
+   public:
+    /**** original container functions for stl compatibility ****/
 
-	iterator begin() const
-	{
-		return hs.begin();
-	}
+    iterator begin() const { return hs.begin(); }
 
-	iterator end() const
-	{
-		return hs.end();
-	}
+    iterator end() const { return hs.end(); }
 
-	size_type size() const
-	{
-		return hs.size();
-	}
+    size_type size() const { return hs.size(); }
 
-	size_type max_size() const
-	{
-		return hs.max_size();
-	}
+    size_type max_size() const { return hs.max_size(); }
 
-	bool empty() const
-	{
-		return hs.empty();
-	}
+    bool empty() const { return hs.empty(); }
 
-	void swap(const hash_set_type& inhashset)
-	{
-		hs.swap(inhashset.hs);
-	}
+    void swap(const hash_set_type& inhashset) { hs.swap(inhashset.hs); }
 
-	pair<iterator, bool> insert(const value_type& key)
-	{
-		return hs.insert(key);
-	}
+    pair<iterator, bool> insert(const value_type& key) {
+        return hs.insert(key);
+    }
 
-	template<class InputIterator>
-	void insert(InputIterator first, InputIterator last)
-	{
-		hs.insert(first, last);
-	}
+    template <class InputIterator>
+    void insert(InputIterator first, InputIterator last) {
+        hs.insert(first, last);
+    }
 
-	void erase(iterator position)
-	{
-		hs.erase(position);
-	}
+    void erase(iterator position) { hs.erase(position); }
 
-	size_type erase(const key_type& key)
-	{
-		return hs.erase(key);
-	}
+    size_type erase(const key_type& key) { return hs.erase(key); }
 
-	void erase(iterator first, iterator last)
-	{
-		hs.erase(first, last);
-	}
+    void erase(iterator first, iterator last) { hs.erase(first, last); }
 
-	void clear()
-	{
-		hs.clear();
-	}
+    void clear() { hs.clear(); }
 
-	iterator find(const key_type& key)
-	{
-		return hs.find(key);
-	}
+    iterator find(const key_type& key) { return hs.find(key); }
 
-	const_iterator find(const key_type& key) const
-	{
-		return hs.find(key);
-	}
+    const_iterator find(const key_type& key) const { return hs.find(key); }
 
-	size_type count(const key_type& key) const
-	{
-		return hs.count(key);
-	}
+    size_type count(const key_type& key) const { return hs.count(key); }
 };
 
 //==========================================
 // opHashTable
 //==========================================
 
-template<class Key, class Value>
-class opHashTable
-{
-public:
-	/**** typedefs ****/
+template <class Key, class Value>
+class opHashTable {
+   public:
+/**** typedefs ****/
 
 #ifdef OPSTL_GNU_LINUX
-	typedef          unordered_map<Key, Value, opHasher<Key>, opHasher<Key> > hash_table_type;
+    typedef unordered_map<Key, Value, opHasher<Key>, opHasher<Key> >
+        hash_table_type;
 #else
-	typedef          hash_map<Key, Value, opHasher<Key> >                     hash_table_type;
+    typedef hash_map<Key, Value, opHasher<Key> > hash_table_type;
 #endif
-	typedef typename hash_table_type::key_type                                key_type;
-	typedef typename hash_table_type::value_type                              value_type;
-	typedef typename hash_table_type::size_type                               size_type;
-	typedef typename hash_table_type::iterator					              iterator;
-	typedef typename hash_table_type::const_iterator			              const_iterator;
-	typedef typename hash_table_type::reference					              reference;
-	typedef typename hash_table_type::const_reference                         const_reference;
+    typedef typename hash_table_type::key_type key_type;
+    typedef typename hash_table_type::value_type value_type;
+    typedef typename hash_table_type::size_type size_type;
+    typedef typename hash_table_type::iterator iterator;
+    typedef typename hash_table_type::const_iterator const_iterator;
+    typedef typename hash_table_type::reference reference;
+    typedef typename hash_table_type::const_reference const_reference;
 
-	/**** construction ****/
+    /**** construction ****/
 
-	opHashTable() {}
+    opHashTable() {}
 
-	opHashTable(const hash_table_type& inhashtable)
-		: ht(inhashtable) {}
+    opHashTable(const hash_table_type& inhashtable) : ht(inhashtable) {}
 
-	opHashTable(const opHashTable<Key, Value>& inhashtable)
-		: ht(inhashtable.ht) {}
+    opHashTable(const opHashTable<Key, Value>& inhashtable)
+        : ht(inhashtable.ht) {}
 
-	template<class InputIterator>
-	opHashTable(InputIterator first, InputIterator last) 
-		: ht(first, last) {}
+    template <class InputIterator>
+    opHashTable(InputIterator first, InputIterator last) : ht(first, last) {}
 
-	/**** destruction ****/
+    /**** destruction ****/
 
-	~opHashTable() 
-	{
-		ht.clear();
-	}
+    ~opHashTable() { ht.clear(); }
 
-	/**** utility ****/
+    /**** utility ****/
 
-	iterator Begin()
-	{
-		return ht.begin();
-	}
+    iterator Begin() { return ht.begin(); }
 
-	iterator Last()
-	{
-		if (IsEmpty())
-			return End();
+    iterator Last() {
+        if (IsEmpty()) return End();
 
-		return --End();
-	}
+        return --End();
+    }
 
-	iterator End()
-	{
-		return ht.end();
-	}
+    iterator End() { return ht.end(); }
 
-	const_iterator Begin() const
-	{
-		return ht.begin();
-	}
+    const_iterator Begin() const { return ht.begin(); }
 
-	const_iterator Last() const
-	{
-		if (IsEmpty())
-			return End();
+    const_iterator Last() const {
+        if (IsEmpty()) return End();
 
-		return --End();
-	}
+        return --End();
+    }
 
-	const_iterator End() const
-	{
-		return ht.end();
-	}
+    const_iterator End() const { return ht.end(); }
 
-	int Size() const
-	{
-		return (int) ht.size();
-	}
+    int Size() const { return (int)ht.size(); }
 
-	int Length() const
-	{
-		return (int) ht.size();
-	}
+    int Length() const { return (int)ht.size(); }
 
-	int MaxSize() const
-	{
-		return (int) ht.max_size();
-	}
+    int MaxSize() const { return (int)ht.max_size(); }
 
-	bool IsEmpty() const
-	{
-		return ht.empty();
-	}
-	
-	void Swap(opHashTable<Key, Value>& inhashtable)
-	{
-		ht.swap(inhashtable.ht);
-	}
+    bool IsEmpty() const { return ht.empty(); }
 
-	iterator Insert(const Key& inkey, const Value& inval)
-	{
-		pair<iterator, bool> r = ht.insert(pair<Key, Value>(inkey, inval));
+    void Swap(opHashTable<Key, Value>& inhashtable) { ht.swap(inhashtable.ht); }
 
-		return r.first;
-	}
+    iterator Insert(const Key& inkey, const Value& inval) {
+        pair<iterator, bool> r = ht.insert(pair<Key, Value>(inkey, inval));
 
-	template<class InputIterator>
-	void Insert(InputIterator first, InputIterator last)
-	{
-		ht.insert(first, last);
-	}
+        return r.first;
+    }
 
-	void Erase(iterator position)
-	{
-		ht.erase(position);
-	}
+    template <class InputIterator>
+    void Insert(InputIterator first, InputIterator last) {
+        ht.insert(first, last);
+    }
 
-	void Erase(const Key& inkey)
-	{
-		ht.erase(inkey);
-	}
+    void Erase(iterator position) { ht.erase(position); }
 
-	void Erase(iterator first, iterator last)
-	{
-		ht.erase(first, last);
-	}
+    void Erase(const Key& inkey) { ht.erase(inkey); }
 
-	void Clear()
-	{
-		ht.clear();
-	}
+    void Erase(iterator first, iterator last) { ht.erase(first, last); }
 
-	iterator Find(const Key& inkey) 
-	{
-		return ht.find(inkey);
-	}
+    void Clear() { ht.clear(); }
 
-	const_iterator Find(const Key& inkey) const
-	{
-		return ht.find(inkey);
-	}
+    iterator Find(const Key& inkey) { return ht.find(inkey); }
 
-	bool Find(const Key& inkey, Value& inval) const
-	{
-		const_iterator iter   = ht.find(inkey);
-		bool           result = (iter != ht.end());
+    const_iterator Find(const Key& inkey) const { return ht.find(inkey); }
 
-		if (result)
-			inval = iter->second;
+    bool Find(const Key& inkey, Value& inval) const {
+        const_iterator iter = ht.find(inkey);
+        bool result = (iter != ht.end());
 
-		return result;
-	}
+        if (result) inval = iter->second;
 
-	bool Contains(const Key& inkey) const
-	{
-		return ht.find(inkey) != ht.end();
-	}
+        return result;
+    }
 
-	int Count(const Key& inkey) const
-	{
-		return (int) ht.count(inkey);
-	}
+    bool Contains(const Key& inkey) const { return ht.find(inkey) != ht.end(); }
 
-	hash_table_type& GetHashTable()
-	{
-		return ht;
-	}
+    int Count(const Key& inkey) const { return (int)ht.count(inkey); }
 
-	const hash_table_type& GetHashTable() const
-	{
-		return ht;
-	}
+    hash_table_type& GetHashTable() { return ht; }
 
-	void DeleteAllKeys()
-	{
-		iterator i   = ht.begin();
-		iterator end = ht.end();
+    const hash_table_type& GetHashTable() const { return ht; }
 
-		while (i != end)
-		{
-			delete i->first;
-			++i;
-		}
-	}
+    void DeleteAllKeys() {
+        iterator i = ht.begin();
+        iterator end = ht.end();
 
-	void DeleteAllValues()
-	{
-		iterator i   = ht.begin();
-		iterator end = ht.end();
+        while (i != end) {
+            delete i->first;
+            ++i;
+        }
+    }
 
-		while (i != end)
-		{
-			delete i->second;
-			++i;
-		}
-	}
+    void DeleteAllValues() {
+        iterator i = ht.begin();
+        iterator end = ht.end();
 
-	/**** operator overloads ****/
+        while (i != end) {
+            delete i->second;
+            ++i;
+        }
+    }
 
-	Value& operator [] (const Key& inkey)
-	{
-		return ht[inkey];
-	}
+    /**** operator overloads ****/
 
-	friend bool operator == (const opHashTable<Key, Value>& ht1, const opHashTable<Key, Value>& ht2)
-	{
-		return ht1.ht == ht2.ht;
-	}
+    Value& operator[](const Key& inkey) { return ht[inkey]; }
 
-private:
-	hash_table_type ht;
+    friend bool operator==(const opHashTable<Key, Value>& ht1,
+                           const opHashTable<Key, Value>& ht2) {
+        return ht1.ht == ht2.ht;
+    }
 
-public:
-	/**** original container functions for stl compatibility ****/
+   private:
+    hash_table_type ht;
 
-	iterator begin()
-	{
-		return ht.begin();
-	}
+   public:
+    /**** original container functions for stl compatibility ****/
 
-	iterator end()
-	{
-		return ht.end();
-	}
+    iterator begin() { return ht.begin(); }
 
-	const_iterator begin() const
-	{
-		return ht.begin();
-	}
+    iterator end() { return ht.end(); }
 
-	const_iterator end() const
-	{
-		return ht.end();
-	}
+    const_iterator begin() const { return ht.begin(); }
 
-	size_type size() const
-	{
-		return ht.size();
-	}
+    const_iterator end() const { return ht.end(); }
 
-	size_type max_size() const
-	{
-		return ht.max_size();
-	}
+    size_type size() const { return ht.size(); }
 
-	bool empty() const
-	{
-		return ht.empty();
-	}
+    size_type max_size() const { return ht.max_size(); }
 
-	void swap(const hash_table_type& inhashtable)
-	{
-		ht.swap(inhashtable.ht);
-	}
+    bool empty() const { return ht.empty(); }
 
-	pair<iterator, bool> insert(const value_type& inval)
-	{
-		return ht.insert(inval);
-	}
+    void swap(const hash_table_type& inhashtable) { ht.swap(inhashtable.ht); }
 
-	template<class InputIterator>
-	void insert(InputIterator first, InputIterator last)
-	{
-		ht.insert(first, last);
-	}
+    pair<iterator, bool> insert(const value_type& inval) {
+        return ht.insert(inval);
+    }
 
-	void erase(iterator position)
-	{
-		ht.erase(position);
-	}
+    template <class InputIterator>
+    void insert(InputIterator first, InputIterator last) {
+        ht.insert(first, last);
+    }
 
-	size_type erase(const key_type& inkey)
-	{
-		ht.erase(inkey);
-	}
+    void erase(iterator position) { ht.erase(position); }
 
-	void erase(iterator first, iterator last)
-	{
-		ht.erase(first, last);
-	}
+    size_type erase(const key_type& inkey) { ht.erase(inkey); }
 
-	void clear()
-	{
-		ht.clear();
-	}
+    void erase(iterator first, iterator last) { ht.erase(first, last); }
 
-	iterator find(const key_type& inkey) 
-	{
-		return ht.find(inkey);
-	}
+    void clear() { ht.clear(); }
 
-	const_iterator find(const key_type& inkey) const
-	{
-		return ht.find(inkey);
-	}
+    iterator find(const key_type& inkey) { return ht.find(inkey); }
 
-	size_type count(const key_type& inkey) const
-	{
-		return ht.count(inkey);
-	}
+    const_iterator find(const key_type& inkey) const { return ht.find(inkey); }
+
+    size_type count(const key_type& inkey) const { return ht.count(inkey); }
 };
 
-} // end namespace opstl
-
-
-
+}  // end namespace opstl

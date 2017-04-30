@@ -14,12 +14,10 @@
 // this class is for error objects use
 // and for sending final errors to the error logger
 
-namespace errors
-{
-	class opErrorTracker
-	{
-		//add error
-		//add an error from an error object to the stack, using rules
-	};
+namespace errors {
+class opErrorTracker {
+    // add error
+    // add an error from an error object to the stack, using rules
+};
 
-} // end namespace errors
+}  // end namespace errors

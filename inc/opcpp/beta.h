@@ -11,33 +11,25 @@
 /// Beta-related code.
 ///****************************************************************
 
-namespace beta
-{
+namespace beta {
 
-class opBetaSupport
-{
-public:
+class opBetaSupport {
+   public:
+    static bool IsBetaBuild() { return isBetaBuild; }
 
-	static bool IsBetaBuild()
-	{
-		return isBetaBuild;
-	}
+    static bool BetaExpired();
 
-	static bool BetaExpired();
+    static void PrintBetaExpiredString() {
+        Log("");
+        Log("========================================");
+        Log("This opC++ Beta Compiler is now expired.");
+        Log("========================================");
+        Log("");
+    }
 
-	static void PrintBetaExpiredString()
-	{
-		Log("");
-		Log("========================================");
-		Log("This opC++ Beta Compiler is now expired.");
-		Log("========================================");
-		Log("");
-	}
-
-private:
-
-	static time_t ExpireDate;
-	static bool   isBetaBuild;
+   private:
+    static time_t ExpireDate;
+    static bool isBetaBuild;
 };
 
-} // end namespace beta
+}  // end namespace beta

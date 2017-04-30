@@ -10,847 +10,714 @@
 ///
 ///****************************************************************
 
-namespace nodes
-{
+namespace nodes {
 
 ///==========================================
 /// 3 Main Statement Classes..
 ///==========================================
 
-//NOTE: we split this up into StatementBase
+// NOTE: we split this up into StatementBase
 //		and also StatementModifierBase
-//		(statementmodifierbase extends StatementBase w/ modifier support)
-//		reasoning: some statements are only wrapping (the BasicStatements), so they redirect to inner statements
-//		but we still want to be able to cast to a statement base class and query them for modifiers.
+//		(statementmodifierbase extends StatementBase w/ modifier
+//support) 		reasoning: some statements are only wrapping (the
+//BasicStatements), so they redirect to inner statements 		but we
+//still want to be able to cast to a statement base class and query them for
+//modifiers.
 
-class StatementBase : public ConditionalSupport< opNode >
-{
-public:
-	DECLARE_NODE(StatementBase,ConditionalSupport< opNode >,T_UNKNOWN);
-	
-	//ToStatementBase conversion
-	virtual StatementBase* ToStatementBase() { return this; }
-	virtual class VisibilityStatementNode* ToVisibilityStatementNode() { return NULL; }
-	
-	VisibilityMode GetVisibilityMode()
-	{
-		if(HasModifier(T_PUBLIC))
-			return vismode_public;
-		else if(HasModifier(T_PRIVATE))
-			return vismode_private;
-		else if(HasModifier(T_PROTECTED))
-			return vismode_protected;
-		return vismode_none;
-	}
+class StatementBase : public ConditionalSupport<opNode> {
+   public:
+    DECLARE_NODE(StatementBase, ConditionalSupport<opNode>, T_UNKNOWN);
 
-	virtual void SetVisibilityMode(VisibilityMode mode)
-	{
-		UndefinedFunctionError("SetVisibilityMode(VisibilityMode)");
-	}
-	
-	//HasModifier query
-	//certain wrapping statements must overload this.
-	virtual bool HasModifier(const opString& modifiername) 
-	{
-		ABSTRACT_FUNCTION;
-		return false; 
-	}
-	virtual bool HasModifier(Token modifiertoken)
-	{
-		ABSTRACT_FUNCTION;
-		return false;
-	}
+    // ToStatementBase conversion
+    virtual StatementBase* ToStatementBase() { return this; }
+    virtual class VisibilityStatementNode* ToVisibilityStatementNode() {
+        return NULL;
+    }
 
-	//????
-	virtual opNode* FetchModifier(const opString& name)
-	{
-		return NULL;
-	}
+    VisibilityMode GetVisibilityMode() {
+        if (HasModifier(T_PUBLIC))
+            return vismode_public;
+        else if (HasModifier(T_PRIVATE))
+            return vismode_private;
+        else if (HasModifier(T_PROTECTED))
+            return vismode_protected;
+        return vismode_none;
+    }
 
-	virtual ValuedModifierNode* GetValuedModifier(const opString& s)
-	{
-		ABSTRACT_FUNCTION;
-		return NULL;
-	}
+    virtual void SetVisibilityMode(VisibilityMode mode) {
+        UndefinedFunctionError("SetVisibilityMode(VisibilityMode)");
+    }
 
-	virtual opNode* GetMemberName()
-	{
-		UndefinedFunctionError("GetMemberName()");
-		return NULL;
-	}
-	
-	virtual void FetchAllModifiers()
-	{
-		UndefinedFunctionError("FetchAllModifiers()");
-	}
+    // HasModifier query
+    // certain wrapping statements must overload this.
+    virtual bool HasModifier(const opString& modifiername) {
+        ABSTRACT_FUNCTION;
+        return false;
+    }
+    virtual bool HasModifier(Token modifiertoken) {
+        ABSTRACT_FUNCTION;
+        return false;
+    }
 
-	virtual opNode* GetDataType()
-	{
-		UndefinedFunctionError("GetDataType()");
-		return NULL;
-	}
+    //????
+    virtual opNode* FetchModifier(const opString& name) { return NULL; }
 
-	virtual bool ProcessModifiers()
-	{
-		UndefinedFunctionError("ProcessModifiers()");
-		return true;
-	}
+    virtual ValuedModifierNode* GetValuedModifier(const opString& s) {
+        ABSTRACT_FUNCTION;
+        return NULL;
+    }
 
-	//return false on error
-	virtual bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		UndefinedFunctionError("ProcessDisallows(DialectCategory* CategorySettings)");
-		return true;
-	}
+    virtual opNode* GetMemberName() {
+        UndefinedFunctionError("GetMemberName()");
+        return NULL;
+    }
 
-	// conditional support - virtualized
-	virtual void SetCondition(PreprocessorStatementNode* node)
-	{
-		Super::SetCondition(node);
-	}
+    virtual void FetchAllModifiers() {
+        UndefinedFunctionError("FetchAllModifiers()");
+    }
+
+    virtual opNode* GetDataType() {
+        UndefinedFunctionError("GetDataType()");
+        return NULL;
+    }
+
+    virtual bool ProcessModifiers() {
+        UndefinedFunctionError("ProcessModifiers()");
+        return true;
+    }
+
+    // return false on error
+    virtual bool ProcessDisallows(DialectCategory* CategorySettings) {
+        UndefinedFunctionError(
+            "ProcessDisallows(DialectCategory* CategorySettings)");
+        return true;
+    }
+
+    // conditional support - virtualized
+    virtual void SetCondition(PreprocessorStatementNode* node) {
+        Super::SetCondition(node);
+    }
 };
 
-//extend from this class if
-//a statement doesn't have modifiers
-class StatementModifierlessBase : public StatementBase
-{
-public:
-	DECLARE_NODE(StatementModifierlessBase, opNode, T_UNKNOWN);
-	
-	virtual inline bool HasModifier(const opString& modifiername)
-	{
-		return false;
-	}
-	
-	virtual inline bool HasModifier(Token modifiertoken)
-	{
-		return false;
-	}
+// extend from this class if
+// a statement doesn't have modifiers
+class StatementModifierlessBase : public StatementBase {
+   public:
+    DECLARE_NODE(StatementModifierlessBase, opNode, T_UNKNOWN);
 
-	void SetVisibilityMode(VisibilityMode mode) {}
+    virtual inline bool HasModifier(const opString& modifiername) {
+        return false;
+    }
 
-	bool ProcessModifiers() { return true; }
+    virtual inline bool HasModifier(Token modifiertoken) { return false; }
 
-	bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		return true;
-	}
+    void SetVisibilityMode(VisibilityMode mode) {}
 
-	void FetchAllModifiers() {}
+    bool ProcessModifiers() { return true; }
+
+    bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
+
+    void FetchAllModifiers() {}
 };
 
-typedef ModifierSupport< StatementBase > StatementModifierBaseParent;
+typedef ModifierSupport<StatementBase> StatementModifierBaseParent;
 
-class StatementModifierBase : public StatementModifierBaseParent
-{
-public:
-	DECLARE_NODE(StatementModifierBase,StatementModifierBaseParent,T_UNKNOWN);
-	
-	virtual StatementModifierBase* ToStatementModifierBase() { return this; }
+class StatementModifierBase : public StatementModifierBaseParent {
+   public:
+    DECLARE_NODE(StatementModifierBase, StatementModifierBaseParent, T_UNKNOWN);
 
-	void Init()
-	{
-		VisibilityModifier	= NULL;
-		Category			= NULL;
-	}
-	
-	void SetVisibilityModifier(TerminalNode* node)
-	{
-		VisibilityModifier = node;
-	}
-	
-	void CheckForDuplicates();
-	void CheckSingleVisibility();
+    virtual StatementModifierBase* ToStatementModifierBase() { return this; }
 
-	virtual void CheckModifiers()
-	{
-		modifiers->AllowOnly(T_PUBLIC,T_PRIVATE,T_PROTECTED);
-	}
+    void Init() {
+        VisibilityModifier = NULL;
+        Category = NULL;
+    }
 
-	virtual opNode* GetAutomaticArgument(const opString& argumentname)
-	{
-		UndefinedFunctionError("opNode* GetAutomaticArgument(const opString&)");
-		return NULL;
-	}
+    void SetVisibilityModifier(TerminalNode* node) {
+        VisibilityModifier = node;
+    }
 
-	void GenerateStatementModifiers();
-	
-	void SetVisibilityMode(VisibilityMode mode);
-		
-	//grabs a list of valued argument modifiers
-	void BuildArguments(const vector<opString>& valuedmodifiers, vector<ValuedModifierNode*>& arguments);
-	void BuildValueModifiers(vector<ValuedModifierNode*>& modifiers);
+    void CheckForDuplicates();
+    void CheckSingleVisibility();
 
-	//grabs a list of all modifiers
-	void BuildModifiers(opList<opNode*>& modifiers);
+    virtual void CheckModifiers() {
+        modifiers->AllowOnly(T_PUBLIC, T_PRIVATE, T_PROTECTED);
+    }
 
-	virtual bool GetModifierDescription(const opString& name, opString& description)
-	{
-		return false;
-	}
+    virtual opNode* GetAutomaticArgument(const opString& argumentname) {
+        UndefinedFunctionError("opNode* GetAutomaticArgument(const opString&)");
+        return NULL;
+    }
 
-	//call from child clone functions, or else you'll lose modifiers
-	void CloneModifiers(StatementModifierBase* node)
-	{
-		if(modifiers)
-		{
-			stacked<ModifiersNode> clonemod = modifiers->Clone();
-			node->SetModifiers(*clonemod);
-			node->AppendNode(clonemod);
-		}
-		if(automodifiers)
-		{
-			stacked<AutoModifiersNode> clonemod = automodifiers->Clone();
-			node->SetAutoModifiers(*clonemod);
-			node->AppendNode(clonemod);
-		}
-		if(VisibilityModifier)
-		{
-			stacked<TerminalNode> clonevis = VisibilityModifier->Clone();
-			node->SetVisibilityModifier(*clonevis);
-			node->AppendNode(clonevis);
-		}
-	}
+    void GenerateStatementModifiers();
 
-	bool ProcessModifiers()
-	{
-		OPERATIONS_START;
-		
-		if(GetModifiers())
-		{
-			CheckModifiers();
-			CheckForDuplicates();
-			CheckSingleVisibility();
-		}
+    void SetVisibilityMode(VisibilityMode mode);
 
-		RegisterAutoModifiers();
+    // grabs a list of valued argument modifiers
+    void BuildArguments(const vector<opString>& valuedmodifiers,
+                        vector<ValuedModifierNode*>& arguments);
+    void BuildValueModifiers(vector<ValuedModifierNode*>& modifiers);
 
-		OPERATIONS_END;
-	}
+    // grabs a list of all modifiers
+    void BuildModifiers(opList<opNode*>& modifiers);
 
-	//generates automatic arguments
-	virtual void RegisterAutoModifiers()
-	{
-		UndefinedFunctionError("void RegisterAutoModifiers()");
-	}
+    virtual bool GetModifierDescription(const opString& name,
+                                        opString& description) {
+        return false;
+    }
 
-	virtual opNode* GetVisibility(const opString& name)
-	{
-		if(VisibilityModifier)
-		{
-			if(VisibilityModifier->GetValue() == name)
-				return VisibilityModifier;
-		}
+    // call from child clone functions, or else you'll lose modifiers
+    void CloneModifiers(StatementModifierBase* node) {
+        if (modifiers) {
+            stacked<ModifiersNode> clonemod = modifiers->Clone();
+            node->SetModifiers(*clonemod);
+            node->AppendNode(clonemod);
+        }
+        if (automodifiers) {
+            stacked<AutoModifiersNode> clonemod = automodifiers->Clone();
+            node->SetAutoModifiers(*clonemod);
+            node->AppendNode(clonemod);
+        }
+        if (VisibilityModifier) {
+            stacked<TerminalNode> clonevis = VisibilityModifier->Clone();
+            node->SetVisibilityModifier(*clonevis);
+            node->AppendNode(clonevis);
+        }
+    }
 
-		return NULL;
-	}
+    bool ProcessModifiers() {
+        OPERATIONS_START;
 
-	void PrintXml( opXmlStream& stream );
+        if (GetModifiers()) {
+            CheckModifiers();
+            CheckForDuplicates();
+            CheckSingleVisibility();
+        }
 
-	virtual void PrintStatementString(opString& s)
-	{
-		ABSTRACT_FUNCTION;
-	}
+        RegisterAutoModifiers();
 
-protected:
+        OPERATIONS_END;
+    }
 
-	DialectCategory* GetCategorySettings()
-	{
-		if(!Category)
-			Category = FindParent<OPObjectNode>()->GetCategorySettings();
-		return Category;
-	}
+    // generates automatic arguments
+    virtual void RegisterAutoModifiers() {
+        UndefinedFunctionError("void RegisterAutoModifiers()");
+    }
 
-	//cached category
-	DialectCategory* Category;
+    virtual opNode* GetVisibility(const opString& name) {
+        if (VisibilityModifier) {
+            if (VisibilityModifier->GetValue() == name)
+                return VisibilityModifier;
+        }
 
-	//cached visibility
-	TerminalNode* VisibilityModifier;
+        return NULL;
+    }
 
-	//
-	// Modifier Generator Functions
-	//
+    void PrintXml(opXmlStream& stream);
 
-	opNode* ModifierMemberName(const opString& name);
-	opNode* ModifierAllModifiers(const opString& name);
+    virtual void PrintStatementString(opString& s) { ABSTRACT_FUNCTION; }
+
+   protected:
+    DialectCategory* GetCategorySettings() {
+        if (!Category)
+            Category = FindParent<OPObjectNode>()->GetCategorySettings();
+        return Category;
+    }
+
+    // cached category
+    DialectCategory* Category;
+
+    // cached visibility
+    TerminalNode* VisibilityModifier;
+
+    //
+    // Modifier Generator Functions
+    //
+
+    opNode* ModifierMemberName(const opString& name);
+    opNode* ModifierAllModifiers(const opString& name);
 };
 
 ///
 /// StatementNode
 ///
 
-class StatementNodeBase : public StatementBase
-{
-public:
-	DECLARE_NODE(StatementNodeBase,StatementBase,T_UNKNOWN);
-	
-	void Init()
-	{
-		InnerStatement = NULL;
-	}
-	
-	StatementBase* GetInnerStatement()
-	{
-		//InnerStatement should never be NULL
-		//assert(InnerStatement);
+class StatementNodeBase : public StatementBase {
+   public:
+    DECLARE_NODE(StatementNodeBase, StatementBase, T_UNKNOWN);
 
-		return InnerStatement;
-	}
-	
-	void SetInnerStatement(StatementBase* statement)
-	{
-		assert(!InnerStatement);
-		InnerStatement = statement;
-	}
-	
-private:
-	StatementBase* InnerStatement;
+    void Init() { InnerStatement = NULL; }
+
+    StatementBase* GetInnerStatement() {
+        // InnerStatement should never be NULL
+        // assert(InnerStatement);
+
+        return InnerStatement;
+    }
+
+    void SetInnerStatement(StatementBase* statement) {
+        assert(!InnerStatement);
+        InnerStatement = statement;
+    }
+
+   private:
+    StatementBase* InnerStatement;
 };
 
-//NOTE:	statement node is the wrapping node for figuring out 
+// NOTE:	statement node is the wrapping node for figuring out
 //		a ton of different statements
 
 typedef UsingStatements<
-		NullStatements<
-		FuncPointerStatements<
-		FuncPrototypeStatements<
-		ConstructorPrototypeStatements<
-		DestructorPrototypeStatements<
-		DataStatements<
-		StatementNodeBase
-		> > > > > > > 
-		StatementNodeParent;
+    NullStatements<FuncPointerStatements<FuncPrototypeStatements<
+        ConstructorPrototypeStatements<DestructorPrototypeStatements<
+            DataStatements<StatementNodeBase> > > > > > >
+    StatementNodeParent;
 
-class StatementNode : public StatementNodeParent
-{
-public:
-	//NOTE: StatementNodeBase is the parent on purpose - if not it will call finds twice, and in the wrong order
-	DECLARE_NODE(StatementNode,StatementNodeBase,G_STATEMENT);
-	
-	void PrintTransformed(opSectionStream& stream);
-	void PrintNode(opFileStream& stream);
-	
-	bool Parse();
-	bool PostParse();
-	
-	virtual bool HasModifier(const opString& modifiername)
-	{
-		if(GetInnerStatement())
-			return GetInnerStatement()->HasModifier(modifiername);
-		return false;
-	}
-	
-	virtual bool HasModifier(Token modifiertoken)
-	{
-		if(GetInnerStatement())
-			return GetInnerStatement()->HasModifier(modifiertoken);
-		return false;
-	}
-	
-	virtual void SetVisibilityMode(VisibilityMode mode)
-	{
-		if(GetInnerStatement())
-			GetInnerStatement()->SetVisibilityMode(mode);
-	}
-	
-	virtual DataStatementBase* ToDataStatementBase()
-	{
-		if(GetInnerStatement())
-			return GetInnerStatement()->ToDataStatementBase();
-		
-		return NULL;
-	}
-	
-	virtual FunctionStatementBase* ToFunctionStatementBase()
-	{
-		if(GetInnerStatement())
-			return GetInnerStatement()->ToFunctionStatementBase();
-		
-		return NULL;
-	}
-	
-	virtual ConstructorStatementBase* ToConstructorStatementBase()
-	{ 
-		if(GetInnerStatement())
-			return GetInnerStatement()->ToConstructorStatementBase();
-		
-		return NULL; 
-	}
-	
-	virtual DestructorStatementBase* ToDestructorStatementBase()
-	{
-		if(GetInnerStatement())
-			return GetInnerStatement()->ToDestructorStatementBase();
-		
-		return NULL;
-	}
-	
-	opString ErrorName();
-	
-	bool ProcessModifiers()
-	{
-		if (GetInnerStatement())
-			return GetInnerStatement()->ProcessModifiers();
-		return true;
-	}
+class StatementNode : public StatementNodeParent {
+   public:
+    // NOTE: StatementNodeBase is the parent on purpose - if not it will call
+    // finds twice, and in the wrong order
+    DECLARE_NODE(StatementNode, StatementNodeBase, G_STATEMENT);
 
-	void FetchAllModifiers()
-	{
-		if(GetInnerStatement())
-			GetInnerStatement()->FetchAllModifiers();
-	}
-	
-	bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		if (GetInnerStatement())
-			return GetInnerStatement()->ProcessDisallows(CategorySettings);
+    void PrintTransformed(opSectionStream& stream);
+    void PrintNode(opFileStream& stream);
 
-		return true;
-	}
+    bool Parse();
+    bool PostParse();
+
+    virtual bool HasModifier(const opString& modifiername) {
+        if (GetInnerStatement())
+            return GetInnerStatement()->HasModifier(modifiername);
+        return false;
+    }
+
+    virtual bool HasModifier(Token modifiertoken) {
+        if (GetInnerStatement())
+            return GetInnerStatement()->HasModifier(modifiertoken);
+        return false;
+    }
+
+    virtual void SetVisibilityMode(VisibilityMode mode) {
+        if (GetInnerStatement()) GetInnerStatement()->SetVisibilityMode(mode);
+    }
+
+    virtual DataStatementBase* ToDataStatementBase() {
+        if (GetInnerStatement())
+            return GetInnerStatement()->ToDataStatementBase();
+
+        return NULL;
+    }
+
+    virtual FunctionStatementBase* ToFunctionStatementBase() {
+        if (GetInnerStatement())
+            return GetInnerStatement()->ToFunctionStatementBase();
+
+        return NULL;
+    }
+
+    virtual ConstructorStatementBase* ToConstructorStatementBase() {
+        if (GetInnerStatement())
+            return GetInnerStatement()->ToConstructorStatementBase();
+
+        return NULL;
+    }
+
+    virtual DestructorStatementBase* ToDestructorStatementBase() {
+        if (GetInnerStatement())
+            return GetInnerStatement()->ToDestructorStatementBase();
+
+        return NULL;
+    }
+
+    opString ErrorName();
+
+    bool ProcessModifiers() {
+        if (GetInnerStatement()) return GetInnerStatement()->ProcessModifiers();
+        return true;
+    }
+
+    void FetchAllModifiers() {
+        if (GetInnerStatement()) GetInnerStatement()->FetchAllModifiers();
+    }
+
+    bool ProcessDisallows(DialectCategory* CategorySettings) {
+        if (GetInnerStatement())
+            return GetInnerStatement()->ProcessDisallows(CategorySettings);
+
+        return true;
+    }
 };
 
 ///
 /// DataStatementBase
 ///
 
-class DataStatementBase : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(DataStatementBase,StatementModifierBase,T_UNKNOWN);
+class DataStatementBase : public StatementModifierBase {
+   public:
+    DECLARE_NODE(DataStatementBase, StatementModifierBase, T_UNKNOWN);
 
-	virtual DataStatementBase* ToDataStatementBase() { return this; }
+    virtual DataStatementBase* ToDataStatementBase() { return this; }
 
-	virtual opString GetMacroType()
-	{
-		ABSTRACT_FUNCTION;
-		return "";
-	}
+    virtual opString GetMacroType() {
+        ABSTRACT_FUNCTION;
+        return "";
+    }
 
-	virtual void PrintMacroName(opSectionStream& stream)
-	{
-		ABSTRACT_FUNCTION;
-	}
+    virtual void PrintMacroName(opSectionStream& stream) { ABSTRACT_FUNCTION; }
 
-	//print a data mapping macro to the stream
-	void PrintDataMapMacro (opSectionStream& stream, const opString& macrotype, 
-		const opString& macroid, const opString& mapname);
+    // print a data mapping macro to the stream
+    void PrintDataMapMacro(opSectionStream& stream, const opString& macrotype,
+                           const opString& macroid, const opString& mapname);
 
-	void PrintValuedDataMapMacro(opSectionStream& stream, const opString& macrotype, 
-		const opString& macroid, const opString& mapname,
-		ValuedModifierNode* modifier);
+    void PrintValuedDataMapMacro(opSectionStream& stream,
+                                 const opString& macrotype,
+                                 const opString& macroid,
+                                 const opString& mapname,
+                                 ValuedModifierNode* modifier);
 
-	void PrintModifierMappings (opSectionStream& stream, const opString& macrotype,
-		const opString& macroid, const opString& mapname);
+    void PrintModifierMappings(opSectionStream& stream,
+                               const opString& macrotype,
+                               const opString& macroid,
+                               const opString& mapname);
 
-	void CheckModifiers();
+    void CheckModifiers();
 
-	bool ProcessDisallows(DialectCategory* CategorySettings);
+    bool ProcessDisallows(DialectCategory* CategorySettings);
 
-	void PrintXml(opXmlStream& stream);
+    void PrintXml(opXmlStream& stream);
 
-	virtual bool GetModifierDescription(const opString& name, opString& description);
+    virtual bool GetModifierDescription(const opString& name,
+                                        opString& description);
 
-protected:
-
-	opString TypeMacroString(opNode* typenode); 
-	void NameMacroString(opNode* namenode, opSectionStream& stream);
+   protected:
+    opString TypeMacroString(opNode* typenode);
+    void NameMacroString(opNode* namenode, opSectionStream& stream);
 };
 
 ///
 /// FunctionStatementBase
 ///
 
-class FunctionStatementBase : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(FunctionStatementBase,StatementModifierBase,T_UNKNOWN);
-	
-	virtual FunctionStatementBase* ToFunctionStatementBase() { return this; }
-	
-	//print a data mapping macro to the stream
-	void PrintFunctionMapMacro (opSectionStream& stream, const opString& macrotype, 
-								const opString& macroid, const opString& mapname);
-	
-	void PrintDelegateMapMacro (opSectionStream& stream, const opString& macrotype, 
-								const opString& macroid, const opString& mapname);
+class FunctionStatementBase : public StatementModifierBase {
+   public:
+    DECLARE_NODE(FunctionStatementBase, StatementModifierBase, T_UNKNOWN);
 
-	void PrintStateFunctionMacro(opSectionStream& stream, const opString& macrotype, 
-								 const opString& macroid, const opString& mapname,
-								 StateStatementNode* state);
-	
-	void PrintXml(opXmlStream& stream);
+    virtual FunctionStatementBase* ToFunctionStatementBase() { return this; }
 
-	virtual FunctionNode* GetFunction()
-	{
-		ABSTRACT_FUNCTION;
-		return NULL;
-	}
-	
-	virtual opNode* GetReturnType()
-	{
-		ABSTRACT_FUNCTION;
-		return NULL;
-	}
-	
-	virtual bool IsConstFunction()
-	{
-		return GetFunction()->IsConst();
-	}
-	
-	virtual bool IsPureFunction()
-	{
-		return GetFunction()->GetAssignment()?true:false;
-	}
-	
-	virtual opNode* GetMemberName()
-	{
-		return GetFunction()->GetName();
-	}
-	
-	virtual void PrintMacroName(opSectionStream& stream) { ABSTRACT_FUNCTION; }
-	virtual void PrintMacroReturnType(opSectionStream& stream) { ABSTRACT_FUNCTION; }
-	virtual void PrintMacroArguments(opSectionStream& stream) { ABSTRACT_FUNCTION; }
-	
-	virtual void CheckModifiers();
-	
-	bool ProcessDisallows(DialectCategory* CategorySettings);
-	
-	void RegisterFunctionModifiers();
-	
-	void PrintString(opString& s);
-	
-	//grab a modifier description
-	virtual bool GetModifierDescription(const opString& name, opString& description);
+    // print a data mapping macro to the stream
+    void PrintFunctionMapMacro(opSectionStream& stream,
+                               const opString& macrotype,
+                               const opString& macroid,
+                               const opString& mapname);
 
-	///==========================================
-	/// Automatic Modifier Methods
-	///==========================================
-	
-	opNode* ModifierFunctionStatement(const opString& name);
-	opNode* ModifierFunctionPure(const opString& name);
-	opNode* ModifierFunctionConst(const opString& name);
-	opNode* ModifierFunctionArguments(const opString& name);
-	opNode* ModifierFunctionReturnType(const opString& name);
-	opNode* ModifierFunctionArgumentCount(const opString& name);
-	opNode* ModifierFunctionSignature(const opString& name);
-	opNode* ModifierFunctionArgumentSignature(const opString& name);
-//	opNode* ModifierFunctionPointerSignature(const opString& name);
-//	opNode* ModifierFunctionSignatureDefaults(const opString& name);
-	opNode* ModifierFunctionArgumentsDefaults(const opString& name);
-	opNode* ModifierFunctionOperatorType(const opString& name);
-	
-private:
-	
-	//common function
-	void PrintMethodMapMacro   (opSectionStream& stream, const opString& macrotype, 
-								const opString& macroid, const opString& mapname);
+    void PrintDelegateMapMacro(opSectionStream& stream,
+                               const opString& macrotype,
+                               const opString& macroid,
+                               const opString& mapname);
+
+    void PrintStateFunctionMacro(opSectionStream& stream,
+                                 const opString& macrotype,
+                                 const opString& macroid,
+                                 const opString& mapname,
+                                 StateStatementNode* state);
+
+    void PrintXml(opXmlStream& stream);
+
+    virtual FunctionNode* GetFunction() {
+        ABSTRACT_FUNCTION;
+        return NULL;
+    }
+
+    virtual opNode* GetReturnType() {
+        ABSTRACT_FUNCTION;
+        return NULL;
+    }
+
+    virtual bool IsConstFunction() { return GetFunction()->IsConst(); }
+
+    virtual bool IsPureFunction() {
+        return GetFunction()->GetAssignment() ? true : false;
+    }
+
+    virtual opNode* GetMemberName() { return GetFunction()->GetName(); }
+
+    virtual void PrintMacroName(opSectionStream& stream) { ABSTRACT_FUNCTION; }
+    virtual void PrintMacroReturnType(opSectionStream& stream) {
+        ABSTRACT_FUNCTION;
+    }
+    virtual void PrintMacroArguments(opSectionStream& stream) {
+        ABSTRACT_FUNCTION;
+    }
+
+    virtual void CheckModifiers();
+
+    bool ProcessDisallows(DialectCategory* CategorySettings);
+
+    void RegisterFunctionModifiers();
+
+    void PrintString(opString& s);
+
+    // grab a modifier description
+    virtual bool GetModifierDescription(const opString& name,
+                                        opString& description);
+
+    ///==========================================
+    /// Automatic Modifier Methods
+    ///==========================================
+
+    opNode* ModifierFunctionStatement(const opString& name);
+    opNode* ModifierFunctionPure(const opString& name);
+    opNode* ModifierFunctionConst(const opString& name);
+    opNode* ModifierFunctionArguments(const opString& name);
+    opNode* ModifierFunctionReturnType(const opString& name);
+    opNode* ModifierFunctionArgumentCount(const opString& name);
+    opNode* ModifierFunctionSignature(const opString& name);
+    opNode* ModifierFunctionArgumentSignature(const opString& name);
+    //	opNode* ModifierFunctionPointerSignature(const opString& name);
+    //	opNode* ModifierFunctionSignatureDefaults(const opString& name);
+    opNode* ModifierFunctionArgumentsDefaults(const opString& name);
+    opNode* ModifierFunctionOperatorType(const opString& name);
+
+   private:
+    // common function
+    void PrintMethodMapMacro(opSectionStream& stream, const opString& macrotype,
+                             const opString& macroid, const opString& mapname);
 };
 
 ///
 /// FuncPrototypeStatementNode
 ///
 
-class FuncPrototypeStatementNode : public FunctionStatementBase
-{
-public:
-	DECLARE_NODE(FuncPrototypeStatementNode,FunctionStatementBase,G_FUNCTION_PROTOTYPE_STATEMENT);
+class FuncPrototypeStatementNode : public FunctionStatementBase {
+   public:
+    DECLARE_NODE(FuncPrototypeStatementNode, FunctionStatementBase,
+                 G_FUNCTION_PROTOTYPE_STATEMENT);
 
-	void Init()
-	{
-		FunctionPrototype = NULL;
-	}
+    void Init() { FunctionPrototype = NULL; }
 
-	void SetFunctionPrototype(FunctionPrototypeNode* innode)
-	{
-		FunctionPrototype = innode;
-	}
+    void SetFunctionPrototype(FunctionPrototypeNode* innode) {
+        FunctionPrototype = innode;
+    }
 
-	FunctionPrototypeNode* GetFunctionPrototype()
-	{
-		return FunctionPrototype;
-	}
+    FunctionPrototypeNode* GetFunctionPrototype() { return FunctionPrototype; }
 
-	void PrintTransformed(opSectionStream& stream );
-	void PrintOriginal(opSectionStream& stream );
+    void PrintTransformed(opSectionStream& stream);
+    void PrintOriginal(opSectionStream& stream);
 
-	void PrintNode(opFileStream& stream )
-	{
-		PrintTransformed(stream.header.body);
-	}
+    void PrintNode(opFileStream& stream) {
+        PrintTransformed(stream.header.body);
+    }
 
-	virtual void PrintMacroName(opSectionStream& stream);
-	virtual void PrintMacroReturnType(opSectionStream& stream);
-	virtual void PrintMacroArguments(opSectionStream& stream);
+    virtual void PrintMacroName(opSectionStream& stream);
+    virtual void PrintMacroReturnType(opSectionStream& stream);
+    virtual void PrintMacroArguments(opSectionStream& stream);
 
-	void PrintStatementString(opString& s);
+    void PrintStatementString(opString& s);
 
-	FunctionNode* GetFunction()
-	{
-		return FunctionPrototype->GetFunction();
-	}
+    FunctionNode* GetFunction() { return FunctionPrototype->GetFunction(); }
 
-	opNode* GetReturnType()
-	{
-		return FunctionPrototype->GetReturn();
-	}
+    opNode* GetReturnType() { return FunctionPrototype->GetReturn(); }
 
-	opString ErrorName();
+    opString ErrorName();
 
-	///==========================================
-	/// Automatic Modifier Methods
-	///==========================================
+    ///==========================================
+    /// Automatic Modifier Methods
+    ///==========================================
 
-	opNode* ModifierFunctionPrototype(const opString& name);
+    opNode* ModifierFunctionPrototype(const opString& name);
 
-private:
+   private:
+    void RegisterAutoModifiers();
 
-	void RegisterAutoModifiers();
-
-	FunctionPrototypeNode* FunctionPrototype;
+    FunctionPrototypeNode* FunctionPrototype;
 };
 
 ///
 /// FuncDefStatementNode
 ///
 
-class FunctionDefinitionStatementNode : public UnInlineSupport< FunctionStatementBase >
-{
-public:
-	DECLARE_NODE(FunctionDefinitionStatementNode,FunctionStatementBase,G_FUNCTION_DEFINITION_STATEMENT);
+class FunctionDefinitionStatementNode
+    : public UnInlineSupport<FunctionStatementBase> {
+   public:
+    DECLARE_NODE(FunctionDefinitionStatementNode, FunctionStatementBase,
+                 G_FUNCTION_DEFINITION_STATEMENT);
 
-	void Init()
-	{
-		FunctionDefinition = NULL;
-	}
+    void Init() { FunctionDefinition = NULL; }
 
-	void SetFunctionDefinition(FunctionDefinitionNode* functiondefinition)
-	{
-		FunctionDefinition = functiondefinition;
-	}
-	
-	FunctionDefinitionNode* GetFunctionDefinition()
-	{
-		return FunctionDefinition;
-	}
-	
-	FunctionNode* GetFunction()
-	{
-		return FunctionDefinition->GetFunction();
-	}
+    void SetFunctionDefinition(FunctionDefinitionNode* functiondefinition) {
+        FunctionDefinition = functiondefinition;
+    }
 
-	opNode* GetReturnType()
-	{
-		return FunctionDefinition->GetReturn();
-	}
+    FunctionDefinitionNode* GetFunctionDefinition() {
+        return FunctionDefinition;
+    }
 
-	//printing
-	void PrintTransformed(opSectionStream& stream);
-	void PrintOriginal(opSectionStream& stream );
-	void PrintNode(opFileStream& stream);
+    FunctionNode* GetFunction() { return FunctionDefinition->GetFunction(); }
 
-	//print parts of the function signature
-	void PrintName(opSectionStream& stream);
-	void PrintReturnType(opSectionStream& stream);
-	void PrintArguments(opSectionStream& stream);
+    opNode* GetReturnType() { return FunctionDefinition->GetReturn(); }
 
-	void PrintStatementString(opString& s);
+    // printing
+    void PrintTransformed(opSectionStream& stream);
+    void PrintOriginal(opSectionStream& stream);
+    void PrintNode(opFileStream& stream);
 
-	opString GetSignatureString();
+    // print parts of the function signature
+    void PrintName(opSectionStream& stream);
+    void PrintReturnType(opSectionStream& stream);
+    void PrintArguments(opSectionStream& stream);
 
+    void PrintStatementString(opString& s);
 
-	opString ErrorName();
+    opString GetSignatureString();
 
-	///==========================================
-	/// Automatic Modifier Methods
-	///==========================================
+    opString ErrorName();
 
-	opNode* ModifierFunctionDefinition(const opString& name);
-	opNode* ModifierFunctionBody(const opString& name);
+    ///==========================================
+    /// Automatic Modifier Methods
+    ///==========================================
 
-private:
+    opNode* ModifierFunctionDefinition(const opString& name);
+    opNode* ModifierFunctionBody(const opString& name);
 
-	void PrintPrototype(opSectionStream& stream);
-	void PrintScopedDefinition(opSectionStream& stream);
+   private:
+    void PrintPrototype(opSectionStream& stream);
+    void PrintScopedDefinition(opSectionStream& stream);
 
-	void PrintFunction(opFileStream& stream);
+    void PrintFunction(opFileStream& stream);
 
-	template<bool bInline>
-	void PrintFunctionDefinition(opFileStream& stream);
+    template <bool bInline>
+    void PrintFunctionDefinition(opFileStream& stream);
 
-	void RegisterAutoModifiers();
+    void RegisterAutoModifiers();
 
-	FunctionDefinitionNode* FunctionDefinition;
+    FunctionDefinitionNode* FunctionDefinition;
 };
 
 ///
 /// VisibilityStatementNode
 ///
 
-class VisibilityStatementNode : public StatementModifierlessBase
-{
-public:
-	DECLARE_NODE(VisibilityStatementNode,StatementModifierlessBase,G_VISIBILITY_STATEMENT);
+class VisibilityStatementNode : public StatementModifierlessBase {
+   public:
+    DECLARE_NODE(VisibilityStatementNode, StatementModifierlessBase,
+                 G_VISIBILITY_STATEMENT);
 
-	void Init()
-	{
-		Label = NULL;
-	}
+    void Init() { Label = NULL; }
 
-	void PrintNode(opFileStream& stream)
-	{
-		PrintTransformed(stream.header.body);
-	}
-	
-	virtual VisibilityStatementNode* ToVisibilityStatementNode() { return this; }
+    void PrintNode(opFileStream& stream) {
+        PrintTransformed(stream.header.body);
+    }
 
-	void PrintOriginal( opSectionStream& stream )
-	{
-		PrintOriginalChildren(stream);
-	}
+    virtual VisibilityStatementNode* ToVisibilityStatementNode() {
+        return this;
+    }
 
-	void SetLabel(VisibilityLabelNode* label)
-	{
-		Label = label;
-	}
+    void PrintOriginal(opSectionStream& stream) {
+        PrintOriginalChildren(stream);
+    }
 
-	VisibilityMode GetVisibilityMode()
-	{
-		return Label->GetVisibility();
-	}
+    void SetLabel(VisibilityLabelNode* label) { Label = label; }
 
-	opString ErrorName() { return ""; }
+    VisibilityMode GetVisibilityMode() { return Label->GetVisibility(); }
 
-	bool ProcessModifiers() { return true; }
+    opString ErrorName() { return ""; }
 
-private:
-	VisibilityLabelNode* Label;
+    bool ProcessModifiers() { return true; }
+
+   private:
+    VisibilityLabelNode* Label;
 };
 
 ///
 /// PreprocessorStatementNode
 ///
 
-class PreprocessorStatementNode : public StatementModifierlessBase
-{
-public:
-	DECLARE_NODE(PreprocessorStatementNode,StatementModifierlessBase,G_PREPROCESSOR_STATEMENT);
-	
-	void Init()
-	{
-		Preprocessor = NULL;
-		Previous = NULL;
-	}
-	
-	bool Parse()
-	{
-		PARSE_START;
-		{
+class PreprocessorStatementNode : public StatementModifierlessBase {
+   public:
+    DECLARE_NODE(PreprocessorStatementNode, StatementModifierlessBase,
+                 G_PREPROCESSOR_STATEMENT);
 
-		}
-		PARSE_END;
-	}
+    void Init() {
+        Preprocessor = NULL;
+        Previous = NULL;
+    }
 
-	bool PostParse()
-	{
-		POSTPARSE_START;
-		{
-			AllowOnly(G_POUND_ELIF,
-				G_POUND_ELSE,
-				G_POUND_ENDIF,
-				G_POUND_IF,
-				G_POUND_IFDEF,
-				G_POUND_IFNDEF);
-		}
-		POSTPARSE_END;
-	}
-	
-	void PrintNode(opFileStream& stream)
-	{
-		PrintOriginal(stream.header.body);
-	}
-	
-	void PrintOriginal(opSectionStream& stream )
-	{
-		PrintOriginalChildren(stream);
-		stream << endl;
-	}
-	
-	opString ErrorName();
-	
-	void SetPreprocessor(PreprocessorNode* innode)
-	{
-		Preprocessor = innode;
-	}
-	
-	PreprocessorNode* GetPreprocessor()
-	{
-		return Preprocessor;
-	}
+    bool Parse() {
+        PARSE_START;
+        {}
+        PARSE_END;
+    }
 
-	PreprocessorStatementNode* ToPreprocessorStatementNode()
-	{
-		return this;
-	}
-	
-	void SetPrevDirective(PreprocessorStatementNode* node)
-	{
-		Previous = node;
-	}
+    bool PostParse() {
+        POSTPARSE_START;
+        {
+            AllowOnly(G_POUND_ELIF, G_POUND_ELSE, G_POUND_ENDIF, G_POUND_IF,
+                      G_POUND_IFDEF, G_POUND_IFNDEF);
+        }
+        POSTPARSE_END;
+    }
 
-	PreprocessorStatementNode* GetPrevPreprocessor()
-	{
-		return Previous;
-	}
+    void PrintNode(opFileStream& stream) { PrintOriginal(stream.header.body); }
 
-	//prints the conditions and previous conditions, and returns the number of #if conditions
-	int PrintCondition(opSectionStream& stream);
-	
-private:
-	PreprocessorNode* Preprocessor;
+    void PrintOriginal(opSectionStream& stream) {
+        PrintOriginalChildren(stream);
+        stream << endl;
+    }
 
-	PreprocessorStatementNode* Previous;
+    opString ErrorName();
+
+    void SetPreprocessor(PreprocessorNode* innode) { Preprocessor = innode; }
+
+    PreprocessorNode* GetPreprocessor() { return Preprocessor; }
+
+    PreprocessorStatementNode* ToPreprocessorStatementNode() { return this; }
+
+    void SetPrevDirective(PreprocessorStatementNode* node) { Previous = node; }
+
+    PreprocessorStatementNode* GetPrevPreprocessor() { return Previous; }
+
+    // prints the conditions and previous conditions, and returns the number of
+    // #if conditions
+    int PrintCondition(opSectionStream& stream);
+
+   private:
+    PreprocessorNode* Preprocessor;
+
+    PreprocessorStatementNode* Previous;
 };
 
 ///
 /// StateStatement
 ///
 
-class StateStatementNode : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(StateStatementNode,StatementModifierBase,G_STATE_STATEMENT);
-	
-	void Init()
-	{
-		State = NULL;
-	}
+class StateStatementNode : public StatementModifierBase {
+   public:
+    DECLARE_NODE(StateStatementNode, StatementModifierBase, G_STATE_STATEMENT);
 
-	void SetState(StateNode* state)
-	{
-		State = state;
-	}
+    void Init() { State = NULL; }
 
-	StateNode* GetState()
-	{
-		return State;
-	}
-	
-	void PrintTransformed(opSectionStream& stream);
+    void SetState(StateNode* state) { State = state; }
 
-	void PrintNode(opFileStream& stream);
+    StateNode* GetState() { return State; }
 
-	//print a state mapping macro to the stream
-// 	void PrintStateMapMacro(opSectionStream& stream, const opString& macrotype, 
-// 							const opString& macroid, const opString& mapname);
-	
-//	typedef OPObjectBodyNode::statefunctionpair statefunctionpair;
+    void PrintTransformed(opSectionStream& stream);
 
-// 	void GatherStateFunctions(vector<statefunctionpair> & statefunctions);
-	
-	opString ErrorName();
+    void PrintNode(opFileStream& stream);
 
-private:
-	StateNode* State;
+    // print a state mapping macro to the stream
+    // 	void PrintStateMapMacro(opSectionStream& stream, const opString&
+    // macrotype,
+    // 							const opString& macroid, const opString&
+    // mapname);
+
+    //	typedef OPObjectBodyNode::statefunctionpair statefunctionpair;
+
+    // 	void GatherStateFunctions(vector<statefunctionpair> & statefunctions);
+
+    opString ErrorName();
+
+   private:
+    StateNode* State;
 };
 
 ///==========================================
@@ -861,934 +728,710 @@ private:
 /// NullStatementNode
 ///
 
-class NullStatementNode : public StatementModifierlessBase
-{
-public:
-	DECLARE_NODE(NullStatementNode,StatementModifierlessBase,G_NULL_STATEMENT);
+class NullStatementNode : public StatementModifierlessBase {
+   public:
+    DECLARE_NODE(NullStatementNode, StatementModifierlessBase,
+                 G_NULL_STATEMENT);
 
-	void PrintNode(opFileStream& stream )
-	{
-		
-	}
+    void PrintNode(opFileStream& stream) {}
 
-	opString ErrorName() { return ""; }
+    opString ErrorName() { return ""; }
 };
 
 ///
 /// FriendStatementNode
 ///
 
-class FriendStatementNode : public StatementModifierlessBase
-{
-public:
-	DECLARE_NODE(FriendStatementNode,StatementModifierlessBase,G_FRIEND_STATEMENT);
+class FriendStatementNode : public StatementModifierlessBase {
+   public:
+    DECLARE_NODE(FriendStatementNode, StatementModifierlessBase,
+                 G_FRIEND_STATEMENT);
 
-	void Init()
-	{
-		Friend = NULL;
-	}
+    void Init() { Friend = NULL; }
 
-	void SetFriend(FriendNode* innode)
-	{
-		Friend = innode;
-	}
+    void SetFriend(FriendNode* innode) { Friend = innode; }
 
-	FriendNode* GetFriend()
-	{
-		return Friend;
-	}
+    FriendNode* GetFriend() { return Friend; }
 
-	void PrintNode(opFileStream& stream )
-	{
-		PrintTransformed(stream.header.body);
+    void PrintNode(opFileStream& stream) {
+        PrintTransformed(stream.header.body);
 
-		stream << endl;
-	}
+        stream << endl;
+    }
 
-	bool Parse();
+    bool Parse();
 
-	opString ErrorName();
+    opString ErrorName();
 
-private:
-	FriendNode* Friend;
+   private:
+    FriendNode* Friend;
 };
 
 ///==========================================
 /// UsingStatement
 ///==========================================
 
-class UsingStatementNode : public StatementModifierlessBase
-{
-public:
-	DECLARE_NODE(UsingStatementNode,StatementModifierlessBase,G_USING_STATEMENT);
+class UsingStatementNode : public StatementModifierlessBase {
+   public:
+    DECLARE_NODE(UsingStatementNode, StatementModifierlessBase,
+                 G_USING_STATEMENT);
 
-	void Init()
-	{
-		Using = NULL;
-	}
+    void Init() { Using = NULL; }
 
-	UsingNode* GetUsing()
-	{
-		return Using;
-	}
+    UsingNode* GetUsing() { return Using; }
 
-	void PrintNode(opFileStream& stream )
-	{
-		PrintTransformed(stream.header.body);
-	}
+    void PrintNode(opFileStream& stream) {
+        PrintTransformed(stream.header.body);
+    }
 
-	bool Parse();
+    bool Parse();
 
-	opString ErrorName();
+    opString ErrorName();
 
-private:
-	UsingNode* Using;
+   private:
+    UsingNode* Using;
 };
 
 ///
 /// TypedefStatementNode
 ///
 
-class TypedefStatementNode : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(TypedefStatementNode,StatementModifierBase,G_TYPEDEF_STATEMENT);
+class TypedefStatementNode : public StatementModifierBase {
+   public:
+    DECLARE_NODE(TypedefStatementNode, StatementModifierBase,
+                 G_TYPEDEF_STATEMENT);
 
-	void Init()
-	{
-		Typedef = NULL;
-	}
-	
-	void PrintNode(opFileStream& stream )
-	{
-		Typedef->PrintTransformed( stream.header.body );
+    void Init() { Typedef = NULL; }
 
-		stream.header.body << endl;
-	}
+    void PrintNode(opFileStream& stream) {
+        Typedef->PrintTransformed(stream.header.body);
 
-	/*=== set ===*/
+        stream.header.body << endl;
+    }
 
-	void SetTypedef(TypedefNode* innode)
-	{
-		Typedef = innode;
-	}
+    /*=== set ===*/
 
-	/*=== get ===*/
+    void SetTypedef(TypedefNode* innode) { Typedef = innode; }
 
-	TypedefNode* GetTypedef()
-	{
-		return Typedef;
-	}
+    /*=== get ===*/
 
-	/*=== utility ===*/
+    TypedefNode* GetTypedef() { return Typedef; }
 
-	opString ErrorName();
+    /*=== utility ===*/
 
-	/*=== overrides ===*/
+    opString ErrorName();
 
-	virtual void RegisterAutoModifiers() {}
-	bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
+    /*=== overrides ===*/
 
-	void PrintXml( opXmlStream& stream )
-	{
-		
-	}
+    virtual void RegisterAutoModifiers() {}
+    bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
 
-private:
-	TypedefNode* Typedef;
+    void PrintXml(opXmlStream& stream) {}
+
+   private:
+    TypedefNode* Typedef;
 };
 
 ///
 /// FuncPointerStatementNode
 ///
 
-class FuncPointerStatementNode : public DataStatementBase
-{
-public:
-	DECLARE_NODE(FuncPointerStatementNode,DataStatementBase,G_FUNCTION_POINTER_STATEMENT);
+class FuncPointerStatementNode : public DataStatementBase {
+   public:
+    DECLARE_NODE(FuncPointerStatementNode, DataStatementBase,
+                 G_FUNCTION_POINTER_STATEMENT);
 
-	void Init()
-	{
-		FunctionPointer = NULL;
-	}
-		
-	virtual opNode* GetMemberName()
-	{
-		return FunctionPointer->GetName();
-	}
+    void Init() { FunctionPointer = NULL; }
 
-	void SetFunctionPointer(FunctionPointerNode* innode)
-	{
-		FunctionPointer = innode;
-	}
+    virtual opNode* GetMemberName() { return FunctionPointer->GetName(); }
 
-	FunctionPointerNode* GetFunctionPointer()
-	{
-		return FunctionPointer;
-	}
+    void SetFunctionPointer(FunctionPointerNode* innode) {
+        FunctionPointer = innode;
+    }
 
-	void PrintTransformed(opSectionStream& stream);
-	void PrintOriginal(opSectionStream& stream );
-	void PrintString(opString& s);
+    FunctionPointerNode* GetFunctionPointer() { return FunctionPointer; }
 
-	void PrintNode(opFileStream& stream )
-	{
-		PrintTransformed(stream.header.body);
-	}
+    void PrintTransformed(opSectionStream& stream);
+    void PrintOriginal(opSectionStream& stream);
+    void PrintString(opString& s);
 
-	opString GetMacroType()
-	{
-		return "FUNCTIONPOINTER";
-	}
+    void PrintNode(opFileStream& stream) {
+        PrintTransformed(stream.header.body);
+    }
 
-	void PrintMacroName(opSectionStream& stream)
-	{
-		return FunctionPointer->GetName()->PrintOriginal(stream);
-	}
+    opString GetMacroType() { return "FUNCTIONPOINTER"; }
 
-	opString ErrorName();
+    void PrintMacroName(opSectionStream& stream) {
+        return FunctionPointer->GetName()->PrintOriginal(stream);
+    }
 
-	void PrintStatementString(opString& s);
+    opString ErrorName();
 
-	///==========================================
-	/// Automatic Modifier Methods
-	///==========================================
+    void PrintStatementString(opString& s);
 
-	opNode* ModifierDataStatement(const opString& name);
-	opNode* ModifierFunctionPointer(const opString& name);
+    ///==========================================
+    /// Automatic Modifier Methods
+    ///==========================================
 
-private:
-	
-	virtual void RegisterAutoModifiers();
+    opNode* ModifierDataStatement(const opString& name);
+    opNode* ModifierFunctionPointer(const opString& name);
 
-	FunctionPointerNode* FunctionPointer;
+   private:
+    virtual void RegisterAutoModifiers();
+
+    FunctionPointerNode* FunctionPointer;
 };
 
 //
 // TemplateStatementNode
 //
 
-class TemplateStatementNode : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(TemplateStatementNode,StatementModifierBase,G_TEMPLATE_STATEMENT);
-	
-	void Init()
-	{
-		Templated = NULL;
-	}
+class TemplateStatementNode : public StatementModifierBase {
+   public:
+    DECLARE_NODE(TemplateStatementNode, StatementModifierBase,
+                 G_TEMPLATE_STATEMENT);
 
-	void SetTemplated(TemplatedNode* node)
-	{
-		Templated = node;
-	}
+    void Init() { Templated = NULL; }
 
-	TemplatedNode* GetTemplated()
-	{
-		return Templated;
-	}
+    void SetTemplated(TemplatedNode* node) { Templated = node; }
 
-	void PrintNode(opFileStream& stream)
-	{
-		PrintOriginal( stream.header.body );
-	}
+    TemplatedNode* GetTemplated() { return Templated; }
 
-	void PrintOriginal(opSectionStream& stream);
+    void PrintNode(opFileStream& stream) { PrintOriginal(stream.header.body); }
 
-	virtual void CheckModifiers()
-	{
-		modifiers->AllowOnly(T_PUBLIC,T_PRIVATE,T_PROTECTED,G_CPLUSPLUS);
-	}
+    void PrintOriginal(opSectionStream& stream);
 
-	virtual void RegisterAutoModifiers() {}
+    virtual void CheckModifiers() {
+        modifiers->AllowOnly(T_PUBLIC, T_PRIVATE, T_PROTECTED, G_CPLUSPLUS);
+    }
 
-	bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		return true;
-	}
+    virtual void RegisterAutoModifiers() {}
 
-	opString ErrorName();
+    bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
 
-	void PrintXml( opXmlStream& stream )
-	{
+    opString ErrorName();
 
-	}
+    void PrintXml(opXmlStream& stream) {}
 
-private:
-	TemplatedNode* Templated;
+   private:
+    TemplatedNode* Templated;
 };
 
 ///
 /// OPEnumStatementNode
 ///
 
-class OPEnumStatementNode : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(OPEnumStatementNode,StatementModifierBase,G_OPENUM_STATEMENT);
-	
-	void Init()
-	{
-		Enum = NULL;
-	}
+class OPEnumStatementNode : public StatementModifierBase {
+   public:
+    DECLARE_NODE(OPEnumStatementNode, StatementModifierBase,
+                 G_OPENUM_STATEMENT);
 
-	void SetEnum(OPEnumNode* enumnode)
-	{
-		Enum = enumnode;
-	}
+    void Init() { Enum = NULL; }
 
-	OPEnumNode* GetEnum()
-	{
-		return Enum;
-	}
-	
-	opNode* GetMemberName()
-	{
-		return Enum->GetName();
-	}
-	
-	void PrintNode(opFileStream& stream)
-	{
-		if ( modifiers )
-			modifiers->PrintBuiltIn( stream.header.body );
+    void SetEnum(OPEnumNode* enumnode) { Enum = enumnode; }
 
-		Enum->PrintNode(stream);
-	}
+    OPEnumNode* GetEnum() { return Enum; }
 
-	virtual void PrintStatementString(opString& s)
-	{
-		Enum->GetIdentifier()->PrintString(s);
-		s += ' ';
-		Enum->GetName()->PrintString(s);
-	}
-	
-	//no modifiers generated
-	virtual void RegisterAutoModifiers() {}
+    opNode* GetMemberName() { return Enum->GetName(); }
 
-	virtual void CheckModifiers()
-	{
-		modifiers->AllowOnly(T_PUBLIC,T_PRIVATE,T_PROTECTED,G_CPLUSPLUS);
-	}
-	
-	bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		return true;
-	}
+    void PrintNode(opFileStream& stream) {
+        if (modifiers) modifiers->PrintBuiltIn(stream.header.body);
 
-	opString ErrorName();
+        Enum->PrintNode(stream);
+    }
 
-	// conditional support
-	void SetCondition(PreprocessorStatementNode* node)
-	{
-		if(Enum)
-			Enum->SetCondition(node);
-	}
+    virtual void PrintStatementString(opString& s) {
+        Enum->GetIdentifier()->PrintString(s);
+        s += ' ';
+        Enum->GetName()->PrintString(s);
+    }
 
-private:
-	OPEnumNode* Enum;
+    // no modifiers generated
+    virtual void RegisterAutoModifiers() {}
+
+    virtual void CheckModifiers() {
+        modifiers->AllowOnly(T_PUBLIC, T_PRIVATE, T_PROTECTED, G_CPLUSPLUS);
+    }
+
+    bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
+
+    opString ErrorName();
+
+    // conditional support
+    void SetCondition(PreprocessorStatementNode* node) {
+        if (Enum) Enum->SetCondition(node);
+    }
+
+   private:
+    OPEnumNode* Enum;
 };
 
 ///
 /// OPObjectStatementNode
 ///
 
-//TODO: this shouldn't grab modifiers without support really.
-class OPObjectStatementNode : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(OPObjectStatementNode,StatementModifierBase,G_OPOBJECT_STATEMENT);
+// TODO: this shouldn't grab modifiers without support really.
+class OPObjectStatementNode : public StatementModifierBase {
+   public:
+    DECLARE_NODE(OPObjectStatementNode, StatementModifierBase,
+                 G_OPOBJECT_STATEMENT);
 
-	void Init()
-	{
-		Object = NULL;
-	}
+    void Init() { Object = NULL; }
 
-	void SetObject(OPObjectNode* object)
-	{
-		Object = object;
-	}
+    void SetObject(OPObjectNode* object) { Object = object; }
 
-	OPObjectNode* GetObject()
-	{
-		return Object;
-	}
+    OPObjectNode* GetObject() { return Object; }
 
-	void PrintNode(opFileStream& stream)
-	{
-		if ( modifiers )
-			modifiers->PrintBuiltIn( stream.header.body );
+    void PrintNode(opFileStream& stream) {
+        if (modifiers) modifiers->PrintBuiltIn(stream.header.body);
 
-		Object->PrintNode(stream);
-	}
+        Object->PrintNode(stream);
+    }
 
-	//TODO: need to do this probably... for nested stuff
-	virtual void RegisterAutoModifiers() {}
+    // TODO: need to do this probably... for nested stuff
+    virtual void RegisterAutoModifiers() {}
 
-	bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		return true;
-	}
+    bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
 
-	opString ErrorName();
+    opString ErrorName();
 
-	void PrintXml(opXmlStream& stream);
+    void PrintXml(opXmlStream& stream);
 
-	virtual void SetCondition(PreprocessorStatementNode* node)
-	{
-		if(Object)
-			Object->SetCondition(node);
-	}
+    virtual void SetCondition(PreprocessorStatementNode* node) {
+        if (Object) Object->SetCondition(node);
+    }
 
-	virtual void CheckModifiers()
-	{
-		modifiers->AllowOnly(T_PUBLIC,T_PRIVATE,T_PROTECTED,G_CPLUSPLUS);
-	}
+    virtual void CheckModifiers() {
+        modifiers->AllowOnly(T_PUBLIC, T_PRIVATE, T_PROTECTED, G_CPLUSPLUS);
+    }
 
-private:
-	OPObjectNode* Object;
+   private:
+    OPObjectNode* Object;
 };
 
 ///
 /// DataBitsNode
 ///
 
-class DataBitsNode : public opNode
-{
-public:
-	DECLARE_NODE(DataBitsNode,opNode,G_DATA_BITS);
+class DataBitsNode : public opNode {
+   public:
+    DECLARE_NODE(DataBitsNode, opNode, G_DATA_BITS);
 
-	void Init()
-	{
-		Number = NULL;
-	}
+    void Init() { Number = NULL; }
 
-	void SetNumber(TerminalNode* number)
-	{
-		Number = number;
-	}
+    void SetNumber(TerminalNode* number) { Number = number; }
 
-	TerminalNode* GetNumber()
-	{
-		return Number;
-	}
+    TerminalNode* GetNumber() { return Number; }
 
-	opString ErrorName() { return ""; }
+    opString ErrorName() { return ""; }
 
-private:
-	TerminalNode* Number;
+   private:
+    TerminalNode* Number;
 };
 
 ///
 /// DataDeclarationNode
 ///
 
-class DataDeclarationNode : public opNode
-{
-public:
-	DECLARE_NODE(DataDeclarationNode,opNode,G_DATA_DECLARATION);
+class DataDeclarationNode : public opNode {
+   public:
+    DECLARE_NODE(DataDeclarationNode, opNode, G_DATA_DECLARATION);
 
-	//we'll stick modifiers elsewhere.
+    // we'll stick modifiers elsewhere.
 
-	void Init()
-	{
-		Name	  = NULL;
-		Type	  = NULL;
-		Bits	  = NULL;
-	}
+    void Init() {
+        Name = NULL;
+        Type = NULL;
+        Bits = NULL;
+    }
 
-	void SetName(opNode* name)
-	{
-		Name = name;
-	}
+    void SetName(opNode* name) { Name = name; }
 
-	void SetType(opNode* type)
-	{
-		Type = type;
-	}
+    void SetType(opNode* type) { Type = type; }
 
-	void SetBits(DataBitsNode* bits)
-	{
-		Bits = bits;
-	}
+    void SetBits(DataBitsNode* bits) { Bits = bits; }
 
-	opNode* GetName()
-	{
-		return Name;
-	}
+    opNode* GetName() { return Name; }
 
-	opNode* GetType()
-	{
-		return Type;
-	}
+    opNode* GetType() { return Type; }
 
-	DataBitsNode* GetBits()
-	{
-		return Bits;
-	}
+    DataBitsNode* GetBits() { return Bits; }
 
-	void PrintTransformed(opSectionStream& stream )
-	{
-		PrintOriginal(stream);
-	}
+    void PrintTransformed(opSectionStream& stream) { PrintOriginal(stream); }
 
-	void PrintOriginal(opSectionStream& stream );
-	void PrintString(opString& s);
+    void PrintOriginal(opSectionStream& stream);
+    void PrintString(opString& s);
 
-	//parse the nodes into name,type,bits
-	bool Parse();
+    // parse the nodes into name,type,bits
+    bool Parse();
 
-	void CloneNode(DataDeclarationNode* node)
-	{
-		stacked<opNode> name = Name->CloneGeneric();
-		stacked<opNode> type = Type->CloneGeneric();
-		node->SetName(*name);
-		node->SetType(*type);
-		node->AppendNode(type);
-		node->AppendNode(name);
+    void CloneNode(DataDeclarationNode* node) {
+        stacked<opNode> name = Name->CloneGeneric();
+        stacked<opNode> type = Type->CloneGeneric();
+        node->SetName(*name);
+        node->SetType(*type);
+        node->AppendNode(type);
+        node->AppendNode(name);
 
-		if(Bits)
-		{
-			stacked<DataBitsNode> bits = Bits->Clone();
-			node->SetBits(*bits);
-			node->AppendNode(bits);
-		}
+        if (Bits) {
+            stacked<DataBitsNode> bits = Bits->Clone();
+            node->SetBits(*bits);
+            node->AppendNode(bits);
+        }
+    }
 
-	}
+    opString ErrorName();
 
-	opString ErrorName();
+    void ParseTypeName();
 
-	void ParseTypeName();
-
-	opNode*		   Name;
-	opNode*		   Type;
-	DataBitsNode*  Bits;
+    opNode* Name;
+    opNode* Type;
+    DataBitsNode* Bits;
 };
 
 ///
 /// DataInitializationNode
 ///
 
-class DataInitializationNode : public opNode
-{
-public:
-	DECLARE_NODE(DataInitializationNode,opNode,G_DATA_INITIALIZATION);
+class DataInitializationNode : public opNode {
+   public:
+    DECLARE_NODE(DataInitializationNode, opNode, G_DATA_INITIALIZATION);
 
-	void CloneNode(opNode* newnode)
-	{
-		CloneChildren(newnode);
-	}
+    void CloneNode(opNode* newnode) { CloneChildren(newnode); }
 
-	opString ErrorName();
+    opString ErrorName();
 
-	void PrintOriginal(opSectionStream& stream )
-	{
-		PrintOriginalChildren(stream);
-	}
+    void PrintOriginal(opSectionStream& stream) {
+        PrintOriginalChildren(stream);
+    }
 
-	void PrintString(opString& s)
-	{
-		PrintStringChildren(s);
-	}
+    void PrintString(opString& s) { PrintStringChildren(s); }
 };
 
 ///
 /// DataStatementNode
 ///
 
-class DataStatementNode : public DataStatementBase
-{
-public:
-	DECLARE_NODE(DataStatementNode,DataStatementBase,G_DATA_STATEMENT);
+class DataStatementNode : public DataStatementBase {
+   public:
+    DECLARE_NODE(DataStatementNode, DataStatementBase, G_DATA_STATEMENT);
 
-	void Init()
-	{
-		Declaration = NULL;
-		Initialization = NULL;
-	}
+    void Init() {
+        Declaration = NULL;
+        Initialization = NULL;
+    }
 
-	void SetDeclaration(DataDeclarationNode* node)
-	{
-		Declaration = node;
-	}
+    void SetDeclaration(DataDeclarationNode* node) { Declaration = node; }
 
-	void SetInitialization(DataInitializationNode* node)
-	{
-		Initialization = node;
-	}
+    void SetInitialization(DataInitializationNode* node) {
+        Initialization = node;
+    }
 
-	opNode* GetName()
-	{
-		if(Declaration)
-			return Declaration->GetName();
-		return NULL;
-	}
+    opNode* GetName() {
+        if (Declaration) return Declaration->GetName();
+        return NULL;
+    }
 
-	opNode* GetType()
-	{
-		if(Declaration)
-			return Declaration->GetType();
-		return NULL;
-	}
+    opNode* GetType() {
+        if (Declaration) return Declaration->GetType();
+        return NULL;
+    }
 
-	void SetType(opNode* type)
-	{
-		Declaration->SetType(type);
-	}
-	
-	DataBitsNode* GetBits()
-	{
-		if(Declaration)
-			return Declaration->GetBits();
-		return NULL;
-	}
+    void SetType(opNode* type) { Declaration->SetType(type); }
 
-	opNode* GetMemberName()
-	{
-		//special case for arrays
-		if(ArrayNode* node = node_cast<ArrayNode>(GetName()))
-		{
-			return node->GetName();
-		}
+    DataBitsNode* GetBits() {
+        if (Declaration) return Declaration->GetBits();
+        return NULL;
+    }
 
-		return GetName();
-	}
+    opNode* GetMemberName() {
+        // special case for arrays
+        if (ArrayNode* node = node_cast<ArrayNode>(GetName())) {
+            return node->GetName();
+        }
 
-	opNode* GetDataType()
-	{
-		return GetType();
-	}
+        return GetName();
+    }
 
-	void PrintNode(opFileStream& stream )
-	{
-		PrintTransformed(stream.header.body);
-	}
+    opNode* GetDataType() { return GetType(); }
 
-	void PrintOriginal(opSectionStream& stream);
-	void PrintTransformed(opSectionStream& stream);
-	void PrintString(opString& s);
+    void PrintNode(opFileStream& stream) {
+        PrintTransformed(stream.header.body);
+    }
 
-	void PrintStatementString(opString& s);
+    void PrintOriginal(opSectionStream& stream);
+    void PrintTransformed(opSectionStream& stream);
+    void PrintString(opString& s);
 
-	void RegisterAutoModifiers();
+    void PrintStatementString(opString& s);
 
-	opString ErrorName();
+    void RegisterAutoModifiers();
 
-	void CloneNode(DataStatementNode* node)
-	{
-		CloneModifiers(node);
-		
-		stacked<DataDeclarationNode> decl = Declaration->Clone();
-		node->SetDeclaration(*decl);
-		node->AppendNode(decl);
+    opString ErrorName();
 
-		if(Initialization)
-		{
-			stacked<DataInitializationNode> init = Initialization->Clone();
-			node->SetInitialization(*init);
-			node->AppendNode(init);
-		}
-	}
+    void CloneNode(DataStatementNode* node) {
+        CloneModifiers(node);
 
-	// Modifier Generator Functions
-	opNode* ModifierDataType(const opString& name);
-	opNode* ModifierDataStatement(const opString& name);
-	opNode* ModifierDataBits(const opString& name);
-	opNode* ModifierDataInitialized(const opString& name);
-	opNode* ModifierDataReference(const opString& name);
-	opNode* ModifierDataPointer(const opString& name);
-	opNode* ModifierDataPointerLevel(const opString& name);
-	opNode* ModifierDataBaseType(const opString& name);
-	opNode* ModifierDataTemplate(const opString& name);
-	opNode* ModifierDataQualified(const opString& name);
-	opNode* ModifierDataBasic(const opString& name);
-	opNode* ModifierDataFullType(const opString& name);
-	opNode* ModifierDataArray(const opString& name);
-	opNode* ModifierDataArrayBrackets(const opString& name);
-	opNode* ModifierDataArrayCommas(const opString& name);
+        stacked<DataDeclarationNode> decl = Declaration->Clone();
+        node->SetDeclaration(*decl);
+        node->AppendNode(decl);
 
-private:
-	DataDeclarationNode* Declaration;
-	DataInitializationNode* Initialization;
+        if (Initialization) {
+            stacked<DataInitializationNode> init = Initialization->Clone();
+            node->SetInitialization(*init);
+            node->AppendNode(init);
+        }
+    }
+
+    // Modifier Generator Functions
+    opNode* ModifierDataType(const opString& name);
+    opNode* ModifierDataStatement(const opString& name);
+    opNode* ModifierDataBits(const opString& name);
+    opNode* ModifierDataInitialized(const opString& name);
+    opNode* ModifierDataReference(const opString& name);
+    opNode* ModifierDataPointer(const opString& name);
+    opNode* ModifierDataPointerLevel(const opString& name);
+    opNode* ModifierDataBaseType(const opString& name);
+    opNode* ModifierDataTemplate(const opString& name);
+    opNode* ModifierDataQualified(const opString& name);
+    opNode* ModifierDataBasic(const opString& name);
+    opNode* ModifierDataFullType(const opString& name);
+    opNode* ModifierDataArray(const opString& name);
+    opNode* ModifierDataArrayBrackets(const opString& name);
+    opNode* ModifierDataArrayCommas(const opString& name);
+
+   private:
+    DataDeclarationNode* Declaration;
+    DataInitializationNode* Initialization;
 };
 
-class ConstructorStatementBase : public FunctionStatementBase
-{
-public:
-	DECLARE_NODE(ConstructorStatementBase,FunctionStatementBase,T_UNKNOWN);
+class ConstructorStatementBase : public FunctionStatementBase {
+   public:
+    DECLARE_NODE(ConstructorStatementBase, FunctionStatementBase, T_UNKNOWN);
 
-	ConstructorStatementBase* ToConstructorStatementBase() { return this; }
+    ConstructorStatementBase* ToConstructorStatementBase() { return this; }
 
-	virtual FunctionNode* GetFunction()
-	{
-		return GetConstructor()->GetFunction();
-	}
+    virtual FunctionNode* GetFunction() {
+        return GetConstructor()->GetFunction();
+    }
 
-	virtual opNode* GetReturnType()
-	{
-		return NULL;
-	}
+    virtual opNode* GetReturnType() { return NULL; }
 
-	virtual ConstructorNode* GetConstructor()
-	{
-		ABSTRACT_FUNCTION;
-		return NULL;
-	}
+    virtual ConstructorNode* GetConstructor() {
+        ABSTRACT_FUNCTION;
+        return NULL;
+    }
 
-	opNode* ModifierFunctionConstructor(const opString& name);
+    opNode* ModifierFunctionConstructor(const opString& name);
 
-	void RegisterConstructorModifiers();
+    void RegisterConstructorModifiers();
 
-	void CheckModifiers();
+    void CheckModifiers();
 };
 
 ///
 /// Constructor Definition Statement Node
 ///
 
-class ConstructorDefinitionStatementNode : public UnInlineSupport< ConstructorStatementBase >
-{
-public:
-	DECLARE_NODE(ConstructorDefinitionStatementNode,ConstructorStatementBase,G_CONSTRUCTOR_DEFINITION_STATEMENT);
-	
-	void Init()
-	{
-		ConstructorDefinition = NULL;
-	}
+class ConstructorDefinitionStatementNode
+    : public UnInlineSupport<ConstructorStatementBase> {
+   public:
+    DECLARE_NODE(ConstructorDefinitionStatementNode, ConstructorStatementBase,
+                 G_CONSTRUCTOR_DEFINITION_STATEMENT);
 
-	void SetConstructorDefinition(ConstructorDefinitionNode* node)
-	{
-		ConstructorDefinition = node;
-	}
-	
-	void PrintNode(opFileStream& file);
-	void PrintOriginal(opSectionStream& stream);
+    void Init() { ConstructorDefinition = NULL; }
 
-	virtual ConstructorNode* GetConstructor()
-	{
-		return ConstructorDefinition->GetConstructor();
-	}
+    void SetConstructorDefinition(ConstructorDefinitionNode* node) {
+        ConstructorDefinition = node;
+    }
 
-	virtual void RegisterAutoModifiers();
-	
-	opNode* ModifierFunctionBody(const opString& name);
+    void PrintNode(opFileStream& file);
+    void PrintOriginal(opSectionStream& stream);
 
-	opString ErrorName();
+    virtual ConstructorNode* GetConstructor() {
+        return ConstructorDefinition->GetConstructor();
+    }
 
-	void PrintStatementString(opString& s);
+    virtual void RegisterAutoModifiers();
 
-private:
-	void PrintPrototype(opSectionStream& stream);
-	void PrintScopedDefinition(opSectionStream& stream);
+    opNode* ModifierFunctionBody(const opString& name);
 
-private:
-	ConstructorDefinitionNode* ConstructorDefinition;
+    opString ErrorName();
+
+    void PrintStatementString(opString& s);
+
+   private:
+    void PrintPrototype(opSectionStream& stream);
+    void PrintScopedDefinition(opSectionStream& stream);
+
+   private:
+    ConstructorDefinitionNode* ConstructorDefinition;
 };
 
 ///
 /// Constructor Prototype Statement Node
 ///
 
-class ConstructorPrototypeStatementNode : public ConstructorStatementBase
-{
-public:
-	DECLARE_NODE(ConstructorPrototypeStatementNode,ConstructorStatementBase,G_CONSTRUCTOR_PROTOTYPE_STATEMENT);
-	
-	void Init()
-	{
-		Constructor = NULL;
-	}
+class ConstructorPrototypeStatementNode : public ConstructorStatementBase {
+   public:
+    DECLARE_NODE(ConstructorPrototypeStatementNode, ConstructorStatementBase,
+                 G_CONSTRUCTOR_PROTOTYPE_STATEMENT);
 
-	void SetConstructorPrototype(ConstructorPrototypeNode* node)
-	{
-		Constructor = node;
-	}
+    void Init() { Constructor = NULL; }
 
-	void PrintNode(opFileStream& stream);
-	void PrintOriginal(opSectionStream& stream);
+    void SetConstructorPrototype(ConstructorPrototypeNode* node) {
+        Constructor = node;
+    }
 
-	void PrintStatementString(opString& s);
+    void PrintNode(opFileStream& stream);
+    void PrintOriginal(opSectionStream& stream);
 
-	//no modifiers generated
-	virtual void RegisterAutoModifiers();
+    void PrintStatementString(opString& s);
 
-	virtual ConstructorNode* GetConstructor()
-	{
-		return Constructor->GetConstructor();
-	}
+    // no modifiers generated
+    virtual void RegisterAutoModifiers();
 
-	opString ErrorName();
+    virtual ConstructorNode* GetConstructor() {
+        return Constructor->GetConstructor();
+    }
 
-private:
-	ConstructorPrototypeNode* Constructor;
+    opString ErrorName();
+
+   private:
+    ConstructorPrototypeNode* Constructor;
 };
 
+class DestructorStatementBase : public FunctionStatementBase {
+   public:
+    DECLARE_NODE(DestructorStatementBase, FunctionStatementBase, T_UNKNOWN);
 
-class DestructorStatementBase : public FunctionStatementBase
-{
-public:
-	DECLARE_NODE(DestructorStatementBase,FunctionStatementBase,T_UNKNOWN);
+    DestructorStatementBase* ToDestructorStatementBase() { return this; }
 
-	DestructorStatementBase* ToDestructorStatementBase() { return this; }
+    virtual DestructorNode* GetDestructor() {
+        ABSTRACT_FUNCTION;
+        return NULL;
+    }
 
-	virtual DestructorNode* GetDestructor()
-	{
-		ABSTRACT_FUNCTION;
-		return NULL;
-	}
+    virtual FunctionNode* GetFunction() {
+        return GetDestructor()->GetFunction();
+    }
 
-	virtual FunctionNode* GetFunction()
-	{
-		return GetDestructor()->GetFunction();
-	}
+    virtual opNode* GetReturnType() { return NULL; }
 
-	virtual opNode* GetReturnType()
-	{
-		return NULL;
-	}
+    void RegisterDestructorModifiers();
 
-	void RegisterDestructorModifiers();
+    opNode* ModifierFunctionDestructor(const opString& name);
 
-	opNode* ModifierFunctionDestructor(const opString& name);
-
-	void CheckModifiers();
+    void CheckModifiers();
 };
-
 
 ///
 /// Destructor Definition Statement Node
 ///
 
-class DestructorDefinitionStatementNode : public UnInlineSupport< DestructorStatementBase >
-{
-public:
-	DECLARE_NODE(DestructorDefinitionStatementNode,DestructorStatementBase,G_DESTRUCTOR_DEFINITION_STATEMENT);
+class DestructorDefinitionStatementNode
+    : public UnInlineSupport<DestructorStatementBase> {
+   public:
+    DECLARE_NODE(DestructorDefinitionStatementNode, DestructorStatementBase,
+                 G_DESTRUCTOR_DEFINITION_STATEMENT);
 
-	void Init()
-	{
-		DestructorDefinition = NULL;
-	}
+    void Init() { DestructorDefinition = NULL; }
 
-	void SetDestructorDefinition(DestructorDefinitionNode* node)
-	{
-		DestructorDefinition = node;
-	}
+    void SetDestructorDefinition(DestructorDefinitionNode* node) {
+        DestructorDefinition = node;
+    }
 
-	virtual DestructorNode* GetDestructor()
-	{
-		return DestructorDefinition->GetDestructor();
-	}
+    virtual DestructorNode* GetDestructor() {
+        return DestructorDefinition->GetDestructor();
+    }
 
-	void PrintNode(opFileStream& file);
-	void PrintOriginal(opSectionStream& stream);
+    void PrintNode(opFileStream& file);
+    void PrintOriginal(opSectionStream& stream);
 
-	void PrintStatementString(opString& s);
+    void PrintStatementString(opString& s);
 
-	virtual void RegisterAutoModifiers();
+    virtual void RegisterAutoModifiers();
 
-	opNode* ModifierFunctionBody(const opString& name);
+    opNode* ModifierFunctionBody(const opString& name);
 
-	opString ErrorName();
+    opString ErrorName();
 
-private:
-	void PrintPrototype(opSectionStream& stream);
-	void PrintScopedDefinition(opSectionStream& stream);
+   private:
+    void PrintPrototype(opSectionStream& stream);
+    void PrintScopedDefinition(opSectionStream& stream);
 
-private:
-	DestructorDefinitionNode* DestructorDefinition;
+   private:
+    DestructorDefinitionNode* DestructorDefinition;
 };
 
 ///
 /// Constructor Prototype Statement Node
 ///
 
-class DestructorPrototypeStatementNode : public DestructorStatementBase
-{
-public:
-	DECLARE_NODE(DestructorPrototypeStatementNode,DestructorStatementBase,G_CONSTRUCTOR_PROTOTYPE_STATEMENT);
+class DestructorPrototypeStatementNode : public DestructorStatementBase {
+   public:
+    DECLARE_NODE(DestructorPrototypeStatementNode, DestructorStatementBase,
+                 G_CONSTRUCTOR_PROTOTYPE_STATEMENT);
 
-	void Init()
-	{
-		Destructor = NULL;
-	}
+    void Init() { Destructor = NULL; }
 
-	void SetDestructorPrototype(DestructorPrototypeNode* node)
-	{
-		Destructor = node;
-	}
+    void SetDestructorPrototype(DestructorPrototypeNode* node) {
+        Destructor = node;
+    }
 
-	virtual DestructorNode* GetDestructor()
-	{
-		return Destructor->GetDestructor();
-	}
+    virtual DestructorNode* GetDestructor() {
+        return Destructor->GetDestructor();
+    }
 
-	void PrintNode(opFileStream& stream);
-	void PrintOriginal(opSectionStream& stream);
+    void PrintNode(opFileStream& stream);
+    void PrintOriginal(opSectionStream& stream);
 
-	void PrintStatementString(opString& s);
+    void PrintStatementString(opString& s);
 
-	//no modifiers generated
-	virtual void RegisterAutoModifiers();
+    // no modifiers generated
+    virtual void RegisterAutoModifiers();
 
-	opString ErrorName();
+    opString ErrorName();
 
-private:
-	DestructorPrototypeNode* Destructor;
+   private:
+    DestructorPrototypeNode* Destructor;
 };
 
 ///==========================================
 /// CPPConstructStatementNode
 ///==========================================
 
-class CPPConstructStatementNode : public StatementModifierBase
-{
-public:
-	DECLARE_NODE(CPPConstructStatementNode,StatementModifierBase,G_CPPCONSTRUCT_STATEMENT);
+class CPPConstructStatementNode : public StatementModifierBase {
+   public:
+    DECLARE_NODE(CPPConstructStatementNode, StatementModifierBase,
+                 G_CPPCONSTRUCT_STATEMENT);
 
-	void Init()
-	{
-		Construct = NULL;
-	}
+    void Init() { Construct = NULL; }
 
-	void PrintNode(opFileStream& stream)
-	{
-		if ( modifiers )
-			modifiers->PrintBuiltIn( stream.header.body );
+    void PrintNode(opFileStream& stream) {
+        if (modifiers) modifiers->PrintBuiltIn(stream.header.body);
 
-		Construct->PrintOriginal( stream.header.body );
-	}
+        Construct->PrintOriginal(stream.header.body);
+    }
 
-	void SetConstruct(CPPConstructNode* innode)
-	{
-		Construct = innode;
-	}
+    void SetConstruct(CPPConstructNode* innode) { Construct = innode; }
 
-	CPPConstructNode* GetConstruct()
-	{
-		return Construct;
-	}
+    CPPConstructNode* GetConstruct() { return Construct; }
 
-	virtual void RegisterAutoModifiers() {}
+    virtual void RegisterAutoModifiers() {}
 
-	bool ProcessDisallows(DialectCategory* CategorySettings)
-	{
-		return true;
-	}
+    bool ProcessDisallows(DialectCategory* CategorySettings) { return true; }
 
-	virtual void CheckModifiers()
-	{
-		modifiers->AllowOnly(T_PUBLIC,T_PRIVATE,T_PROTECTED,G_CPLUSPLUS);
-	}
+    virtual void CheckModifiers() {
+        modifiers->AllowOnly(T_PUBLIC, T_PRIVATE, T_PROTECTED, G_CPLUSPLUS);
+    }
 
-	void PrintXml( opXmlStream& stream )
-	{
-		PrintXmlChildren( stream );
-	}
+    void PrintXml(opXmlStream& stream) { PrintXmlChildren(stream); }
 
-	opString ErrorName();
+    opString ErrorName();
 
-private:
-	CPPConstructNode* Construct;
+   private:
+    CPPConstructNode* Construct;
 };
 
-} // end namespace nodes
-
+}  // end namespace nodes

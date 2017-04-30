@@ -15,40 +15,37 @@
 /// MacroConcatenations
 ///==========================================
 
-template<class Parent>
-class MacroConcatenations : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(MacroConcatenations)
+template <class Parent>
+class MacroConcatenations : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(MacroConcatenations)
 
-	// Finds ID@ID
-	void FindConcatenations();
+    // Finds ID@ID
+    void FindConcatenations();
 };
 
 ///==========================================
 /// MacroSingleQuotes
 ///==========================================
 
-template<class Parent>
-class MacroSingleQuotes : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(MacroSingleQuotes)
+template <class Parent>
+class MacroSingleQuotes : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(MacroSingleQuotes)
 
-	// Finds `text`
-	void FindSingleQuotes();
+    // Finds `text`
+    void FindSingleQuotes();
 };
 
 ///==========================================
 /// MacroDoubleQuotes
 ///==========================================
 
-template<class Parent>
-class MacroDoubleQuotes : public Parent
-{
-public:
-	IMPLEMENTS_INTERFACE(MacroDoubleQuotes)
+template <class Parent>
+class MacroDoubleQuotes : public Parent {
+   public:
+    IMPLEMENTS_INTERFACE(MacroDoubleQuotes)
 
-	// Finds ``text``
-	void FindDoubleQuotes();
+    // Finds ``text``
+    void FindDoubleQuotes();
 };

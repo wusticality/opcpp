@@ -18,7 +18,7 @@
 ///
 
 // Populates the blacklisted serial numbers.
-void opDemoSupport::PopulateBlacklist()
-{
-	//Blacklist.Insert("6514b252542f74e943c83480f22c237a", opString("KevinDepue1") + opDemoSupport::ExtraHashString);
+void opDemoSupport::PopulateBlacklist() {
+    // Blacklist.Insert("6514b252542f74e943c83480f22c237a",
+    // opString("KevinDepue1") + opDemoSupport::ExtraHashString);
 }

@@ -22,35 +22,22 @@ opString opPlatform::opCppPath;
 opString opPlatform::opCppDirectory;
 
 // Get the executable name.
-opString opPlatform::GetOpCppExecutableName()
-{
-	return opCppExecutableName;
-}
+opString opPlatform::GetOpCppExecutableName() { return opCppExecutableName; }
 
 // Get the executable path.
-opString opPlatform::GetOpCppPath()
-{
-	return opCppPath;
-}
+opString opPlatform::GetOpCppPath() { return opCppPath; }
 
 // Get the executable directory.
-opString opPlatform::GetOpCppDirectory()
-{
-	return opCppDirectory;
-}
+opString opPlatform::GetOpCppDirectory() { return opCppDirectory; }
 
 // Returns the timestamp on the executable.
-time_t opPlatform::GetOpCppTimeStamp()
-{
-	boost::filesystem::path opcpppath = GetOpCppPath().GetString();	
+time_t opPlatform::GetOpCppTimeStamp() {
+    boost::filesystem::path opcpppath = GetOpCppPath().GetString();
 
-	return last_write_time(opcpppath);
+    return last_write_time(opcpppath);
 }
 
 #include <assert.h>
 
-//you hit an assertion, step out
-void opPlatform::Assertion()
-{
-	assert(0);
-}
+// you hit an assertion, step out
+void opPlatform::Assertion() { assert(0); }

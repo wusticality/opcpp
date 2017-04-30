@@ -15,22 +15,18 @@
 // Platform Specific Code Header
 //
 
-class opPlatform
-{
-public:
-	static bool     ParseExeLocation(const opString& cmdarg);
-	static opString GetOpCppExecutableName();
-	static opString GetOpCppPath();
-	static opString GetOpCppDirectory();
-	static time_t	GetOpCppTimeStamp();
-	static void     Assertion();
-	static void     Breakpoint();
+class opPlatform {
+   public:
+    static bool ParseExeLocation(const opString& cmdarg);
+    static opString GetOpCppExecutableName();
+    static opString GetOpCppPath();
+    static opString GetOpCppDirectory();
+    static time_t GetOpCppTimeStamp();
+    static void Assertion();
+    static void Breakpoint();
 
-private:
-	static opString opCppExecutableName;
-	static opString opCppPath;
-	static opString opCppDirectory;
+   private:
+    static opString opCppExecutableName;
+    static opString opCppPath;
+    static opString opCppDirectory;
 };
-
-
-

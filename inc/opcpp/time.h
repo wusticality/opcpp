@@ -13,27 +13,21 @@
 
 #pragma once
 
-class opTimeUtility
-{
-public:
+class opTimeUtility {
+   public:
+    // Assumes month is [1,12], day is [1,31], year is [1900, ..].
+    static time_t GetTime(int month, int day, int year) {
+        struct tm t;
 
-	// Assumes month is [1,12], day is [1,31], year is [1900, ..].
-	static time_t GetTime(int month, int day, int year)
-	{
-		struct tm t;
+        memset(&t, 0, sizeof(struct tm));
 
-		memset( &t, 0, sizeof(struct tm) );
+        t.tm_mon = month - 1;
+        t.tm_mday = day;
+        t.tm_year = year - 1900;
 
- 		t.tm_mon  = month - 1;
-		t.tm_mday = day;	
-		t.tm_year = year - 1900;
+        return mktime(&t);
+    }
 
-		return mktime( &t );
-	}
-
-	// Returns the current time.
-	static time_t GetCurrentTime()
-	{
-		return time( NULL );
-	}
+    // Returns the current time.
+    static time_t GetCurrentTime() { return time(NULL); }
 };

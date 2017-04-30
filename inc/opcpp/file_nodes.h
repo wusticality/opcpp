@@ -11,200 +11,167 @@
 /// This file contains nodes for parsing files.
 ///****************************************************************
 
-namespace nodes
-{
+namespace nodes {
 
 class FileNode;
 class OPFileNode;
 
-typedef Blocks< Preprocessors< opNode > > FileNodeParent;
+typedef Blocks<Preprocessors<opNode> > FileNodeParent;
 
 // This is an abstract base class.
-class FileNode : public FileNodeParent
-{
-public:
-	DECLARE_NODE(FileNode,opNode,T_UNKNOWN);
-	
-	void Init()
-	{
-		scanMs = 0;
-		parseMs = 0;
-		totalMs = 0;
-		SetLine(0);
-		SetFile(this);
-		bAbsolutePath = false;
-	}
+class FileNode : public FileNodeParent {
+   public:
+    DECLARE_NODE(FileNode, opNode, T_UNKNOWN);
 
-	~FileNode();
-	
-	const opString& GetInputName()
-	{
-		return InputName;
-	}
+    void Init() {
+        scanMs = 0;
+        parseMs = 0;
+        totalMs = 0;
+        SetLine(0);
+        SetFile(this);
+        bAbsolutePath = false;
+    }
 
-	const opString& GetAbsoluteFileName()
-	{
-		return AbsoluteFileName;
-	}
-	
-	bool IsAbsolutePath()
-	{
-		return bAbsolutePath;
-	}
+    ~FileNode();
 
-	/**** utility ****/
+    const opString& GetInputName() { return InputName; }
 
-	virtual FileNode* ToFileNode()
-	{
-		return this;
-	}
-	
-	//load this file to this node, should we scan/identify test mode tokens?
-	//should always return a file, but do check the errors
-	template<class T>
-	static T* Load(const opString& file, opScanner::ScanMode scanmode, bool bIncluded = false);
-	
-	// Process this node, inner nodes
-	// we have to catch file errors in this
-	bool PreProcess();	
-	bool Process();
+    const opString& GetAbsoluteFileName() { return AbsoluteFileName; }
 
-	// happens after PreProcess, before anything else
-	virtual bool PreOperations();
+    bool IsAbsolutePath() { return bAbsolutePath; }
 
-	// happens after Process
-	virtual bool Operations();
+    /**** utility ****/
 
-	// happens after PostProcess
-	virtual bool PostOperations();
-	
-	// copy errors from an inner file
-	// void MergeErrors(FileNode* file);
-	
-	// utility
-	virtual bool Preprocessor();
-	bool CheckBlockCorrectness();
+    virtual FileNode* ToFileNode() { return this; }
 
-	void PrintIncluded(opDialectStream& stream);
-	void PrintIncluded(opFileStream& stream);
-	void PrintIncluded(opXmlStream& stream);
+    // load this file to this node, should we scan/identify test mode tokens?
+    // should always return a file, but do check the errors
+    template <class T>
+    static T* Load(const opString& file, opScanner::ScanMode scanmode,
+                   bool bIncluded = false);
 
-protected:
-	opString WriteFileHeader(stringstream& o, opString filename);
-	
-private:
-	//input filename
-	opString InputName;
-	
-	//absolute path for the file
-	opString AbsoluteFileName;
+    // Process this node, inner nodes
+    // we have to catch file errors in this
+    bool PreProcess();
+    bool Process();
 
-	//is the path absolute or relative?
-	bool bAbsolutePath;
+    // happens after PreProcess, before anything else
+    virtual bool PreOperations();
 
-	// timing
-	double scanMs;
-	double parseMs;
-	double totalMs;
+    // happens after Process
+    virtual bool Operations();
 
-public:
-	//get timing
-	double GetScanMs()
-	{
-		return scanMs;
-	}
+    // happens after PostProcess
+    virtual bool PostOperations();
 
-	double GetParseMs()
-	{
-		return parseMs;
-	}
+    // copy errors from an inner file
+    // void MergeErrors(FileNode* file);
 
-	double GetTotalMs()
-	{
-		return totalMs;
-	}
+    // utility
+    virtual bool Preprocessor();
+    bool CheckBlockCorrectness();
 
-	//file dependencies
-	void AddDependency(const opString& filepath);
-	void SaveDependencies(const opString& filepath);
-	bool LoadDependencies(const opString& filepath);
+    void PrintIncluded(opDialectStream& stream);
+    void PrintIncluded(opFileStream& stream);
+    void PrintIncluded(opXmlStream& stream);
 
-	bool IsDependencyNewer(time_t timestamp);
+   protected:
+    opString WriteFileHeader(stringstream& o, opString filename);
 
-private:
-	opSet<opString> Dependencies;
+   private:
+    // input filename
+    opString InputName;
 
+    // absolute path for the file
+    opString AbsoluteFileName;
 
-private:
-	//internal file tables
-	static opArray<FileNode*> FileTable;
-	
-	static FileNode* GetLoadedFile(const opString& filename);
-	
-	static void		 UnRegisterLoadedFiles();
-public:
-	static void      DeleteLoadedFiles();
-private:
-	friend class opDriver;
-	friend class opMemoryTracker;
+    // is the path absolute or relative?
+    bool bAbsolutePath;
+
+    // timing
+    double scanMs;
+    double parseMs;
+    double totalMs;
+
+   public:
+    // get timing
+    double GetScanMs() { return scanMs; }
+
+    double GetParseMs() { return parseMs; }
+
+    double GetTotalMs() { return totalMs; }
+
+    // file dependencies
+    void AddDependency(const opString& filepath);
+    void SaveDependencies(const opString& filepath);
+    bool LoadDependencies(const opString& filepath);
+
+    bool IsDependencyNewer(time_t timestamp);
+
+   private:
+    opSet<opString> Dependencies;
+
+   private:
+    // internal file tables
+    static opArray<FileNode*> FileTable;
+
+    static FileNode* GetLoadedFile(const opString& filename);
+
+    static void UnRegisterLoadedFiles();
+
+   public:
+    static void DeleteLoadedFiles();
+
+   private:
+    friend class opDriver;
+    friend class opMemoryTracker;
 };
 
 ///==========================================
 /// OPFileNode
 ///==========================================
 
-//defines the normal file context (should really be moved to a context)
-typedef context::Global< ExpandCalls< OPMacros< FileNode > > > OPFileNodeParent;
+// defines the normal file context (should really be moved to a context)
+typedef context::Global<ExpandCalls<OPMacros<FileNode> > > OPFileNodeParent;
 
 // This represents an .oh file to be parsed.
-class OPFileNode : public OPFileNodeParent
-{
-public:
-	DECLARE_NODE(OPFileNode,OPFileNodeParent,G_OPFILE);
+class OPFileNode : public OPFileNodeParent {
+   public:
+    DECLARE_NODE(OPFileNode, OPFileNodeParent, G_OPFILE);
 
-	//these functions handle the preparse pass
-	//which handle opmacro expansions
-	virtual bool PreParse();
-	virtual bool PostParse();
+    // these functions handle the preparse pass
+    // which handle opmacro expansions
+    virtual bool PreParse();
+    virtual bool PostParse();
 
-	virtual void PrintNode(opFileStream& stream);
-	virtual void PrintXml(opXmlStream& stream);
+    virtual void PrintNode(opFileStream& stream);
+    virtual void PrintXml(opXmlStream& stream);
 
-	void SetFiles(const opString& headerfile, const opString& sourcefile)
-	{
-		HeaderFile = headerfile;
-		SourceFile = sourcefile;
-	}
-	
-	opString ErrorName() { return ""; }
-	
-private:
-	
-	//output filenames
-	opString SourceFile;
-	opString HeaderFile;
-	
+    void SetFiles(const opString& headerfile, const opString& sourcefile) {
+        HeaderFile = headerfile;
+        SourceFile = sourcefile;
+    }
+
+    opString ErrorName() { return ""; }
+
+   private:
+    // output filenames
+    opString SourceFile;
+    opString HeaderFile;
 };
 
-//This represents a cpp file
-class CppFileNode : public FileNode
-{
-public:
-	DECLARE_NODE(CppFileNode,FileNode,G_CPPFILE);
+// This represents a cpp file
+class CppFileNode : public FileNode {
+   public:
+    DECLARE_NODE(CppFileNode, FileNode, G_CPPFILE);
 
-	void PrintNode(opFileStream& stream)
-	{
-		PrintNodeChildren(stream);
-	}
+    void PrintNode(opFileStream& stream) { PrintNodeChildren(stream); }
 
-	void PrintOriginal(opSectionStream& stream )
-	{
-		PrintOriginalUnspacedChildren(stream);
-	}
+    void PrintOriginal(opSectionStream& stream) {
+        PrintOriginalUnspacedChildren(stream);
+    }
 
-	opString ErrorName() { return ""; }
-
+    opString ErrorName() { return ""; }
 };
 
-} // end namespace nodes
-
+}  // end namespace nodes

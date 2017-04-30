@@ -11,62 +11,53 @@
 /// opLog Header
 ///****************************************************************
 
-//we only add includes to headers that
-//can be independently included
+// we only add includes to headers that
+// can be independently included
 #include <iostream>
-#include "opcpp/opstl/opstl.h"
 #include "opcpp/file.h"
+#include "opcpp/opstl/opstl.h"
 
-//errors?
-namespace errors
-{
+// errors?
+namespace errors {
 
-	///==========================================
-	/// opLog
-	///==========================================
+///==========================================
+/// opLog
+///==========================================
 
-	class opLog 
-	{
-	public:
-		/*=== construction ===*/
+class opLog {
+   public:
+    /*=== construction ===*/
 
-		opLog()  {}
-		~opLog() {}
+    opLog() {}
+    ~opLog() {}
 
-		/*=== utility ===*/
+    /*=== utility ===*/
 
-		static void SetStream(ostream& s)
-		{
-			o = &s;
-		}
+    static void SetStream(ostream& s) { o = &s; }
 
-		static void Log(const opString& s)
-		{
-			opString log = s;
+    static void Log(const opString& s) {
+        opString log = s;
 
-			if (log.Trim() == "" && lastLog == "");
-			else 
-			{
-				(*o) << s.GetString() << endl << flush;
-				DebugLog(s + "\n");
+        if (log.Trim() == "" && lastLog == "")
+            ;
+        else {
+            (*o) << s.GetString() << endl << flush;
+            DebugLog(s + "\n");
 
-				lastLog = log;
-			}
-		}
+            lastLog = log;
+        }
+    }
 
-		static void DebugLog(const opString& s);
+    static void DebugLog(const opString& s);
 
-	private:
-		/*=== data ===*/
+   private:
+    /*=== data ===*/
 
-		static ostream* o;
-		static opString lastLog;
-	};
+    static ostream* o;
+    static opString lastLog;
+};
 
-	// Method to log an error.
-	inline void Log(const opString& error)
-	{
-		opLog::Log(error);
-	}
+// Method to log an error.
+inline void Log(const opString& error) { opLog::Log(error); }
 
-}
+}  // namespace errors

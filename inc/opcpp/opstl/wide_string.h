@@ -13,106 +13,63 @@
 
 #pragma once
 
-#include "opcpp/opstl/opstlcommon.h"
-#include <string>
-#include <iostream>
-#include <sstream>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include "opcpp/opstl/opstlcommon.h"
 
-namespace opstl
-{
+namespace opstl {
 
 /**** wrapper for stl string class ****/
 
-class opWideString
-{
-public:
+class opWideString {
+   public:
+    /**** construction ****/
 
-	/**** construction ****/
+    opWideString() {}
 
-	opWideString()
-	{
-	}
+    opWideString(const opWideString& _s) : s(_s.s) {}
 
-	opWideString(const opWideString& _s)
-		: s(_s.s)
-	{
-	}
+    opWideString(const opString& _s)
+        : s(_s.GetString().begin(), _s.GetString().end()) {}
 
-	opWideString(const opString& _s)
-		: s(_s.GetString().begin(),_s.GetString().end())
-	{
-	}
+    opWideString(const string& _s) : s(_s.begin(), _s.end()) {}
 
-	opWideString(const string& _s)
-		: s(_s.begin(),_s.end())
-	{
-	}
-	
-	opWideString(const wstring& _s)
-		: s(_s)
-	{
-	}
+    opWideString(const wstring& _s) : s(_s) {}
 
-	opWideString(wchar_t c)
-	{
-		s = c;
-	}
-	
-	opWideString(const wchar_t* c)
-	{
-		s = c;
-	}
+    opWideString(wchar_t c) { s = c; }
 
-	opWideString(char c)
-	{
-		s = c;
-	}
+    opWideString(const wchar_t* c) { s = c; }
 
-	opWideString(const char* c)
-	{
-		s = opWideString(opString(c)).GetWideString();
-	}
+    opWideString(char c) { s = c; }
 
-	std::wstring& GetWideString()
-	{
-		return s;
-	}
-	
-	const std::wstring& GetWideString() const
-	{
-		return s;
-	}
+    opWideString(const char* c) {
+        s = opWideString(opString(c)).GetWideString();
+    }
 
-	const wchar_t* GetCString() const
-	{
-		return s.c_str();
-	}
+    std::wstring& GetWideString() { return s; }
 
-	int Size() const
-	{
-		return (int)s.size();
-	}
+    const std::wstring& GetWideString() const { return s; }
 
-	opWideString& operator += (const opWideString& _s)
-	{
-		s += _s.s;
-		return *this;
-	}
+    const wchar_t* GetCString() const { return s.c_str(); }
 
-	opWideString operator + (const opWideString& _s) const
-	{
-		opWideString ws = *this;
-		ws += _s;
-		return ws;
-	}
+    int Size() const { return (int)s.size(); }
 
-private:
-	std::wstring s;
+    opWideString& operator+=(const opWideString& _s) {
+        s += _s.s;
+        return *this;
+    }
+
+    opWideString operator+(const opWideString& _s) const {
+        opWideString ws = *this;
+        ws += _s;
+        return ws;
+    }
+
+   private:
+    std::wstring s;
 };
 
-} // end namespace opstl
-
-
-
+}  // end namespace opstl

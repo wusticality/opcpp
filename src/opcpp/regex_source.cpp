@@ -11,21 +11,18 @@
 /// Regex Source
 ///****************************************************************
 
-#include "opcpp/opstl/opstl.h"
 #include <boost/xpressive/xpressive.hpp>
+#include "opcpp/opstl/opstl.h"
 
 using boost::xpressive::sregex;
 using boost::xpressive::smatch;
 using boost::xpressive::regex_match;
 
-namespace regex
-{
-	bool Match(const opString& matchstring, const opString& pattern)
-	{
-		sregex expression = sregex::compile(pattern.GetString());
-		smatch match;
-		
-		return regex_match(matchstring.GetString(),match,expression);
-	}
-};
+namespace regex {
+bool Match(const opString& matchstring, const opString& pattern) {
+    sregex expression = sregex::compile(pattern.GetString());
+    smatch match;
 
+    return regex_match(matchstring.GetString(), match, expression);
+}
+};  // namespace regex

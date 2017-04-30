@@ -11,203 +11,150 @@
 /// File for dialect modifier classes.
 ///****************************************************************
 
-namespace dialect_nodes
-{
+namespace dialect_nodes {
 
 ///
 /// DialectModifiersNode - contains all dialect modifiers
 ///
 
-typedef DialectModifiers<ModifiersBase> DialectModifiersNodeParent; 
+typedef DialectModifiers<ModifiersBase> DialectModifiersNodeParent;
 
-class DialectModifiersNode : public DialectModifiersNodeParent
-{
-public:
-	DECLARE_NODE(DialectModifiersNode,DialectModifiersNodeParent,G_DIALECT_MODIFIERS);
+class DialectModifiersNode : public DialectModifiersNodeParent {
+   public:
+    DECLARE_NODE(DialectModifiersNode, DialectModifiersNodeParent,
+                 G_DIALECT_MODIFIERS);
 
-	opString ErrorName() { return ""; }
+    opString ErrorName() { return ""; }
 
-	void PrintNode(opFileStream& stream)
-	{}
+    void PrintNode(opFileStream& stream) {}
 
-	void PrintDialectNode(opDialectStream& stream)
-	{}
+    void PrintDialectNode(opDialectStream& stream) {}
 
-	void PrintString(opString& s)
-	{
-		PrintStringChildren(s);
-	}
+    void PrintString(opString& s) { PrintStringChildren(s); }
 
-	void CheckForDuplicates();
+    void CheckForDuplicates();
 
- 	bool Parse()
- 	{
- 		PARSE_START;
- 		{
- 			CheckForDuplicates();
- 		}
- 		PARSE_END;
- 	}
+    bool Parse() {
+        PARSE_START;
+        { CheckForDuplicates(); }
+        PARSE_END;
+    }
 };
 
 ///
 /// DialectModifierNode
 ///
 
-class DialectModifierNode : public opNode
-{
-public:
-	DECLARE_NODE(DialectModifierNode,opNode,T_UNKNOWN);
+class DialectModifierNode : public opNode {
+   public:
+    DECLARE_NODE(DialectModifierNode, opNode, T_UNKNOWN);
 
-	void PrintString(opString& s)
-	{
-		s += ModifierName;
-	}
+    void PrintString(opString& s) { s += ModifierName; }
 
-	opString ErrorName() 
-	{ 
-		return ModifierName;
-	}
+    opString ErrorName() { return ModifierName; }
 
-protected:
-	opString ModifierName;
+   protected:
+    opString ModifierName;
 };
 
 ///
 /// ValuedDialectModifierNode
 ///
 
-class ValuedDialectModiferNode : public DialectModifierNode
-{
-public:
-	DECLARE_NODE(ValuedDialectModiferNode,DialectModifierNode,T_UNKNOWN);
+class ValuedDialectModiferNode : public DialectModifierNode {
+   public:
+    DECLARE_NODE(ValuedDialectModiferNode, DialectModifierNode, T_UNKNOWN);
 
-	void Init()
-	{
-		Value = NULL;
-	}
+    void Init() { Value = NULL; }
 
-	void SetValue(ParenBlockNode* innode)
-	{
-		Value = innode;
-	}
+    void SetValue(ParenBlockNode* innode) { Value = innode; }
 
-	ParenBlockNode* GetValue()
-	{
-		return Value;
-	}
+    ParenBlockNode* GetValue() { return Value; }
 
-	void PrintString(opString& s)
-	{
-		s += ModifierName;
+    void PrintString(opString& s) {
+        s += ModifierName;
 
-		Value->PrintString(s);
-	}
+        Value->PrintString(s);
+    }
 
-	opString ErrorName() 
-	{ 
-		opString name = ModifierName;
+    opString ErrorName() {
+        opString name = ModifierName;
 
-		if (Value)
-			Value->PrintString(name);
-		else
-			name += "( ... )";
+        if (Value)
+            Value->PrintString(name);
+        else
+            name += "( ... )";
 
-		return name;
-	}
+        return name;
+    }
 
-protected:
-	ParenBlockNode* Value;
+   protected:
+    ParenBlockNode* Value;
 };
 
 ///
 /// ErrorNode
 ///
 
-class ErrorNode : public ValuedDialectModiferNode
-{
-public:
-	DECLARE_NODE(ErrorNode,ValuedDialectModiferNode,G_ERROR);
+class ErrorNode : public ValuedDialectModiferNode {
+   public:
+    DECLARE_NODE(ErrorNode, ValuedDialectModiferNode, G_ERROR);
 
-	bool Parse()
-	{
-		PARSE_START;
-		{
-			Value->Check(T_STRING);
-			Value->CheckNone();
-		}
-		PARSE_END;
-	}
+    bool Parse() {
+        PARSE_START;
+        {
+            Value->Check(T_STRING);
+            Value->CheckNone();
+        }
+        PARSE_END;
+    }
 
-	TerminalNode* GetError()
-	{
-		return node_cast<TerminalNode>( Value->FirstChild() );
-	}
+    TerminalNode* GetError() {
+        return node_cast<TerminalNode>(Value->FirstChild());
+    }
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "error";
-	}
+    static opString StaticModifierName() { return "error"; }
 };
 
 ///
 /// DescriptionNode
 ///
 
-class DescriptionNode : public ValuedDialectModiferNode
-{
-public:
-	DECLARE_NODE(DescriptionNode,ValuedDialectModiferNode,G_DESCRIPTION);
+class DescriptionNode : public ValuedDialectModiferNode {
+   public:
+    DECLARE_NODE(DescriptionNode, ValuedDialectModiferNode, G_DESCRIPTION);
 
-	bool Parse()
-	{
-		PARSE_START;
-		{
-			Value->Check(T_STRING);
-			Value->CheckNone();
-		}
-		PARSE_END;
-	}
+    bool Parse() {
+        PARSE_START;
+        {
+            Value->Check(T_STRING);
+            Value->CheckNone();
+        }
+        PARSE_END;
+    }
 
-	TerminalNode* GetDescription()
-	{
-		return node_cast<TerminalNode>( Value->FirstChild() );
-	}
+    TerminalNode* GetDescription() {
+        return node_cast<TerminalNode>(Value->FirstChild());
+    }
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "description";
-	}
+    static opString StaticModifierName() { return "description"; }
 };
 
 ///
 /// HiddenNode
 ///
 
-class HiddenNode : public DialectModifierNode
-{
-public:
-	DECLARE_NODE(HiddenNode,DialectModifierNode,G_HIDDEN);
+class HiddenNode : public DialectModifierNode {
+   public:
+    DECLARE_NODE(HiddenNode, DialectModifierNode, G_HIDDEN);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "hidden";
-	}
+    static opString StaticModifierName() { return "hidden"; }
 };
 
 //==========================================
@@ -216,94 +163,64 @@ public:
 // Base class for BeforeNode and AfterNode.
 //==========================================
 
-class OrderModifierNodeBase : public ValuedDialectModiferNode
-{
-public:
-	DECLARE_NODE(OrderModifierNodeBase,ValuedDialectModiferNode,T_UNKNOWN);
+class OrderModifierNodeBase : public ValuedDialectModiferNode {
+   public:
+    DECLARE_NODE(OrderModifierNodeBase, ValuedDialectModiferNode, T_UNKNOWN);
 
-	void Init()
-	{
-		Location = NULL;
-	}
+    void Init() { Location = NULL; }
 
-	bool Parse()
-	{
-		PARSE_START;
-		{
-			Location = Value->Check<TerminalNode>(T_ID);
-			Value->CheckNone();
-		}
-		PARSE_END;
-	}
+    bool Parse() {
+        PARSE_START;
+        {
+            Location = Value->Check<TerminalNode>(T_ID);
+            Value->CheckNone();
+        }
+        PARSE_END;
+    }
 
-	TerminalNode* GetLocation()
-	{
-		return Location;
-	}
+    TerminalNode* GetLocation() { return Location; }
 
-private:
-
-	TerminalNode* Location;
+   private:
+    TerminalNode* Location;
 };
 
 ///
 /// BeforeNode
 ///
 
-class BeforeNode : public OrderModifierNodeBase
-{
-public:
-	DECLARE_NODE(BeforeNode,OrderModifierNodeBase,G_BEFORE);
+class BeforeNode : public OrderModifierNodeBase {
+   public:
+    DECLARE_NODE(BeforeNode, OrderModifierNodeBase, G_BEFORE);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "before";
-	}
+    static opString StaticModifierName() { return "before"; }
 };
 
 //==========================================
 // AfterNode
 //==========================================
 
-class AfterNode : public OrderModifierNodeBase
-{
-public:
-	DECLARE_NODE(AfterNode,OrderModifierNodeBase,G_AFTER);
+class AfterNode : public OrderModifierNodeBase {
+   public:
+    DECLARE_NODE(AfterNode, OrderModifierNodeBase, G_AFTER);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "after";
-	}
+    static opString StaticModifierName() { return "after"; }
 };
 
 ///
 /// VerbatimNode
 ///
 
-class VerbatimNode : public DialectModifierNode
-{
-public:
-	DECLARE_NODE(VerbatimNode,DialectModifierNode,G_VERBATIM);
+class VerbatimNode : public DialectModifierNode {
+   public:
+    DECLARE_NODE(VerbatimNode, DialectModifierNode, G_VERBATIM);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "verbatim";
-	}
+    static opString StaticModifierName() { return "verbatim"; }
 };
 
 //============================================
@@ -313,115 +230,77 @@ public:
 // StructPrefixNode, and EnumPrefixNode.
 //============================================
 
-class PrefixNodeBase : public ValuedDialectModiferNode
-{
-public:
-	DECLARE_NODE(PrefixNodeBase,ValuedDialectModiferNode,T_UNKNOWN);
+class PrefixNodeBase : public ValuedDialectModiferNode {
+   public:
+    DECLARE_NODE(PrefixNodeBase, ValuedDialectModiferNode, T_UNKNOWN);
 
-	void Init()
-	{
-		Prefix = NULL;
-	}
+    void Init() { Prefix = NULL; }
 
-	bool Parse()
-	{
-		PARSE_START;
-		{
-			Prefix = Value->Check<TerminalNode>(T_ID);
-			Value->CheckNone();
-		}
-		PARSE_END;
-	}
+    bool Parse() {
+        PARSE_START;
+        {
+            Prefix = Value->Check<TerminalNode>(T_ID);
+            Value->CheckNone();
+        }
+        PARSE_END;
+    }
 
-	TerminalNode* GetPrefix()
-	{
-		return Prefix;
-	}
+    TerminalNode* GetPrefix() { return Prefix; }
 
-private:
-
-	TerminalNode* Prefix;
+   private:
+    TerminalNode* Prefix;
 };
 
 //
 // ClassPrefixNode
 //
 
-class ClassPrefixNode : public PrefixNodeBase
-{
-public:
-	DECLARE_NODE(ClassPrefixNode,PrefixNodeBase,G_CLASS_PREFIX);
+class ClassPrefixNode : public PrefixNodeBase {
+   public:
+    DECLARE_NODE(ClassPrefixNode, PrefixNodeBase, G_CLASS_PREFIX);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "classprefix";
-	}
+    static opString StaticModifierName() { return "classprefix"; }
 };
 
 //
 // StructPrefixNode
 //
 
-class StructPrefixNode : public PrefixNodeBase
-{
-public:
-	DECLARE_NODE(StructPrefixNode,PrefixNodeBase,G_STRUCT_PREFIX);
+class StructPrefixNode : public PrefixNodeBase {
+   public:
+    DECLARE_NODE(StructPrefixNode, PrefixNodeBase, G_STRUCT_PREFIX);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "structprefix";
-	}
+    static opString StaticModifierName() { return "structprefix"; }
 };
 
 //
 // EnumPrefixNode
 //
 
-class EnumPrefixNode : public PrefixNodeBase
-{
-public:
-	DECLARE_NODE(EnumPrefixNode,PrefixNodeBase,G_ENUM_PREFIX);
+class EnumPrefixNode : public PrefixNodeBase {
+   public:
+    DECLARE_NODE(EnumPrefixNode, PrefixNodeBase, G_ENUM_PREFIX);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "enumprefix";
-	}
+    static opString StaticModifierName() { return "enumprefix"; }
 };
 
 ///
 /// OverrideNode
 ///
 
-class OverrideNode : public DialectModifierNode
-{
-public:
-	DECLARE_NODE(OverrideNode,DialectModifierNode,G_OVERRIDE);
+class OverrideNode : public DialectModifierNode {
+   public:
+    DECLARE_NODE(OverrideNode, DialectModifierNode, G_OVERRIDE);
 
-	void Init()
-	{
-		ModifierName = StaticModifierName();
-	}
+    void Init() { ModifierName = StaticModifierName(); }
 
-	static opString StaticModifierName()
-	{
-		return "override";
-	}
+    static opString StaticModifierName() { return "override"; }
 };
 
-
-} // end namespace dialect_nodes
+}  // end namespace dialect_nodes

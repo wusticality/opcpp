@@ -15,23 +15,21 @@
 /// opSymbolTracker
 ///==========================================
 
-class opSymbolTracker 
-{
-public:
-	/**** construction / destruction ****/
-	opSymbolTracker() {}
-	~opSymbolTracker() {}
-	
-	/**** opmacros stuff ****/
-	
-	//registration function
-	void Register(OPMacroNode* innode);
-	
-	//query function
-	OPMacroNode* OPMacroRegistered(const opString& name);
+class opSymbolTracker {
+   public:
+    /**** construction / destruction ****/
+    opSymbolTracker() {}
+    ~opSymbolTracker() {}
 
-private:
-	// NOTE: we have a different hash table for each opcpp construct
-	opHashTable<opString, OPMacroNode*> OPMacrosTable;
+    /**** opmacros stuff ****/
+
+    // registration function
+    void Register(OPMacroNode* innode);
+
+    // query function
+    OPMacroNode* OPMacroRegistered(const opString& name);
+
+   private:
+    // NOTE: we have a different hash table for each opcpp construct
+    opHashTable<opString, OPMacroNode*> OPMacrosTable;
 };
-

@@ -11,8 +11,7 @@
 // Definition of base visitor classes.
 //****************************************************************
 
-namespace visitors
-{
+namespace visitors {
 
 //==========================================
 // opVisitor
@@ -20,53 +19,40 @@ namespace visitors
 // Base visitor class.
 //==========================================
 
-class opVisitor
-{
-public:
+class opVisitor {
+   public:
+    /*=== construction ===*/
 
-	/*=== construction ===*/
+    opVisitor() : bFailed(false) {}
 
-	opVisitor()
-		: bFailed(false)
-	{
+    /*=== visiting methods ===*/
 
-	}
+    // NOTE: This is totally gay/lamo, but necessary.
+    //       For each node type that you want to be
+    //       able to visit via enter/leave, you have
+    //       to define a macro for the node type here.
+    //       If only we could use opC++ to write the
+    //       opC++ compiler!!  :(
 
-	/*=== visiting methods ===*/
+    DECLARE_VISIT(opNode)
+    DECLARE_VISIT(CategoryNode)
+    DECLARE_VISIT(EnumerationNode)
+    DECLARE_VISIT(NoteDefinitionNode)
+    DECLARE_VISIT(FileDeclarationNode)
+    DECLARE_VISIT(ExtensionNode)
+    DECLARE_VISIT(ExtensionPointNode)
+    DECLARE_VISIT(ExtendPointNode)
 
-	// NOTE: This is totally gay/lamo, but necessary.
-	//       For each node type that you want to be
-	//       able to visit via enter/leave, you have 
-	//       to define a macro for the node type here.
-	//       If only we could use opC++ to write the
-	//       opC++ compiler!!  :( 
+    /*=== get ===*/
 
-	DECLARE_VISIT(opNode)
-	DECLARE_VISIT(CategoryNode)
-	DECLARE_VISIT(EnumerationNode)
-	DECLARE_VISIT(NoteDefinitionNode)
-	DECLARE_VISIT(FileDeclarationNode)
-	DECLARE_VISIT(ExtensionNode)
-	DECLARE_VISIT(ExtensionPointNode)
-	DECLARE_VISIT(ExtendPointNode)
+    void SetFailed(bool inbool) { bFailed = inbool; }
 
-	/*=== get ===*/
+    bool Failed() const { return bFailed; }
 
-	void SetFailed(bool inbool)
-	{
-		bFailed = inbool;
-	}
+   private:
+    /*=== data ===*/
 
-	bool Failed() const
-	{
-		return bFailed;
-	}
-
-private:
-
-	/*=== data ===*/
-
-	bool bFailed;
+    bool bFailed;
 };
 
-} // end namespace visitors
+}  // end namespace visitors

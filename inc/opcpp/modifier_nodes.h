@@ -11,254 +11,209 @@
 /// Modifier node header.
 ///****************************************************************
 
-namespace nodes
-{
+namespace nodes {
 
 ///
 /// ModifiersBase
 ///
 
-class ModifiersBase : public opNode
-{
-public:
-	DECLARE_NODE(ModifiersBase,opNode,T_UNKNOWN);
-	
-	/*=== utility ===*/
+class ModifiersBase : public opNode {
+   public:
+    DECLARE_NODE(ModifiersBase, opNode, T_UNKNOWN);
 
-	void AddModifier(opNode* innode)
-	{
-		Modifiers.push_back(innode);
-	}
-	
-	/**** printing ****/
+    /*=== utility ===*/
 
-	void PrintNode(opFileStream& stream)
-	{
-		PrintNodeChildren(stream);
-	}
+    void AddModifier(opNode* innode) { Modifiers.push_back(innode); }
 
-	void PrintOriginal(opSectionStream& stream)
-	{
-		PrintOriginalChildren(stream);
-	}
-	
-	/**** queries ****/
-	
-	bool			    HasModifier(const opString& modifiername);
-	bool			    HasModifier(Token modifiertoken);
-	TerminalNode*	    FindModifier(Token modifiertoken);
-	ValuedModifierNode* GetValuedModifier(const opString& modifiername);
-	void			    BuildValueModifiers(vector<ValuedModifierNode*>& modifierlist);
+    /**** printing ****/
 
-	opNode*			   GetModifier(Token modtoken);
+    void PrintNode(opFileStream& stream) { PrintNodeChildren(stream); }
 
-	bool PostProcess()
-	{
-		return true;
-	}
-	
-	void CloneNode(ModifiersBase* node)
-	{
-		int num = (int)Modifiers.size();
-		for(int i = 0; i < num; i++)
-		{
-			stacked<opNode> mod = Modifiers[i]->CloneGeneric();
-			node->AddModifier(*mod);
-			node->AppendNode(mod);
-		}
-	}
+    void PrintOriginal(opSectionStream& stream) {
+        PrintOriginalChildren(stream);
+    }
 
-private:
-	vector<opNode*> Modifiers;
+    /**** queries ****/
+
+    bool HasModifier(const opString& modifiername);
+    bool HasModifier(Token modifiertoken);
+    TerminalNode* FindModifier(Token modifiertoken);
+    ValuedModifierNode* GetValuedModifier(const opString& modifiername);
+    void BuildValueModifiers(vector<ValuedModifierNode*>& modifierlist);
+
+    opNode* GetModifier(Token modtoken);
+
+    bool PostProcess() { return true; }
+
+    void CloneNode(ModifiersBase* node) {
+        int num = (int)Modifiers.size();
+        for (int i = 0; i < num; i++) {
+            stacked<opNode> mod = Modifiers[i]->CloneGeneric();
+            node->AddModifier(*mod);
+            node->AppendNode(mod);
+        }
+    }
+
+   private:
+    vector<opNode*> Modifiers;
 };
 
 ///
 /// ModifiersNode
 ///
 
-class ModifiersNode : public ModifiersBase
-{
-public:
-	DECLARE_NODE(ModifiersNode,ModifiersBase,G_MODIFIERS);
+class ModifiersNode : public ModifiersBase {
+   public:
+    DECLARE_NODE(ModifiersNode, ModifiersBase, G_MODIFIERS);
 
-	/*=== validation ===*/
+    /*=== validation ===*/
 
-	void CheckFunctionModifiers();
-	void CheckDataModifiers();
+    void CheckFunctionModifiers();
+    void CheckDataModifiers();
 
-	/*=== printing ===*/
+    /*=== printing ===*/
 
-	void PrintString(opString& s)
-	{
-		PrintStringChildren(s);
-	}
+    void PrintString(opString& s) { PrintStringChildren(s); }
 
-	void PrintBuiltIn(opSectionStream& stream);
-	void PrintBuiltInReturnArgument(opString& s);
-	void PrintBuiltInArgument(opString& s);
-	void PrintBuiltInSource(opSectionStream& stream);
+    void PrintBuiltIn(opSectionStream& stream);
+    void PrintBuiltInReturnArgument(opString& s);
+    void PrintBuiltInArgument(opString& s);
+    void PrintBuiltInSource(opSectionStream& stream);
 
-	opString ErrorName() { return ""; }
+    opString ErrorName() { return ""; }
 };
 
 ///
 /// AutoModifiersNode
 ///
 
-class AutoModifiersNode : public ModifiersNode
-{
-public:
-	DECLARE_NODE(AutoModifiersNode,ModifiersNode,G_AUTO_MODIFIERS);
+class AutoModifiersNode : public ModifiersNode {
+   public:
+    DECLARE_NODE(AutoModifiersNode, ModifiersNode, G_AUTO_MODIFIERS);
 };
 
-class ModifierSupportBase
-{
-public:
-	void InitModifierSupport()
-	{
-		modifiers = NULL;
-		automodifiers = NULL;
-	}
-	
-	void SetModifiers(ModifiersNode* innode)
-	{
-		modifiers = innode;
-	}
-	
-	ModifiersNode* GetModifiers()
-	{
-		return modifiers;
-	}
-	
-	void SetAutoModifiers(AutoModifiersNode* node)
-	{
-		automodifiers = node;
-	}
-	
-	AutoModifiersNode* GetAutoModifiers()
-	{
-		return automodifiers;
-	}
-	
-	TerminalNode*		AddBasicModifier(const opString& modifiername, Token token);
-	ValuedModifierNode*	AddValueModifier(const opString& modifiername);
-	
-	virtual bool			    HasModifier(const opString& modifiername)	   = NULL;
-	virtual bool			    HasModifier(Token modifiertoken)				   = NULL;
-	virtual ValuedModifierNode* GetValuedModifier(const opString& modifiername) = NULL;
-	
-protected:
-	virtual void CreateModifiersNode() = NULL;
-	
-	ModifiersNode*		modifiers;
-	AutoModifiersNode*  automodifiers;
-	
-public:
-	// you must fetch modifier values using this, it runs through a cached map structure
-	opNode* FetchModifier(const opString& modifiername)
-	{
-		ModifierMap::iterator end = ModifierGenerators.end();
+class ModifierSupportBase {
+   public:
+    void InitModifierSupport() {
+        modifiers = NULL;
+        automodifiers = NULL;
+    }
 
-		ModifierMap::iterator found = ModifierGenerators.Find(modifiername);
+    void SetModifiers(ModifiersNode* innode) { modifiers = innode; }
 
-		if(found != end)
-		{
-			if((*found).second.CachedModifier != NULL)
-				return (*found).second.CachedModifier;
+    ModifiersNode* GetModifiers() { return modifiers; }
 
-			//get the result from the generate modifier delegate
-			opNode* result = (*found).second.GenerateModifier(modifiername);
+    void SetAutoModifiers(AutoModifiersNode* node) { automodifiers = node; }
 
-			(*found).second.CachedModifier = result;
+    AutoModifiersNode* GetAutoModifiers() { return automodifiers; }
 
-			return result;
-		}
+    TerminalNode* AddBasicModifier(const opString& modifiername, Token token);
+    ValuedModifierNode* AddValueModifier(const opString& modifiername);
 
-		return NULL;
-	}
-	
-	//attempt to cache all modifiers
-	void FetchAllModifiers()
-	{
-		ModifierMap::iterator it = ModifierGenerators.begin();
-		ModifierMap::iterator end = ModifierGenerators.end();
+    virtual bool HasModifier(const opString& modifiername) = NULL;
+    virtual bool HasModifier(Token modifiertoken) = NULL;
+    virtual ValuedModifierNode* GetValuedModifier(
+        const opString& modifiername) = NULL;
 
-		while(it != end)
-		{
-			if((*it).second.CachedModifier != NULL)
-			{
-				++it;			
-				continue;
-			}
+   protected:
+    virtual void CreateModifiersNode() = NULL;
 
-			const opString& modifiername = (*it).first;
+    ModifiersNode* modifiers;
+    AutoModifiersNode* automodifiers;
 
-			//get the result from the generate modifier delegate
-			opNode* result = (*it).second.GenerateModifier( modifiername );
+   public:
+    // you must fetch modifier values using this, it runs through a cached map
+    // structure
+    opNode* FetchModifier(const opString& modifiername) {
+        ModifierMap::iterator end = ModifierGenerators.end();
 
-			(*it).second.CachedModifier = result;
-			
-			++it;
-		}
-	}
+        ModifierMap::iterator found = ModifierGenerators.Find(modifiername);
 
-	ValuedModifierNode* FetchValueModifier(const opString& modifiername)
-	{
-		opNode* node = FetchModifier(modifiername);
+        if (found != end) {
+            if ((*found).second.CachedModifier != NULL)
+                return (*found).second.CachedModifier;
 
-		return node_cast<ValuedModifierNode>(node);
-	}
-	
-	TerminalNode* FetchBasicModifier(const opString& modifiername)
-	{
-		opNode* node = FetchModifier(modifiername);
+            // get the result from the generate modifier delegate
+            opNode* result = (*found).second.GenerateModifier(modifiername);
 
-		return node_cast<TerminalNode>(node);
-	}
+            (*found).second.CachedModifier = result;
 
-protected:
-	// you must register each modifier we want to generate with this
-	void RegisterModifier(const opString& modifiername, const ModifierDelegate& generator)
-	{
-		assert(!generator.empty());
+            return result;
+        }
 
-		ModifierGenerators.Insert(modifiername,generator);
-	}
+        return NULL;
+    }
 
-	void RegisterBasicModifier(const opString& modifiername)
-	{
-		// ModifierDelegate modifier(this,&ModifierSupportBase::ModifierBasic);
+    // attempt to cache all modifiers
+    void FetchAllModifiers() {
+        ModifierMap::iterator it = ModifierGenerators.begin();
+        ModifierMap::iterator end = ModifierGenerators.end();
+
+        while (it != end) {
+            if ((*it).second.CachedModifier != NULL) {
+                ++it;
+                continue;
+            }
+
+            const opString& modifiername = (*it).first;
+
+            // get the result from the generate modifier delegate
+            opNode* result = (*it).second.GenerateModifier(modifiername);
+
+            (*it).second.CachedModifier = result;
+
+            ++it;
+        }
+    }
+
+    ValuedModifierNode* FetchValueModifier(const opString& modifiername) {
+        opNode* node = FetchModifier(modifiername);
+
+        return node_cast<ValuedModifierNode>(node);
+    }
+
+    TerminalNode* FetchBasicModifier(const opString& modifiername) {
+        opNode* node = FetchModifier(modifiername);
+
+        return node_cast<TerminalNode>(node);
+    }
+
+   protected:
+    // you must register each modifier we want to generate with this
+    void RegisterModifier(const opString& modifiername,
+                          const ModifierDelegate& generator) {
+        assert(!generator.empty());
+
+        ModifierGenerators.Insert(modifiername, generator);
+    }
+
+    void RegisterBasicModifier(const opString& modifiername) {
+        // ModifierDelegate modifier(this,&ModifierSupportBase::ModifierBasic);
         // kevin: hacked to use boost::bind here ..
-		RegisterModifier(modifiername,
-                         boost::bind(&ModifierSupportBase::ModifierBasic, this, _1));
-	}
+        RegisterModifier(
+            modifiername,
+            boost::bind(&ModifierSupportBase::ModifierBasic, this, _1));
+    }
 
-	opNode* ModifierBasic(const opString& name)
-	{
-		return AddBasicModifier(name,T_MODIFIER);
-	}
+    opNode* ModifierBasic(const opString& name) {
+        return AddBasicModifier(name, T_MODIFIER);
+    }
 
-protected:
-	struct ModifierCache
-	{
-		ModifierCache()
-		{
-			CachedModifier = NULL;
-		}
+   protected:
+    struct ModifierCache {
+        ModifierCache() { CachedModifier = NULL; }
 
-		ModifierCache(const ModifierDelegate& delegate)
-		{
-			GenerateModifier = delegate;
-			CachedModifier = NULL;
-		}
+        ModifierCache(const ModifierDelegate& delegate) {
+            GenerateModifier = delegate;
+            CachedModifier = NULL;
+        }
 
-		ModifierDelegate GenerateModifier;
-		opNode*          CachedModifier;
-	};
+        ModifierDelegate GenerateModifier;
+        opNode* CachedModifier;
+    };
 
-	typedef opMap< opString, ModifierCache > ModifierMap;
-	ModifierMap								 ModifierGenerators;
+    typedef opMap<opString, ModifierCache> ModifierMap;
+    ModifierMap ModifierGenerators;
 };
 
-} // end of namespace nodes
-
+}  // end of namespace nodes

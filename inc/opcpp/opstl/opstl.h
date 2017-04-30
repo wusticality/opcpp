@@ -15,11 +15,9 @@
 
 #include "opcpp/opstl/array.h"
 #include "opcpp/opstl/deque.h"
-#include "opcpp/opstl/list.h"
 #include "opcpp/opstl/hash.h"
-#include "opcpp/opstl/set.h"
+#include "opcpp/opstl/list.h"
 #include "opcpp/opstl/map.h"
+#include "opcpp/opstl/set.h"
 #include "opcpp/opstl/string.h"
 #include "opcpp/opstl/wide_string.h"
-
-

@@ -11,78 +11,68 @@
 // Dialect-related visitors.
 //****************************************************************
 
-namespace visitors
-{
+namespace visitors {
 
 //==========================================
 // DialectRegistrationVisitor
 //==========================================
 
-class DialectRegistrationVisitor : public opVisitor
-{
-public:
+class DialectRegistrationVisitor : public opVisitor {
+   public:
+    /*=== visiting methods ===*/
 
-	/*=== visiting methods ===*/
+    // enter a category
+    bool enter(CategoryNode* node) {
+        DialectCategory* categoryinfo = DialectTracker::Register(node);
 
-	// enter a category
-	bool enter(CategoryNode* node)
-	{
-		DialectCategory* categoryinfo = DialectTracker::Register(node);
+        node->GetBody()->Register(categoryinfo);
 
-		node->GetBody()->Register(categoryinfo);
+        return false;
+    }
 
-		return false;
-	}
+    // enter an enumeration
+    bool enter(EnumerationNode* node) {
+        DialectEnumeration* enuminfo = DialectTracker::Register(node);
 
-	// enter an enumeration
-	bool enter(EnumerationNode* node)
-	{
-		DialectEnumeration* enuminfo = DialectTracker::Register(node);
+        node->GetBody()->Register(enuminfo);
 
-		node->GetBody()->Register(enuminfo);
+        return false;
+    }
 
-		return false;
-	}
+    // enter a note definition
+    bool enter(NoteDefinitionNode* node) {
+        DialectTracker::Register(node);
 
-	// enter a note definition
-	bool enter(NoteDefinitionNode* node)
-	{
-		DialectTracker::Register(node);
+        return true;
+    }
 
-		return true;
-	}
+    // enter a file declaration
+    bool enter(FileDeclarationNode* node) {
+        DialectTracker::Register(node);
 
-	// enter a file declaration
-	bool enter(FileDeclarationNode* node)
-	{
-		DialectTracker::Register(node);
+        return false;
+    }
 
-		return false;
-	}
+    // enter an extension
+    bool enter(ExtensionNode* node) {
+        DialectTracker::Register(node);
 
-	// enter an extension
-	bool enter(ExtensionNode* node)
-	{
-		DialectTracker::Register(node);
+        return false;
+    }
 
-		return false;
-	}
+    // enter an extension point
+    bool enter(ExtensionPointNode* node) {
+        DialectTracker::Register(node);
 
-	// enter an extension point
-	bool enter(ExtensionPointNode* node)
-	{
-		DialectTracker::Register(node);
+        return false;
+    }
 
-		return false;
-	}
+    // enter an extendpoint
+    bool enter(ExtendPointNode* node) {
+        DialectTracker::Register(node);
 
-	// enter an extendpoint 
-	bool enter(ExtendPointNode* node)
-	{
-		DialectTracker::Register(node);
-
-		return false;
-	}
+        return false;
+    }
 };
 
-} // end namespace visitors
+}  // end namespace visitors

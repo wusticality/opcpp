@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
 
-namespace delegates
-{
-    typedef boost::function< opNode* (const opString& modifiername) > ModifierDelegate;
+namespace delegates {
+typedef boost::function<opNode*(const opString& modifiername)> ModifierDelegate;
 }

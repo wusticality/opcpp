@@ -8,27 +8,25 @@
 ///
 /// Description:
 ///
-/// Configuration-related code. 
+/// Configuration-related code.
 ///****************************************************************
 
-//linux detection
-#if defined(__GNUC__) 
-	#define PLATFORM_LINUX
+// linux detection
+#if defined(__GNUC__)
+#define PLATFORM_LINUX
 #endif
 
-//windows detection
+// windows detection
 #if defined(WIN32) || defined(WIN64)
-	#define PLATFORM_WINDOWS
+#define PLATFORM_WINDOWS
 #endif
 
-//check for stuff
+// check for stuff
 #ifdef _INC_WINDOWS
-	#error dont use windows.h!
+#error dont use windows.h!
 #endif
 
-//special library settings
+// special library settings
 #ifdef PLATFORM_WINDOWS
-	#define BOOST_FILESYSTEM_NO_LIB
+#define BOOST_FILESYSTEM_NO_LIB
 #endif
-
-

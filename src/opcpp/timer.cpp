@@ -13,9 +13,7 @@
 
 #include "opcpp/opcpp.h"
 
-namespace timing
-{
-	double		  opTimer::invtimerfrequency;
-	unsigned long opTimer::timerstart;
-} // end namespace timing
-
+namespace timing {
+double opTimer::invtimerfrequency;
+unsigned long opTimer::timerstart;
+}  // end namespace timing

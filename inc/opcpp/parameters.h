@@ -14,8 +14,7 @@
 class opDriver;
 class Globber;
 
-namespace parameters
-{
+namespace parameters {
 
 class opParameters;
 
@@ -23,411 +22,317 @@ class opParameters;
 /// opOption
 ///==========================================
 
-//TODO: we need a validation phase for these,
+// TODO: we need a validation phase for these,
 //		which treats each option type as
-//		its own grammar - we may need more type 
+//		its own grammar - we may need more type
 //		options (template types?) at that point
 
 // Base option type.
-class opOption
-{
-public:
-	/**** construction / destruction ****/
+class opOption {
+   public:
+    /**** construction / destruction ****/
 
-	opOption(const opString& name, const opString& description, bool hidden);
-	~opOption() {}
+    opOption(const opString& name, const opString& description, bool hidden);
+    ~opOption() {}
 
-	/**** get ****/
+    /**** get ****/
 
-	const opString& GetName() const
-	{
-		return Name;
-	}
+    const opString& GetName() const { return Name; }
 
-	const opString& GetDescription() const
-	{
-		return Description;
-	}
+    const opString& GetDescription() const { return Description; }
 
-	bool GetUsed() const
-	{
-		return bUsed;
-	}	
+    bool GetUsed() const { return bUsed; }
 
-	bool GetHidden() const
-	{
-		return bHidden;
-	}
+    bool GetHidden() const { return bHidden; }
 
-protected:
-	virtual bool HasArgument() = NULL;
-	
-	//bool version
-	virtual void UsedOption() = NULL;
+   protected:
+    virtual bool HasArgument() = NULL;
 
-	//string version
-	virtual void UsedOption(const opString& arg) = NULL;
+    // bool version
+    virtual void UsedOption() = NULL;
 
-	void SetUsed(bool bused)
-	{
-		bUsed = bused;
-	}
-	
-	friend class opParameters;
+    // string version
+    virtual void UsedOption(const opString& arg) = NULL;
 
-private:
-	const opString Name;
-	const opString Description;
-	const bool     bHidden;
-	bool	       bUsed;
+    void SetUsed(bool bused) { bUsed = bused; }
+
+    friend class opParameters;
+
+   private:
+    const opString Name;
+    const opString Description;
+    const bool bHidden;
+    bool bUsed;
 };
 
 //==========================================
 // opBoolOption
 //==========================================
 
-class opBoolOption : public opOption
-{
-public:
-	/**** construction / destruction ****/
+class opBoolOption : public opOption {
+   public:
+    /**** construction / destruction ****/
 
-	opBoolOption(const opString& name, const opString& description, bool hidden = false, bool defaultvalue = false);
+    opBoolOption(const opString& name, const opString& description,
+                 bool hidden = false, bool defaultvalue = false);
 
-	/**** get ****/
-	
-	bool GetValue() const
-	{
-		return Value;
-	}
+    /**** get ****/
 
-	operator bool() const
-	{
-		return Value;
-	}
+    bool GetValue() const { return Value; }
 
-	bool operator = (bool newval)
-	{
-		Value = newval;
-		return Value;
-	}
+    operator bool() const { return Value; }
 
-protected:
+    bool operator=(bool newval) {
+        Value = newval;
+        return Value;
+    }
 
-	/**** used option ****/
+   protected:
+    /**** used option ****/
 
-	bool HasArgument()
-	{
-		return false;
-	}
+    bool HasArgument() { return false; }
 
-	void UsedOption()
-	{
-		SetUsed(true);
-		Value = !DefaultValue;
-	}
+    void UsedOption() {
+        SetUsed(true);
+        Value = !DefaultValue;
+    }
 
-	void UsedOption(const opString& arg)
-	{
-		ABSTRACT_FUNCTION;
-	}
+    void UsedOption(const opString& arg) { ABSTRACT_FUNCTION; }
 
-private:
-	bool DefaultValue;
-	bool Value;
+   private:
+    bool DefaultValue;
+    bool Value;
 };
 
 // List of values option.
-class opListOption : public opOption
-{
-public:
-	/**** construction / destruction ****/
+class opListOption : public opOption {
+   public:
+    /**** construction / destruction ****/
 
-	opListOption(const opString& name, const opString& description, bool hidden = false);
+    opListOption(const opString& name, const opString& description,
+                 bool hidden = false);
 
-	/**** typedefs ****/
+    /**** typedefs ****/
 
-	typedef vector<opString>			ValueType;
-	typedef ValueType::iterator			iterator;
-	typedef ValueType::const_iterator	const_iterator;
+    typedef vector<opString> ValueType;
+    typedef ValueType::iterator iterator;
+    typedef ValueType::const_iterator const_iterator;
 
-	/**** get ****/
+    /**** get ****/
 
-	const vector<opString>& GetValues() const
-	{
-		return Values;
-	}
+    const vector<opString>& GetValues() const { return Values; }
 
-	bool FindValue(const opString& s) const
-	{
-		return find(Values.begin(),Values.end(),s) != Values.end();
-	}
+    bool FindValue(const opString& s) const {
+        return find(Values.begin(), Values.end(), s) != Values.end();
+    }
 
-	/**** modify ****/
-		
-	void AddValue(const opString& s)
-	{
-		Values.push_back(s);
-	}
+    /**** modify ****/
 
-	/**** easy access ****/
+    void AddValue(const opString& s) { Values.push_back(s); }
 
-	int size() const
-	{
-		return (int)Values.size();
-	}
+    /**** easy access ****/
 
-	const_iterator begin() const
-	{
-		return Values.begin();
-	}
+    int size() const { return (int)Values.size(); }
 
-	const_iterator end() const
-	{
-		return Values.end();
-	}
+    const_iterator begin() const { return Values.begin(); }
 
-	const opString& operator[](int index) const
-	{
-		return Values[index];
-	}
+    const_iterator end() const { return Values.end(); }
 
-protected:
+    const opString& operator[](int index) const { return Values[index]; }
 
-	/**** used option ****/
+   protected:
+    /**** used option ****/
 
-	bool HasArgument()
-	{
-		return true;
-	}
+    bool HasArgument() { return true; }
 
-	void UsedOption()
-	{
-		ABSTRACT_FUNCTION;
-	}
+    void UsedOption() { ABSTRACT_FUNCTION; }
 
-	void UsedOption(const opString& arg)
-	{
-		SetUsed(true);
-		
-		//Tokenize adds, doesn't clear
-		arg.Tokenize(",",Values);
-	}
+    void UsedOption(const opString& arg) {
+        SetUsed(true);
 
-private:
-	vector<opString> Values;
+        // Tokenize adds, doesn't clear
+        arg.Tokenize(",", Values);
+    }
+
+   private:
+    vector<opString> Values;
 };
 
 //==========================================
 // opStringOption
 //==========================================
 
-class opStringOption : public opOption
-{
-public:
-	opStringOption(const opString& name, const opString& description, bool hidden, const opString& defaultvalue);
-	
-	/**** get ****/
+class opStringOption : public opOption {
+   public:
+    opStringOption(const opString& name, const opString& description,
+                   bool hidden, const opString& defaultvalue);
 
-	const opString& GetValue() const
-	{
-		return Value;
-	}
+    /**** get ****/
 
-	const string& GetString() const
-	{
-		return Value.GetString();
-	}
+    const opString& GetValue() const { return Value; }
 
-	opString operator = (const opString& newval)
-	{
-		Value = newval;
-		return Value;
-	}
+    const string& GetString() const { return Value.GetString(); }
 
-protected:
+    opString operator=(const opString& newval) {
+        Value = newval;
+        return Value;
+    }
 
-	/**** used option ****/
+   protected:
+    /**** used option ****/
 
-	bool HasArgument()
-	{
-		return true;
-	}
+    bool HasArgument() { return true; }
 
-	void UsedOption()
-	{
-		ABSTRACT_FUNCTION;
-	}
+    void UsedOption() { ABSTRACT_FUNCTION; }
 
-	void UsedOption(const opString& arg)
-	{
-		SetUsed(true);
-		Value = arg;
-	}
+    void UsedOption(const opString& arg) {
+        SetUsed(true);
+        Value = arg;
+    }
 
-private:
-	opString Value;
+   private:
+    opString Value;
 };
 
 //==========================================
 // opIntOption
 //==========================================
 
-class opIntOption : public opOption
-{
-public:
-	opIntOption(const opString& name, const opString& description, bool hidden, int defaultvalue);
+class opIntOption : public opOption {
+   public:
+    opIntOption(const opString& name, const opString& description, bool hidden,
+                int defaultvalue);
 
-	/**** get ****/
+    /**** get ****/
 
-	int GetValue() const
-	{
-		return Value;
-	}
+    int GetValue() const { return Value; }
 
-	int operator = (int newval)
-	{
-		Value = newval;
-		return Value;
-	}
+    int operator=(int newval) {
+        Value = newval;
+        return Value;
+    }
 
-protected:
+   protected:
+    /**** used option ****/
 
-	/**** used option ****/
+    bool HasArgument() { return true; }
 
-	bool HasArgument()
-	{
-		return true;
-	}
+    void UsedOption() { ABSTRACT_FUNCTION; }
 
-	void UsedOption()
-	{
-		ABSTRACT_FUNCTION;
-	}
+    void UsedOption(const opString& arg) {
+        SetUsed(true);
+        ArgumentValue = arg;
+        Value = ArgumentValue.ToInt();
+    }
 
-	void UsedOption(const opString& arg)
-	{
-		SetUsed(true);
-		ArgumentValue = arg;
-		Value = ArgumentValue.ToInt();
-	}
-
-private:
-	opString ArgumentValue;
-	int Value;
+   private:
+    opString ArgumentValue;
+    int Value;
 };
 
 ///==========================================
 /// opParameters
 ///==========================================
 
-class opParameters
-{
-	friend class opDriver;
-	friend class lobber;
+class opParameters {
+    friend class opDriver;
+    friend class lobber;
 
-public:
-	/**** singleton stuff ****/
+   public:
+    /**** singleton stuff ****/
 
-	static const opParameters& Get();
-	
-	//TODO: make writable very inaccessible
-	static opParameters&       GetWritable();
+    static const opParameters& Get();
 
-	static void Destroy();
+    // TODO: make writable very inaccessible
+    static opParameters& GetWritable();
 
-	/**** startup ****/
+    static void Destroy();
 
-	// read command-line arguments (Params)
-	void Init(const vector<opString>& params);
+    /**** startup ****/
 
-	// parse command-line options (pre-dialect reading)
-	bool Parse();
+    // read command-line arguments (Params)
+    void Init(const vector<opString>& params);
 
-	// validate command-line options (post-dialect reading)
-	bool Validate();
+    // parse command-line options (pre-dialect reading)
+    bool Parse();
 
-	//should only be called once from opDriver
-	static bool ValidateParameters()
-	{
-		return GetWritable().Validate();
-	}
+    // validate command-line options (post-dialect reading)
+    bool Validate();
 
-private:
-	/**** private construction / destruction ****/
+    // should only be called once from opDriver
+    static bool ValidateParameters() { return GetWritable().Validate(); }
 
-	opParameters();
+   private:
+    /**** private construction / destruction ****/
 
-	~opParameters();
+    opParameters();
 
-	/**** internal functions ****/
+    ~opParameters();
 
-	void PrintSyntax();
+    /**** internal functions ****/
 
-	/**** set ****/
+    void PrintSyntax();
 
-	bool SetParameter(const opString& optionname);
+    /**** set ****/
 
-	bool SetParameter(const opString& optionname, const opString& value);
+    bool SetParameter(const opString& optionname);
 
-public:
+    bool SetParameter(const opString& optionname, const opString& value);
 
-	/**** get ****/
+   public:
+    /**** get ****/
 
-	opOption* GetOption(const opString& optionname);
+    opOption* GetOption(const opString& optionname);
 
-	opString GetCommandLineString() const;
+    opString GetCommandLineString() const;
 
-	/**** data ****/
+    /**** data ****/
 
-	vector<opString> Params;
+    vector<opString> Params;
 
-	/*=== normal options ===*/
+    /*=== normal options ===*/
 
-	opBoolOption    Version;
-	opStringOption  License;
-	opListOption    Files;
-	opListOption	Directories;
-	opListOption	FileDirectories;
-	opStringOption  GeneratedDirectory;
-	opListOption	Dialects;
-	opBoolOption	GlobMode;
-	opBoolOption	CleanMode; 
-	opBoolOption	Verbose;
-	opBoolOption    Diagnostics;
-	opBoolOption	Silent;
-	opBoolOption	Force;
-	opBoolOption	NoDebug;
-	opBoolOption    Compact;
-	opBoolOption	NoStandardIncludes;
-	opBoolOption	InlineAll;
-	opBoolOption	Ghosts;
-	opBoolOption    Highlighting; 
-	opBoolOption	Notations;
-	opBoolOption    PrintXml;
-	opIntOption		OPMacroExpansionDepth;	
-	opBoolOption    FixedSys;
-	opListOption	Depend;
+    opBoolOption Version;
+    opStringOption License;
+    opListOption Files;
+    opListOption Directories;
+    opListOption FileDirectories;
+    opStringOption GeneratedDirectory;
+    opListOption Dialects;
+    opBoolOption GlobMode;
+    opBoolOption CleanMode;
+    opBoolOption Verbose;
+    opBoolOption Diagnostics;
+    opBoolOption Silent;
+    opBoolOption Force;
+    opBoolOption NoDebug;
+    opBoolOption Compact;
+    opBoolOption NoStandardIncludes;
+    opBoolOption InlineAll;
+    opBoolOption Ghosts;
+    opBoolOption Highlighting;
+    opBoolOption Notations;
+    opBoolOption PrintXml;
+    opIntOption OPMacroExpansionDepth;
+    opBoolOption FixedSys;
+    opListOption Depend;
 
-	/*=== debug options (these options are hidden) ===*/
+    /*=== debug options (these options are hidden) ===*/
 
-	opBoolOption	PrintTree;
-	opBoolOption	PrintFullTree;
-	bool			NormalMode;
-	opBoolOption    DeveloperMode;
+    opBoolOption PrintTree;
+    opBoolOption PrintFullTree;
+    bool NormalMode;
+    opBoolOption DeveloperMode;
 
-private:
+   private:
+    friend class opOption;
 
-	friend class opOption;
+    static void AddOption(opOption* option) { Options.push_back(option); }
 
-	static void AddOption(opOption* option)
-	{
-		Options.push_back(option);
-	}
+    // initialization ordering may be a problem on linux?
+    static vector<opOption*> Options;
 
-	//initialization ordering may be a problem on linux?
-	static vector<opOption*> Options;
-
-	static opParameters* Instance;
+    static opParameters* Instance;
 };
 
-} // end namespace parameters
+}  // end namespace parameters

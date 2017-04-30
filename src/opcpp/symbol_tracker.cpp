@@ -17,21 +17,19 @@
 /// opSymbolTracker
 ///==========================================
 
-void opSymbolTracker::Register(OPMacroNode* innode)
-{
-	opString keystring = innode->GetSignature();
-	
-	//just to make sure we have newer opmacros replace already defined ones
-	//we may want to allow some control of this behavior
-	OPMacrosTable.Erase(keystring);
-	OPMacrosTable.Insert(keystring, innode);
+void opSymbolTracker::Register(OPMacroNode* innode) {
+    opString keystring = innode->GetSignature();
+
+    // just to make sure we have newer opmacros replace already defined ones
+    // we may want to allow some control of this behavior
+    OPMacrosTable.Erase(keystring);
+    OPMacrosTable.Insert(keystring, innode);
 }
 
-OPMacroNode* opSymbolTracker::OPMacroRegistered(const opString& signature)
-{
-	OPMacroNode* result = NULL;
+OPMacroNode* opSymbolTracker::OPMacroRegistered(const opString& signature) {
+    OPMacroNode* result = NULL;
 
-	OPMacrosTable.Find(signature, result);
+    OPMacrosTable.Find(signature, result);
 
-	return result;
+    return result;
 }

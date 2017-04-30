@@ -11,29 +11,26 @@
 /// This header contains various inline methods.
 ///****************************************************************
 
-//printing for opNode
-inline opStringStream& operator << (opStringStream &oin, TerminalNode* node)
-{
-	Token id = node->GetId();
+// printing for opNode
+inline opStringStream& operator<<(opStringStream& oin, TerminalNode* node) {
+    Token id = node->GetId();
 
-	// handle compact mode and force comments
-	if ( (id == T_COMMENT || id == T_CCOMMENT) 
-	&&   opParameters::Get().Compact 
-	&&   !opStringStream::GetForceComments() )
-	{
-		return oin;
-	}
+    // handle compact mode and force comments
+    if ((id == T_COMMENT || id == T_CCOMMENT) && opParameters::Get().Compact &&
+        !opStringStream::GetForceComments()) {
+        return oin;
+    }
 
-	oin.NoteLineNumber(node->GetFile(), node->GetLine());
-	oin << node->GetValue();
+    oin.NoteLineNumber(node->GetFile(), node->GetLine());
+    oin << node->GetValue();
 
-	return oin;
+    return oin;
 }
 
-template<>
-inline FileWriteStream& operator << <endlinestruct> (FileWriteStream& stream, const endlinestruct&)
-{
-	stream.Write('\n');
+template <>
+inline FileWriteStream& operator<<<endlinestruct>(FileWriteStream& stream,
+                                                  const endlinestruct&) {
+    stream.Write('\n');
 
-	return stream;
+    return stream;
 }

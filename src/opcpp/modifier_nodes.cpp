@@ -18,677 +18,703 @@
 ///
 
 // has a basic modifier? by token
-bool ModifiersBase::HasModifier(Token tok)
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
+bool ModifiersBase::HasModifier(Token tok) {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
 
-	while (i != end)
-	{
-		if (i->GetId() == tok)
-			return true;
+    while (i != end) {
+        if (i->GetId() == tok) return true;
 
-		++i;
-	}
+        ++i;
+    }
 
-	return false;
+    return false;
 }
 
 // has a basic modifier? by string
-bool ModifiersBase::HasModifier(const opString& modifiername)
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
+bool ModifiersBase::HasModifier(const opString& modifiername) {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
 
-	while (i != end)
-	{
-		if ( TerminalNode* node = node_cast<TerminalNode>(*i) )
-		{
-			if(node->GetValue() == modifiername)
-				return true;
-		}
+    while (i != end) {
+        if (TerminalNode* node = node_cast<TerminalNode>(*i)) {
+            if (node->GetValue() == modifiername) return true;
+        }
 
-		++i;
-	}
+        ++i;
+    }
 
-	return false;
+    return false;
 }
 
-TerminalNode* ModifiersBase::FindModifier(Token modifiertoken)
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
+TerminalNode* ModifiersBase::FindModifier(Token modifiertoken) {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
 
-	while (i != end)
-	{
-		if (i->GetId() == modifiertoken)
-			return node_cast<TerminalNode>(*i);
+    while (i != end) {
+        if (i->GetId() == modifiertoken) return node_cast<TerminalNode>(*i);
 
-		++i;
-	}
+        ++i;
+    }
 
-	return NULL;
+    return NULL;
 }
 
-opNode* ModifiersBase::GetModifier(Token modifiertoken)
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
+opNode* ModifiersBase::GetModifier(Token modifiertoken) {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
 
-	while (i != end)
-	{
-		if (i->GetId() == modifiertoken)
-			return *i;
+    while (i != end) {
+        if (i->GetId() == modifiertoken) return *i;
 
-		++i;
-	}
+        ++i;
+    }
 
-	return NULL;
+    return NULL;
 }
 
-ValuedModifierNode* ModifiersBase::GetValuedModifier(const opString& modifiername)
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
-	
-	while (i != end)
-	{
-		if (ValuedModifierNode* valmod = node_cast<ValuedModifierNode>(*i))
-		{
-			if(valmod->GetModifier()->GetValue() == modifiername)
-				return valmod;
-		}
+ValuedModifierNode* ModifiersBase::GetValuedModifier(
+    const opString& modifiername) {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
 
-		++i;
-	}
+    while (i != end) {
+        if (ValuedModifierNode* valmod = node_cast<ValuedModifierNode>(*i)) {
+            if (valmod->GetModifier()->GetValue() == modifiername)
+                return valmod;
+        }
 
-	return NULL;
+        ++i;
+    }
+
+    return NULL;
 }
 
-void ModifiersBase::BuildValueModifiers(vector<ValuedModifierNode*>& modifierlist)
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
+void ModifiersBase::BuildValueModifiers(
+    vector<ValuedModifierNode*>& modifierlist) {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
 
-	while (i != end)
-	{
-		if (ValuedModifierNode* valmod = node_cast<ValuedModifierNode>(*i))
-		{
-			modifierlist.push_back(valmod);
-		}
+    while (i != end) {
+        if (ValuedModifierNode* valmod = node_cast<ValuedModifierNode>(*i)) {
+            modifierlist.push_back(valmod);
+        }
 
-		++i;
-	}
+        ++i;
+    }
 }
 
 ///
 /// ModifiersNode
 ///
 
-void ModifiersNode::CheckDataModifiers()
-{
-	ResetPosition();
+void ModifiersNode::CheckDataModifiers() {
+    ResetPosition();
 
-	while(GetPosition() != GetEnd())
-	{
-		opNode* node = CurrentNode();
+    while (GetPosition() != GetEnd()) {
+        opNode* node = CurrentNode();
 
-		if(ValuedModifierNode* newnode = node_cast<ValuedModifierNode>(node))
-		{
-			//make sure its a valid value data modifier
-			opString name = newnode->GetModifier()->GetValue();
+        if (ValuedModifierNode* newnode = node_cast<ValuedModifierNode>(node)) {
+            // make sure its a valid value data modifier
+            opString name = newnode->GetModifier()->GetValue();
 
-			DialectCategory* category = FindParent<OPObjectNode>()->GetCategorySettings();
+            DialectCategory* category =
+                FindParent<OPObjectNode>()->GetCategorySettings();
 
-			DataModifierNode* modifier = category->FindValueDataModifier(name);
+            DataModifierNode* modifier = category->FindValueDataModifier(name);
 
-			//ask the modifier
-			if(!modifier)
-			{
-				opError::InvalidDataModifierError(newnode);
-				//GenericError("Not a data modifier (...)");
-			}
-			else if(modifier->GetArguments()->GetCondition())
-			{
-				opString stringvalue;
-				newnode->GetArguments()->PrintString(stringvalue);
+            // ask the modifier
+            if (!modifier) {
+                opError::InvalidDataModifierError(newnode);
+                // GenericError("Not a data modifier (...)");
+            } else if (modifier->GetArguments()->GetCondition()) {
+                opString stringvalue;
+                newnode->GetArguments()->PrintString(stringvalue);
 
-				opString pattern = modifier->GetArguments()->GetCondition()->GetValue();
-				pattern = pattern.Substring(1,pattern.Size()-1);
+                opString pattern =
+                    modifier->GetArguments()->GetCondition()->GetValue();
+                pattern = pattern.Substring(1, pattern.Size() - 1);
 
-				//check regex pattern!
-				if(!regex::Match(stringvalue,pattern,modifier))
-				{
-					//GenericError("Invalid data modifier value, pattern mismatch (" + pattern + ")");
-					opError::InvalidValueError(newnode,modifier);
-				}
-			}		
-		}
-		else if ( node->GetId() == T_MODIFIER )
-		{
-			//make sure its a valid data modifier
-			opString name = node->GetStringValue();
+                // check regex pattern!
+                if (!regex::Match(stringvalue, pattern, modifier)) {
+                    // GenericError("Invalid data modifier value, pattern
+                    // mismatch (" + pattern + ")");
+                    opError::InvalidValueError(newnode, modifier);
+                }
+            }
+        } else if (node->GetId() == T_MODIFIER) {
+            // make sure its a valid data modifier
+            opString name = node->GetStringValue();
 
-			DialectCategory* category = FindParent<OPObjectNode>()->GetCategorySettings();
+            DialectCategory* category =
+                FindParent<OPObjectNode>()->GetCategorySettings();
 
-			//ask the modifier
-			if(!category->FindDataModifier(name))
-			{
-				opError::InvalidDataModifierError(node);
-			}
-		}
-		else if ( node->GetId() == T_ID )
-		{
-			opError::InvalidDataModifierError(node);
-		}
+            // ask the modifier
+            if (!category->FindDataModifier(name)) {
+                opError::InvalidDataModifierError(node);
+            }
+        } else if (node->GetId() == T_ID) {
+            opError::InvalidDataModifierError(node);
+        }
 
-		IncrementPosition();
-	}
+        IncrementPosition();
+    }
 }
 
-void ModifiersNode::CheckFunctionModifiers()
-{
-	ResetPosition();
+void ModifiersNode::CheckFunctionModifiers() {
+    ResetPosition();
 
-	while(GetPosition() != GetEnd())
-	{
-		opNode* node = CurrentNode();
+    while (GetPosition() != GetEnd()) {
+        opNode* node = CurrentNode();
 
-		if(ValuedModifierNode* newnode = node_cast<ValuedModifierNode>(node))
-		{
-			//make sure its a valid value function modifier
-			opString name = newnode->GetModifier()->GetValue();
-			
-			DialectCategory* category = FindParent<OPObjectNode>()->GetCategorySettings();
-			
-			FunctionModifierNode* modifier = category->FindValueFunctionModifier(name);
-			//ask the modifier
-			if(!modifier)
-			{
-				opError::InvalidFunctionModifierError(newnode);
-			}
-			else if(modifier->GetArguments()->GetCondition())
-			{
-				opString stringvalue;
-				newnode->GetArguments()->PrintString(stringvalue);
+        if (ValuedModifierNode* newnode = node_cast<ValuedModifierNode>(node)) {
+            // make sure its a valid value function modifier
+            opString name = newnode->GetModifier()->GetValue();
 
-				opString pattern = modifier->GetArguments()->GetCondition()->GetValue();
-				pattern = pattern.Substring(1,pattern.Size()-1);
+            DialectCategory* category =
+                FindParent<OPObjectNode>()->GetCategorySettings();
 
-				//check regex pattern!
-				if(!regex::Match(stringvalue,pattern,modifier))
-				{
-					opError::InvalidValueError(newnode,modifier);
-				}
-			}
-		}
-		else if ( node->GetId() == T_MODIFIER )
-		{
-			//make sure its a valid function modifier
-			opString name = node->GetStringValue();
+            FunctionModifierNode* modifier =
+                category->FindValueFunctionModifier(name);
+            // ask the modifier
+            if (!modifier) {
+                opError::InvalidFunctionModifierError(newnode);
+            } else if (modifier->GetArguments()->GetCondition()) {
+                opString stringvalue;
+                newnode->GetArguments()->PrintString(stringvalue);
 
-			DialectCategory* category = FindParent<OPObjectNode>()->GetCategorySettings();
+                opString pattern =
+                    modifier->GetArguments()->GetCondition()->GetValue();
+                pattern = pattern.Substring(1, pattern.Size() - 1);
 
-			//ask the modifier
-			if(!category->FindFunctionModifier(name))
-			{
-				opError::InvalidFunctionModifierError(node);
-			}
-		}
-		else if ( node->GetId() == T_ID )
-		{
-			opError::InvalidFunctionModifierError(node);
-		}
+                // check regex pattern!
+                if (!regex::Match(stringvalue, pattern, modifier)) {
+                    opError::InvalidValueError(newnode, modifier);
+                }
+            }
+        } else if (node->GetId() == T_MODIFIER) {
+            // make sure its a valid function modifier
+            opString name = node->GetStringValue();
 
-		IncrementPosition();
-	}
+            DialectCategory* category =
+                FindParent<OPObjectNode>()->GetCategorySettings();
+
+            // ask the modifier
+            if (!category->FindFunctionModifier(name)) {
+                opError::InvalidFunctionModifierError(node);
+            }
+        } else if (node->GetId() == T_ID) {
+            opError::InvalidFunctionModifierError(node);
+        }
+
+        IncrementPosition();
+    }
 }
 
 //
 // StatementModifierBase
 //
 
-void StatementModifierBase::SetVisibilityMode(VisibilityMode mode)
-{
-	if(modifiers)
-	{
-		//if we have a visibility modifier, cache it for later
-		if(TerminalNode* modifier = modifiers->FindModifier(T_PUBLIC))
-			VisibilityModifier = modifier;
-		else if(TerminalNode* modifier = modifiers->FindModifier(T_PROTECTED))
-			VisibilityModifier = modifier;
-		else if(TerminalNode* modifier = modifiers->FindModifier(T_PRIVATE))
-			VisibilityModifier = modifier;
-	}
-	
-	if(!VisibilityModifier)
-	{
-		Token token;
-		opString value;
-		
-		//if not, create one using the mode.
-		if(mode == vismode_public)
-		{
-			token = T_PUBLIC;
-			value = "public";
-		}
-		else if(mode == vismode_protected)
-		{
-			token = T_PROTECTED;
-			value = "protected";
-		}
-		else if(mode == vismode_private)
-		{
-			token = T_PRIVATE;
-			value = "private";
-		}
-		else if(mode == vismode_default)
-		{
-			token = T_DEFAULT;
-			value = "default";
-		}
-		
-		VisibilityModifier = AddBasicModifier(value,token);
-	}
-	
-	//now create the automatic visibility_mode modifier
-	ValuedModifierNode* visibility_mode = AddValueModifier("visibility_mode");
-	
-	//set the argument value
-	stacked<TerminalNode> cloned = VisibilityModifier->Clone();
-	visibility_mode->GetArguments()->AppendNode(cloned);
+void StatementModifierBase::SetVisibilityMode(VisibilityMode mode) {
+    if (modifiers) {
+        // if we have a visibility modifier, cache it for later
+        if (TerminalNode* modifier = modifiers->FindModifier(T_PUBLIC))
+            VisibilityModifier = modifier;
+        else if (TerminalNode* modifier = modifiers->FindModifier(T_PROTECTED))
+            VisibilityModifier = modifier;
+        else if (TerminalNode* modifier = modifiers->FindModifier(T_PRIVATE))
+            VisibilityModifier = modifier;
+    }
+
+    if (!VisibilityModifier) {
+        Token token;
+        opString value;
+
+        // if not, create one using the mode.
+        if (mode == vismode_public) {
+            token = T_PUBLIC;
+            value = "public";
+        } else if (mode == vismode_protected) {
+            token = T_PROTECTED;
+            value = "protected";
+        } else if (mode == vismode_private) {
+            token = T_PRIVATE;
+            value = "private";
+        } else if (mode == vismode_default) {
+            token = T_DEFAULT;
+            value = "default";
+        }
+
+        VisibilityModifier = AddBasicModifier(value, token);
+    }
+
+    // now create the automatic visibility_mode modifier
+    ValuedModifierNode* visibility_mode = AddValueModifier("visibility_mode");
+
+    // set the argument value
+    stacked<TerminalNode> cloned = VisibilityModifier->Clone();
+    visibility_mode->GetArguments()->AppendNode(cloned);
 }
 
-TerminalNode* ModifierSupportBase::AddBasicModifier(const opString& modifiername, Token token)
-{
-	CreateModifiersNode();
-	
-	TerminalNode* node = automodifiers->AppendTerminalNode(modifiername,token);
-	
-	node->CopyBasics(automodifiers);
-	
-	return node;
+TerminalNode* ModifierSupportBase::AddBasicModifier(
+    const opString& modifiername, Token token) {
+    CreateModifiersNode();
+
+    TerminalNode* node = automodifiers->AppendTerminalNode(modifiername, token);
+
+    node->CopyBasics(automodifiers);
+
+    return node;
 }
 
-ValuedModifierNode* ModifierSupportBase::AddValueModifier(const opString& modifiername)
-{
-	CreateModifiersNode();
-	
-	//create the value modifier
-	stacked<ValuedModifierNode> valuemod = NEWNODE(ValuedModifierNode);
-	
-	//create the modifier name
-	TerminalNode* mod = valuemod->AppendTerminalNode(modifiername,T_MODIFIER);
-	mod->CopyBasics(automodifiers);
-	
-	valuemod->SetModifier(mod);
-	
-	//create the argument
-	stacked<ValuedModifierArgumentNode> valuearg = NEWNODE(ValuedModifierArgumentNode);
-	
-	ValuedModifierArgumentNode* valuearguments = *valuearg;
-	valuearguments->CopyBasics(automodifiers);
-	
-	valuemod->SetArguments(*valuearg);
-	valuemod->AppendNode(valuearg);
-	
-	ValuedModifierNode* valuemodifier = *valuemod;
-	valuemodifier->CopyBasics(automodifiers);
-	
-	automodifiers->AppendNode(valuemod);
-	
-	return valuemodifier;
+ValuedModifierNode* ModifierSupportBase::AddValueModifier(
+    const opString& modifiername) {
+    CreateModifiersNode();
+
+    // create the value modifier
+    stacked<ValuedModifierNode> valuemod = NEWNODE(ValuedModifierNode);
+
+    // create the modifier name
+    TerminalNode* mod = valuemod->AppendTerminalNode(modifiername, T_MODIFIER);
+    mod->CopyBasics(automodifiers);
+
+    valuemod->SetModifier(mod);
+
+    // create the argument
+    stacked<ValuedModifierArgumentNode> valuearg =
+        NEWNODE(ValuedModifierArgumentNode);
+
+    ValuedModifierArgumentNode* valuearguments = *valuearg;
+    valuearguments->CopyBasics(automodifiers);
+
+    valuemod->SetArguments(*valuearg);
+    valuemod->AppendNode(valuearg);
+
+    ValuedModifierNode* valuemodifier = *valuemod;
+    valuemodifier->CopyBasics(automodifiers);
+
+    automodifiers->AppendNode(valuemod);
+
+    return valuemodifier;
 }
 
-void FuncPointerStatementNode::RegisterAutoModifiers()
-{
-	/*=== function pointer ===*/
+void FuncPointerStatementNode::RegisterAutoModifiers() {
+    /*=== function pointer ===*/
 
     // kevin: hacked using boost::bind ..
 
-	// ModifierDelegate data_statement(this,&FuncPointerStatementNode::ModifierDataStatement);
-	// RegisterModifier("data_statement",data_statement);
-	RegisterModifier("data_statement",
-                     boost::bind(&FuncPointerStatementNode::ModifierDataStatement, this, _1));
-	
-	// ModifierDelegate function_pointer(this,&FuncPointerStatementNode::ModifierFunctionPointer);
-	// RegisterModifier("function_pointer",function_pointer);	
-	RegisterModifier("function_pointer",
-                     boost::bind(&FuncPointerStatementNode::ModifierFunctionPointer, this, _1));
-	
-	//????
-// 	ModifierDelegate function_pointer_signature(this,&FuncPointerStatementNode::ModifierFunctionPointerSignature);
-// 	RegisterModifier("function_pointer_signature",function_pointer_signature);	
+    // ModifierDelegate
+    // data_statement(this,&FuncPointerStatementNode::ModifierDataStatement);
+    // RegisterModifier("data_statement",data_statement);
+    RegisterModifier(
+        "data_statement",
+        boost::bind(&FuncPointerStatementNode::ModifierDataStatement, this,
+                    _1));
+
+    // ModifierDelegate
+    // function_pointer(this,&FuncPointerStatementNode::ModifierFunctionPointer);
+    // RegisterModifier("function_pointer",function_pointer);
+    RegisterModifier(
+        "function_pointer",
+        boost::bind(&FuncPointerStatementNode::ModifierFunctionPointer, this,
+                    _1));
+
+    //????
+    // 	ModifierDelegate
+    // function_pointer_signature(this,&FuncPointerStatementNode::ModifierFunctionPointerSignature);
+    // 	RegisterModifier("function_pointer_signature",function_pointer_signature);
 }
 
-void StatementModifierBase::GenerateStatementModifiers()
-{
-	// Register member_name	
-	// ModifierDelegate member_name(this,&StatementModifierBase::ModifierMemberName);
-	// RegisterModifier("member_name",member_name);
-	RegisterModifier("member_name",
-                     boost::bind(&StatementModifierBase::ModifierMemberName, this, _1));
-	
-	// All modifiers
-	// ModifierDelegate all_modifiers(this,&StatementModifierBase::ModifierAllModifiers);
-	// RegisterModifier("all_modifiers",all_modifiers);
-	RegisterModifier("all_modifiers",
-                     boost::bind(&StatementModifierBase::ModifierAllModifiers, this, _1));
+void StatementModifierBase::GenerateStatementModifiers() {
+    // Register member_name
+    // ModifierDelegate
+    // member_name(this,&StatementModifierBase::ModifierMemberName);
+    // RegisterModifier("member_name",member_name);
+    RegisterModifier(
+        "member_name",
+        boost::bind(&StatementModifierBase::ModifierMemberName, this, _1));
+
+    // All modifiers
+    // ModifierDelegate
+    // all_modifiers(this,&StatementModifierBase::ModifierAllModifiers);
+    // RegisterModifier("all_modifiers",all_modifiers);
+    RegisterModifier(
+        "all_modifiers",
+        boost::bind(&StatementModifierBase::ModifierAllModifiers, this, _1));
 }
 
-void DataStatementNode::RegisterAutoModifiers()
-{	
-	GenerateStatementModifiers();
-	
-	//Register data_statement
-	// ModifierDelegate data_statement(this,&DataStatementNode::ModifierDataStatement);
-	// RegisterModifier("data_statement",data_statement);
-	RegisterModifier("data_statement",
-                     boost::bind(&DataStatementNode::ModifierDataStatement, this, _1));
-	
-	//Register data_type
-	// ModifierDelegate data_type(this,&DataStatementNode::ModifierDataType);
-	// RegisterModifier("data_type",data_type);
-	RegisterModifier("data_type",
-                     boost::bind(&DataStatementNode::ModifierDataType, this, _1));
+void DataStatementNode::RegisterAutoModifiers() {
+    GenerateStatementModifiers();
 
-	if(Declaration->GetBits())
-	{
-		// ModifierDelegate data_bits(this,&DataStatementNode::ModifierDataBits);
-		// RegisterModifier("data_bits",data_bits);
-		RegisterModifier("data_bits",
-                         boost::bind(&DataStatementNode::ModifierDataBits, this, _1));
-	}
-	
-	if(Initialization)
-	{
-		// ModifierDelegate data_initialized(this,&DataStatementNode::ModifierDataInitialized);
-		// RegisterModifier("data_initialized",data_initialized);
-		RegisterModifier("data_initialized",
-                         boost::bind(&DataStatementNode::ModifierDataInitialized, this, _1));
-	}
-	
-	if(node_cast<ReferenceNode>(GetType())
-	|| node_cast<PointerNode>(GetType()))
-	{
-		// ModifierDelegate data_base_type(this,&DataStatementNode::ModifierDataBaseType);
-		// RegisterModifier("data_base_type",data_base_type);
-		RegisterModifier("data_base_type",
-                         boost::bind(&DataStatementNode::ModifierDataBaseType, this, _1));
-	}
-	
-	//type related
-	if(ReferenceNode* node = node_cast<ReferenceNode>(GetType()))
-	{
-		// ModifierDelegate data_reference(this,&DataStatementNode::ModifierDataReference);	
-		// RegisterModifier("data_reference",data_reference);
-		RegisterModifier("data_reference",
-                         boost::bind(&DataStatementNode::ModifierDataReference, this, _1));
-	}
-	if(PointerNode* node = node_cast<PointerNode>(GetType()))
-	{
-		// ModifierDelegate data_pointer(this,&DataStatementNode::ModifierDataPointer);	
-		// RegisterModifier("data_pointer",data_pointer);
-		RegisterModifier("data_pointer",
-                         boost::bind(&DataStatementNode::ModifierDataPointer, this, _1));
-		
-		// ModifierDelegate data_pointer_level(this,&DataStatementNode::ModifierDataPointerLevel);
-		// RegisterModifier("data_pointer_level",data_pointer_level);
-		RegisterModifier("data_pointer_level",
-                         boost::bind(&DataStatementNode::ModifierDataPointerLevel, this, _1));
-	}
-	if(ScopeNode* node = node_cast<ScopeNode>(GetType()))
-	{
-		// ModifierDelegate data_qualified(this,&DataStatementNode::ModifierDataQualified);
-		// RegisterModifier("data_qualified",data_qualified);
-		RegisterModifier("data_qualified",
-                         boost::bind(&DataStatementNode::ModifierDataQualified, this, _1));
-	}
-	if(TemplateTypeNode* node = node_cast<TemplateTypeNode>(GetType()))
-	{
-		// ModifierDelegate data_template(this,&DataStatementNode::ModifierDataTemplate);
-		// RegisterModifier("data_template",data_template);
-		RegisterModifier("data_template",
-                         boost::bind(&DataStatementNode::ModifierDataTemplate, this, _1));
-	}
-	if(TerminalNode* node = node_cast<TerminalNode>(GetType()))
-	{
-		// ModifierDelegate data_basic(this,&DataStatementNode::ModifierDataBasic);
-		// RegisterModifier("data_basic",data_basic);
-		RegisterModifier("data_basic",
-                         boost::bind(&DataStatementNode::ModifierDataBasic, this, _1));
-	}
-	
-	// ModifierDelegate data_full_type(this,&DataStatementNode::ModifierDataFullType);
-	// RegisterModifier("data_full_type",data_full_type);
-	RegisterModifier("data_full_type",
-                     boost::bind(&DataStatementNode::ModifierDataFullType, this, _1));
-	
-	//name related
-	if(ArrayNode* node = node_cast<ArrayNode>(GetName()))
-	{
-		// ModifierDelegate data_array(this,&DataStatementNode::ModifierDataArray);
-		// RegisterModifier("data_array",data_array);
-		RegisterModifier("data_array",
-                         boost::bind(&DataStatementNode::ModifierDataArray, this, _1));
-		
-		// ModifierDelegate data_array_brackets(this,&DataStatementNode::ModifierDataArrayBrackets);
-		// RegisterModifier("data_array_brackets",data_array_brackets);
-		RegisterModifier("data_array_brackets",
-                         boost::bind(&DataStatementNode::ModifierDataArrayBrackets, this, _1));
-		
-		// ModifierDelegate data_array_commas(this,&DataStatementNode::ModifierDataArrayCommas);
-		// RegisterModifier("data_array_commas",data_array_commas);
-		RegisterModifier("data_array_commas",
-                         boost::bind(&DataStatementNode::ModifierDataArrayCommas, this, _1));
-	}
+    // Register data_statement
+    // ModifierDelegate
+    // data_statement(this,&DataStatementNode::ModifierDataStatement);
+    // RegisterModifier("data_statement",data_statement);
+    RegisterModifier(
+        "data_statement",
+        boost::bind(&DataStatementNode::ModifierDataStatement, this, _1));
+
+    // Register data_type
+    // ModifierDelegate data_type(this,&DataStatementNode::ModifierDataType);
+    // RegisterModifier("data_type",data_type);
+    RegisterModifier(
+        "data_type",
+        boost::bind(&DataStatementNode::ModifierDataType, this, _1));
+
+    if (Declaration->GetBits()) {
+        // ModifierDelegate
+        // data_bits(this,&DataStatementNode::ModifierDataBits);
+        // RegisterModifier("data_bits",data_bits);
+        RegisterModifier(
+            "data_bits",
+            boost::bind(&DataStatementNode::ModifierDataBits, this, _1));
+    }
+
+    if (Initialization) {
+        // ModifierDelegate
+        // data_initialized(this,&DataStatementNode::ModifierDataInitialized);
+        // RegisterModifier("data_initialized",data_initialized);
+        RegisterModifier(
+            "data_initialized",
+            boost::bind(&DataStatementNode::ModifierDataInitialized, this, _1));
+    }
+
+    if (node_cast<ReferenceNode>(GetType()) ||
+        node_cast<PointerNode>(GetType())) {
+        // ModifierDelegate
+        // data_base_type(this,&DataStatementNode::ModifierDataBaseType);
+        // RegisterModifier("data_base_type",data_base_type);
+        RegisterModifier(
+            "data_base_type",
+            boost::bind(&DataStatementNode::ModifierDataBaseType, this, _1));
+    }
+
+    // type related
+    if (ReferenceNode* node = node_cast<ReferenceNode>(GetType())) {
+        // ModifierDelegate
+        // data_reference(this,&DataStatementNode::ModifierDataReference);
+        // RegisterModifier("data_reference",data_reference);
+        RegisterModifier(
+            "data_reference",
+            boost::bind(&DataStatementNode::ModifierDataReference, this, _1));
+    }
+    if (PointerNode* node = node_cast<PointerNode>(GetType())) {
+        // ModifierDelegate
+        // data_pointer(this,&DataStatementNode::ModifierDataPointer);
+        // RegisterModifier("data_pointer",data_pointer);
+        RegisterModifier(
+            "data_pointer",
+            boost::bind(&DataStatementNode::ModifierDataPointer, this, _1));
+
+        // ModifierDelegate
+        // data_pointer_level(this,&DataStatementNode::ModifierDataPointerLevel);
+        // RegisterModifier("data_pointer_level",data_pointer_level);
+        RegisterModifier(
+            "data_pointer_level",
+            boost::bind(&DataStatementNode::ModifierDataPointerLevel, this,
+                        _1));
+    }
+    if (ScopeNode* node = node_cast<ScopeNode>(GetType())) {
+        // ModifierDelegate
+        // data_qualified(this,&DataStatementNode::ModifierDataQualified);
+        // RegisterModifier("data_qualified",data_qualified);
+        RegisterModifier(
+            "data_qualified",
+            boost::bind(&DataStatementNode::ModifierDataQualified, this, _1));
+    }
+    if (TemplateTypeNode* node = node_cast<TemplateTypeNode>(GetType())) {
+        // ModifierDelegate
+        // data_template(this,&DataStatementNode::ModifierDataTemplate);
+        // RegisterModifier("data_template",data_template);
+        RegisterModifier(
+            "data_template",
+            boost::bind(&DataStatementNode::ModifierDataTemplate, this, _1));
+    }
+    if (TerminalNode* node = node_cast<TerminalNode>(GetType())) {
+        // ModifierDelegate
+        // data_basic(this,&DataStatementNode::ModifierDataBasic);
+        // RegisterModifier("data_basic",data_basic);
+        RegisterModifier(
+            "data_basic",
+            boost::bind(&DataStatementNode::ModifierDataBasic, this, _1));
+    }
+
+    // ModifierDelegate
+    // data_full_type(this,&DataStatementNode::ModifierDataFullType);
+    // RegisterModifier("data_full_type",data_full_type);
+    RegisterModifier(
+        "data_full_type",
+        boost::bind(&DataStatementNode::ModifierDataFullType, this, _1));
+
+    // name related
+    if (ArrayNode* node = node_cast<ArrayNode>(GetName())) {
+        // ModifierDelegate
+        // data_array(this,&DataStatementNode::ModifierDataArray);
+        // RegisterModifier("data_array",data_array);
+        RegisterModifier(
+            "data_array",
+            boost::bind(&DataStatementNode::ModifierDataArray, this, _1));
+
+        // ModifierDelegate
+        // data_array_brackets(this,&DataStatementNode::ModifierDataArrayBrackets);
+        // RegisterModifier("data_array_brackets",data_array_brackets);
+        RegisterModifier(
+            "data_array_brackets",
+            boost::bind(&DataStatementNode::ModifierDataArrayBrackets, this,
+                        _1));
+
+        // ModifierDelegate
+        // data_array_commas(this,&DataStatementNode::ModifierDataArrayCommas);
+        // RegisterModifier("data_array_commas",data_array_commas);
+        RegisterModifier(
+            "data_array_commas",
+            boost::bind(&DataStatementNode::ModifierDataArrayCommas, this, _1));
+    }
 }
 
 // Register common function modifiers.
-void FunctionStatementBase::RegisterFunctionModifiers()
-{
-	GenerateStatementModifiers();
+void FunctionStatementBase::RegisterFunctionModifiers() {
+    GenerateStatementModifiers();
 
-	/*=== functions - common ===*/
+    /*=== functions - common ===*/
 
-	// ModifierDelegate function_statement(this,&FunctionStatementBase::ModifierFunctionStatement);
-	// RegisterModifier("function_statement",function_statement);	
-	RegisterModifier("function_statement",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionStatement, this, _1));
-	
-	if(GetFunction()->GetAssignment())
-	{
-		// ModifierDelegate function_pure(this,&FunctionStatementBase::ModifierFunctionPure);
-		// RegisterModifier("function_pure",function_pure);	
-		RegisterModifier("function_pure",
-                         boost::bind(&FunctionStatementBase::ModifierFunctionPure, this, _1));
-	}
+    // ModifierDelegate
+    // function_statement(this,&FunctionStatementBase::ModifierFunctionStatement);
+    // RegisterModifier("function_statement",function_statement);
+    RegisterModifier(
+        "function_statement",
+        boost::bind(&FunctionStatementBase::ModifierFunctionStatement, this,
+                    _1));
 
-	if(GetFunction()->IsConst())
-	{
-		// ModifierDelegate function_const(this,&FunctionStatementBase::ModifierFunctionConst);
-		// RegisterModifier("function_const",function_const);
-		RegisterModifier("function_const",
-                         boost::bind(&FunctionStatementBase::ModifierFunctionConst, this, _1));
-	}
-	
-	// ModifierDelegate function_arguments(this,&FunctionStatementBase::ModifierFunctionArguments);
-	// RegisterModifier("function_arguments",function_arguments);
-	RegisterModifier("function_arguments",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionArguments, this, _1));
-	
-	// ModifierDelegate function_return_type(this,&FunctionStatementBase::ModifierFunctionReturnType);
-	// RegisterModifier("function_return_type",function_return_type);
-	RegisterModifier("function_return_type",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionReturnType, this, _1));
-	
-	// ModifierDelegate function_arguments_count(this,&FunctionStatementBase::ModifierFunctionArgumentCount);
-	// RegisterModifier("function_arguments_count",function_arguments_count);
-	RegisterModifier("function_arguments_count",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionArgumentCount, this, _1));
-	
-	// ModifierDelegate function_signature(this,&FunctionStatementBase::ModifierFunctionSignature);
-	// RegisterModifier("function_signature",function_signature);
-	RegisterModifier("function_signature",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionSignature, this, _1));
-	
-	// ModifierDelegate function_arguments_signature(this,&FunctionStatementBase::ModifierFunctionArgumentSignature);
-	// RegisterModifier("function_arguments_signature",function_arguments_signature);
-	RegisterModifier("function_arguments_signature",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionArgumentSignature, this, _1));
-	
-// 	ModifierDelegate function_pointer_signature(this,&FunctionStatementBase::ModifierFunctionPointerSignature);
-// 	RegisterModifier("function_pointer_signature",function_pointer_signature);
-	
-// 	ModifierDelegate function_signature_defaults(this,&FunctionStatementBase::ModifierFunctionSignatureDefaults);
-// 	RegisterModifier("function_signature_defaults",function_signature_defaults);
-	
-	// ModifierDelegate function_arguments_defaults(this,&FunctionStatementBase::ModifierFunctionArgumentsDefaults);
-	// RegisterModifier("function_arguments_defaults",function_arguments_defaults);
-	RegisterModifier("function_arguments_defaults",
-                     boost::bind(&FunctionStatementBase::ModifierFunctionArgumentsDefaults, this, _1));
-	
-	//operator modifiers
-	if(OperatorNode* op = node_cast<OperatorNode>(GetFunction()->GetName()))
-	{
-		//is an operator
-		RegisterBasicModifier("function_operator");
-		
-		//whats its type
-		// ModifierDelegate function_operator_type(this,&FunctionStatementBase::ModifierFunctionOperatorType);
-		// RegisterModifier("function_operator_type",function_operator_type);
-		RegisterModifier("function_operator_type",
-                         boost::bind(&FunctionStatementBase::ModifierFunctionOperatorType, this, _1));
-	}
+    if (GetFunction()->GetAssignment()) {
+        // ModifierDelegate
+        // function_pure(this,&FunctionStatementBase::ModifierFunctionPure);
+        // RegisterModifier("function_pure",function_pure);
+        RegisterModifier(
+            "function_pure",
+            boost::bind(&FunctionStatementBase::ModifierFunctionPure, this,
+                        _1));
+    }
 
+    if (GetFunction()->IsConst()) {
+        // ModifierDelegate
+        // function_const(this,&FunctionStatementBase::ModifierFunctionConst);
+        // RegisterModifier("function_const",function_const);
+        RegisterModifier(
+            "function_const",
+            boost::bind(&FunctionStatementBase::ModifierFunctionConst, this,
+                        _1));
+    }
+
+    // ModifierDelegate
+    // function_arguments(this,&FunctionStatementBase::ModifierFunctionArguments);
+    // RegisterModifier("function_arguments",function_arguments);
+    RegisterModifier(
+        "function_arguments",
+        boost::bind(&FunctionStatementBase::ModifierFunctionArguments, this,
+                    _1));
+
+    // ModifierDelegate
+    // function_return_type(this,&FunctionStatementBase::ModifierFunctionReturnType);
+    // RegisterModifier("function_return_type",function_return_type);
+    RegisterModifier(
+        "function_return_type",
+        boost::bind(&FunctionStatementBase::ModifierFunctionReturnType, this,
+                    _1));
+
+    // ModifierDelegate
+    // function_arguments_count(this,&FunctionStatementBase::ModifierFunctionArgumentCount);
+    // RegisterModifier("function_arguments_count",function_arguments_count);
+    RegisterModifier(
+        "function_arguments_count",
+        boost::bind(&FunctionStatementBase::ModifierFunctionArgumentCount, this,
+                    _1));
+
+    // ModifierDelegate
+    // function_signature(this,&FunctionStatementBase::ModifierFunctionSignature);
+    // RegisterModifier("function_signature",function_signature);
+    RegisterModifier(
+        "function_signature",
+        boost::bind(&FunctionStatementBase::ModifierFunctionSignature, this,
+                    _1));
+
+    // ModifierDelegate
+    // function_arguments_signature(this,&FunctionStatementBase::ModifierFunctionArgumentSignature);
+    // RegisterModifier("function_arguments_signature",function_arguments_signature);
+    RegisterModifier(
+        "function_arguments_signature",
+        boost::bind(&FunctionStatementBase::ModifierFunctionArgumentSignature,
+                    this, _1));
+
+    // 	ModifierDelegate
+    // function_pointer_signature(this,&FunctionStatementBase::ModifierFunctionPointerSignature);
+    // 	RegisterModifier("function_pointer_signature",function_pointer_signature);
+
+    // 	ModifierDelegate
+    // function_signature_defaults(this,&FunctionStatementBase::ModifierFunctionSignatureDefaults);
+    // 	RegisterModifier("function_signature_defaults",function_signature_defaults);
+
+    // ModifierDelegate
+    // function_arguments_defaults(this,&FunctionStatementBase::ModifierFunctionArgumentsDefaults);
+    // RegisterModifier("function_arguments_defaults",function_arguments_defaults);
+    RegisterModifier(
+        "function_arguments_defaults",
+        boost::bind(&FunctionStatementBase::ModifierFunctionArgumentsDefaults,
+                    this, _1));
+
+    // operator modifiers
+    if (OperatorNode* op = node_cast<OperatorNode>(GetFunction()->GetName())) {
+        // is an operator
+        RegisterBasicModifier("function_operator");
+
+        // whats its type
+        // ModifierDelegate
+        // function_operator_type(this,&FunctionStatementBase::ModifierFunctionOperatorType);
+        // RegisterModifier("function_operator_type",function_operator_type);
+        RegisterModifier(
+            "function_operator_type",
+            boost::bind(&FunctionStatementBase::ModifierFunctionOperatorType,
+                        this, _1));
+    }
 }
 
-void FuncPrototypeStatementNode::RegisterAutoModifiers()
-{
-	RegisterFunctionModifiers();
+void FuncPrototypeStatementNode::RegisterAutoModifiers() {
+    RegisterFunctionModifiers();
 
-	//prototype specific registrations
+    // prototype specific registrations
 
-	// ModifierDelegate function_prototype(this,&FuncPrototypeStatementNode::ModifierFunctionPrototype);
-	// RegisterModifier("function_prototype",function_prototype);
-	RegisterModifier("function_prototype",
-                     boost::bind(&FuncPrototypeStatementNode::ModifierFunctionPrototype, this, _1));
+    // ModifierDelegate
+    // function_prototype(this,&FuncPrototypeStatementNode::ModifierFunctionPrototype);
+    // RegisterModifier("function_prototype",function_prototype);
+    RegisterModifier(
+        "function_prototype",
+        boost::bind(&FuncPrototypeStatementNode::ModifierFunctionPrototype,
+                    this, _1));
 }
 
 // Register modifiers for function definitions.
-void FunctionDefinitionStatementNode::RegisterAutoModifiers()
-{
-	RegisterFunctionModifiers();
+void FunctionDefinitionStatementNode::RegisterAutoModifiers() {
+    RegisterFunctionModifiers();
 
-	//definition specific registrations
+    // definition specific registrations
 
-	RegisterBasicModifier("function_definition");
+    RegisterBasicModifier("function_definition");
 
-	// ModifierDelegate function_body(this,&FunctionDefinitionStatementNode::ModifierFunctionBody);
-	// RegisterModifier("function_body",function_body);
-	RegisterModifier("function_body",
-                     boost::bind(&FunctionDefinitionStatementNode::ModifierFunctionBody, this, _1));
+    // ModifierDelegate
+    // function_body(this,&FunctionDefinitionStatementNode::ModifierFunctionBody);
+    // RegisterModifier("function_body",function_body);
+    RegisterModifier(
+        "function_body",
+        boost::bind(&FunctionDefinitionStatementNode::ModifierFunctionBody,
+                    this, _1));
 }
 
-void ConstructorStatementBase::RegisterConstructorModifiers()
-{
-	RegisterFunctionModifiers();
+void ConstructorStatementBase::RegisterConstructorModifiers() {
+    RegisterFunctionModifiers();
 
-	RegisterBasicModifier("function_constructor");
+    RegisterBasicModifier("function_constructor");
 }
 
-void ConstructorDefinitionStatementNode::RegisterAutoModifiers()
-{
-	RegisterConstructorModifiers();
+void ConstructorDefinitionStatementNode::RegisterAutoModifiers() {
+    RegisterConstructorModifiers();
 
-	RegisterBasicModifier("function_definition");
+    RegisterBasicModifier("function_definition");
 
-	//TODO: add normal definition modifiers
-	// ModifierDelegate function_body(this,&ConstructorDefinitionStatementNode::ModifierFunctionBody);
-	// RegisterModifier("function_body",function_body);
-	RegisterModifier("function_body",
-                     boost::bind(&ConstructorDefinitionStatementNode::ModifierFunctionBody, this, _1));
+    // TODO: add normal definition modifiers
+    // ModifierDelegate
+    // function_body(this,&ConstructorDefinitionStatementNode::ModifierFunctionBody);
+    // RegisterModifier("function_body",function_body);
+    RegisterModifier(
+        "function_body",
+        boost::bind(&ConstructorDefinitionStatementNode::ModifierFunctionBody,
+                    this, _1));
 }
 
-void ConstructorPrototypeStatementNode::RegisterAutoModifiers()
-{
-	RegisterConstructorModifiers();
-	
-	//TODO: add normal prototype modifiers
-	RegisterBasicModifier("function_prototype");
+void ConstructorPrototypeStatementNode::RegisterAutoModifiers() {
+    RegisterConstructorModifiers();
+
+    // TODO: add normal prototype modifiers
+    RegisterBasicModifier("function_prototype");
 }
 
-void DestructorStatementBase::RegisterDestructorModifiers()
-{
-	RegisterFunctionModifiers();
+void DestructorStatementBase::RegisterDestructorModifiers() {
+    RegisterFunctionModifiers();
 
-	// ModifierDelegate function_destructor(this,&DestructorStatementBase::ModifierFunctionDestructor);
-	// RegisterModifier("function_destructor",function_destructor);
-	RegisterModifier("function_destructor",
-                     boost::bind(&DestructorStatementBase::ModifierFunctionDestructor, this, _1));
+    // ModifierDelegate
+    // function_destructor(this,&DestructorStatementBase::ModifierFunctionDestructor);
+    // RegisterModifier("function_destructor",function_destructor);
+    RegisterModifier(
+        "function_destructor",
+        boost::bind(&DestructorStatementBase::ModifierFunctionDestructor, this,
+                    _1));
 }
 
-void DestructorDefinitionStatementNode::RegisterAutoModifiers()
-{
-	RegisterDestructorModifiers();
+void DestructorDefinitionStatementNode::RegisterAutoModifiers() {
+    RegisterDestructorModifiers();
 
-	//TODO: add normal definition modifiers
-	RegisterBasicModifier("function_definition");
+    // TODO: add normal definition modifiers
+    RegisterBasicModifier("function_definition");
 
-	// ModifierDelegate function_body(this,&DestructorDefinitionStatementNode::ModifierFunctionBody);
-	// RegisterModifier("function_body",function_body);
-	RegisterModifier("function_body",
-                     boost::bind(&DestructorDefinitionStatementNode::ModifierFunctionBody, this, _1));
+    // ModifierDelegate
+    // function_body(this,&DestructorDefinitionStatementNode::ModifierFunctionBody);
+    // RegisterModifier("function_body",function_body);
+    RegisterModifier(
+        "function_body",
+        boost::bind(&DestructorDefinitionStatementNode::ModifierFunctionBody,
+                    this, _1));
 }
 
-void DestructorPrototypeStatementNode::RegisterAutoModifiers()
-{
-	RegisterDestructorModifiers();
-	
-	//TODO: add normal prototype modifiers
-	RegisterBasicModifier("function_prototype");
+void DestructorPrototypeStatementNode::RegisterAutoModifiers() {
+    RegisterDestructorModifiers();
+
+    // TODO: add normal prototype modifiers
+    RegisterBasicModifier("function_prototype");
 }
 
 // Register modifiers for opTypes (opObject, opEnum)
-void OPTypeBase::RegisterAutoModifiers()
-{
-	if(IsInside(G_OPOBJECT))
-	{
-		// ModifierDelegate inner_type(this,&OPTypeBase::ModifierInnerType);
-		// RegisterModifier("inner_type",inner_type);
-		RegisterModifier("inner_type",
+void OPTypeBase::RegisterAutoModifiers() {
+    if (IsInside(G_OPOBJECT)) {
+        // ModifierDelegate inner_type(this,&OPTypeBase::ModifierInnerType);
+        // RegisterModifier("inner_type",inner_type);
+        RegisterModifier("inner_type",
                          boost::bind(&OPTypeBase::ModifierInnerType, this, _1));
-	}
-	
-	// ModifierDelegate scope(this,&OPTypeBase::ModifierScope);
-	// RegisterModifier("scope",scope);
-	RegisterModifier("scope",
+    }
+
+    // ModifierDelegate scope(this,&OPTypeBase::ModifierScope);
+    // RegisterModifier("scope",scope);
+    RegisterModifier("scope",
                      boost::bind(&OPTypeBase::ModifierScope, this, _1));
-	
-	// ModifierDelegate alt_scope(this,&OPTypeBase::ModifierAltScope);
-	// RegisterModifier("alt_scope",alt_scope);
-	RegisterModifier("alt_scope",
+
+    // ModifierDelegate alt_scope(this,&OPTypeBase::ModifierAltScope);
+    // RegisterModifier("alt_scope",alt_scope);
+    RegisterModifier("alt_scope",
                      boost::bind(&OPTypeBase::ModifierAltScope, this, _1));
-	
-	// ModifierDelegate namespace_start(this,&OPTypeBase::ModifierNamespaceStart);
-	// RegisterModifier("namespace_start",namespace_start);
-	RegisterModifier("namespace_start",
-                     boost::bind(&OPTypeBase::ModifierNamespaceStart, this, _1));
-	
-	// ModifierDelegate namespace_end(this,&OPTypeBase::ModifierNamespaceEnd);
-	// RegisterModifier("namespace_end",namespace_end);
-	RegisterModifier("namespace_end",
+
+    // ModifierDelegate
+    // namespace_start(this,&OPTypeBase::ModifierNamespaceStart);
+    // RegisterModifier("namespace_start",namespace_start);
+    RegisterModifier(
+        "namespace_start",
+        boost::bind(&OPTypeBase::ModifierNamespaceStart, this, _1));
+
+    // ModifierDelegate namespace_end(this,&OPTypeBase::ModifierNamespaceEnd);
+    // RegisterModifier("namespace_end",namespace_end);
+    RegisterModifier("namespace_end",
                      boost::bind(&OPTypeBase::ModifierNamespaceEnd, this, _1));
-	
-	// ModifierDelegate alt_namespace_start(this,&OPTypeBase::ModifierAltNamespaceStart);
-	// RegisterModifier("alt_namespace_start",alt_namespace_start);
-	RegisterModifier("alt_namespace_start",
-                     boost::bind(&OPTypeBase::ModifierAltNamespaceStart, this, _1));
-	
-	// ModifierDelegate alt_namespace_end(this,&OPTypeBase::ModifierAltNamespaceEnd);
-	// RegisterModifier("alt_namespace_end",alt_namespace_end);
-	RegisterModifier("alt_namespace_end",
-                     boost::bind(&OPTypeBase::ModifierAltNamespaceEnd, this, _1));
+
+    // ModifierDelegate
+    // alt_namespace_start(this,&OPTypeBase::ModifierAltNamespaceStart);
+    // RegisterModifier("alt_namespace_start",alt_namespace_start);
+    RegisterModifier(
+        "alt_namespace_start",
+        boost::bind(&OPTypeBase::ModifierAltNamespaceStart, this, _1));
+
+    // ModifierDelegate
+    // alt_namespace_end(this,&OPTypeBase::ModifierAltNamespaceEnd);
+    // RegisterModifier("alt_namespace_end",alt_namespace_end);
+    RegisterModifier(
+        "alt_namespace_end",
+        boost::bind(&OPTypeBase::ModifierAltNamespaceEnd, this, _1));
 }
 
 ///==========================================
@@ -697,85 +723,74 @@ void OPTypeBase::RegisterAutoModifiers()
 
 /*=== class (instance) ===*/
 
-opNode* OPObjectNode::ModifierClassName(const opString& name)
-{
-	ValuedModifierNode* class_name = AddValueModifier(name);
+opNode* OPObjectNode::ModifierClassName(const opString& name) {
+    ValuedModifierNode* class_name = AddValueModifier(name);
 
-	stacked<opNode> cloned = GetName()->CloneGeneric();
-	class_name->GetArguments()->AppendNode(cloned);
+    stacked<opNode> cloned = GetName()->CloneGeneric();
+    class_name->GetArguments()->AppendNode(cloned);
 
-	return class_name;
+    return class_name;
 }
 
-opNode* OPObjectNode::ModifierAltClassName(const opString& name)
-{
-	ValuedModifierNode* alt_class_name = AddValueModifier(name);
-	opNode* node = alt_class_name->GetArguments();
+opNode* OPObjectNode::ModifierAltClassName(const opString& name) {
+    ValuedModifierNode* alt_class_name = AddValueModifier(name);
+    opNode* node = alt_class_name->GetArguments();
 
-	node->AppendTerminalNode("_" + GetName()->GetValue(),T_ID);
+    node->AppendTerminalNode("_" + GetName()->GetValue(), T_ID);
 
-	return alt_class_name;
+    return alt_class_name;
 }
 
+opNode* OPObjectNode::ModifierParentName(const opString& name) {
+    ValuedModifierNode* parent_name = AddValueModifier(name);
+    OPObjectInheritanceNode* inheritance = GetInheritance();
 
-opNode* OPObjectNode::ModifierParentName(const opString& name)
-{
-	ValuedModifierNode*       parent_name = AddValueModifier(name);
-	OPObjectInheritanceNode* inheritance = GetInheritance();
+    if (inheritance) inheritance->CloneParentNames(parent_name->GetArguments());
 
-	if (inheritance)
-		inheritance->CloneParentNames(parent_name->GetArguments());
-
-	return parent_name;
+    return parent_name;
 }
 
 /*=== category ===*/
 
-opNode* OPObjectNode::ModifierCategoryStatement(const opString& name)
-{
-	return AddBasicModifier(name, T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryStatement(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryAbstract(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryAbstract(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryBaseclass(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryBaseclass(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategorySingleInheritance(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategorySingleInheritance(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryMultipleInheritance(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryMultipleInheritance(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryHasConstructor(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryHasConstructor(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryHasDestructor(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryHasDestructor(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryHasSimpleConstructor(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryHasSimpleConstructor(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPObjectNode::ModifierCategoryHasComplexConstructor(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPObjectNode::ModifierCategoryHasComplexConstructor(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
-// 
+//
 // opNode* OPObjectNode::ModifierCategoryName(const opString& name)
 // {
 // 	//????
@@ -784,754 +799,693 @@ opNode* OPObjectNode::ModifierCategoryHasComplexConstructor(const opString& name
 
 /*=== functions - common ===*/
 
-opNode* FunctionStatementBase::ModifierFunctionStatement(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FunctionStatementBase::ModifierFunctionStatement(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* FunctionStatementBase::ModifierFunctionPure(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FunctionStatementBase::ModifierFunctionPure(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* FunctionStatementBase::ModifierFunctionConst(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FunctionStatementBase::ModifierFunctionConst(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
-//NOTE: BUG: functionarguments does not remember const
+// NOTE: BUG: functionarguments does not remember const
 // arguments, no defaults
-opNode* FunctionStatementBase::ModifierFunctionArguments(const opString& name)
-{
-	ValuedModifierNode* argmod = AddValueModifier(name);
-	FunctionArgumentListNode* arglist = GetFunction()->GetArguments();
+opNode* FunctionStatementBase::ModifierFunctionArguments(const opString& name) {
+    ValuedModifierNode* argmod = AddValueModifier(name);
+    FunctionArgumentListNode* arglist = GetFunction()->GetArguments();
 
-	int numargs = arglist->GetNumArguments();
-	for(int i = 0; i < numargs; i++)
-	{
-		stacked<FunctionArgumentDefinitionNode> clonearg = arglist->GetArgument(i)->GetDefinition()->Clone();
-		argmod->GetArguments()->AppendNode(clonearg);
+    int numargs = arglist->GetNumArguments();
+    for (int i = 0; i < numargs; i++) {
+        stacked<FunctionArgumentDefinitionNode> clonearg =
+            arglist->GetArgument(i)->GetDefinition()->Clone();
+        argmod->GetArguments()->AppendNode(clonearg);
 
-		if(i < numargs - 1)
-			argmod->GetArguments()->AppendTerminalNode(',',T_COMMA);
-	}
+        if (i < numargs - 1)
+            argmod->GetArguments()->AppendTerminalNode(',', T_COMMA);
+    }
 
-	return argmod;
+    return argmod;
 }
 
-opNode* FunctionStatementBase::ModifierFunctionReturnType(const opString& name)
-{
-	ValuedModifierNode* retmod = AddValueModifier(name);
-	if(GetReturnType())
-	{
-		stacked<opNode> cloneret = GetReturnType()->CloneGeneric();
-		retmod->GetArguments()->AppendNode(cloneret);
-	}
-	return retmod;
+opNode* FunctionStatementBase::ModifierFunctionReturnType(
+    const opString& name) {
+    ValuedModifierNode* retmod = AddValueModifier(name);
+    if (GetReturnType()) {
+        stacked<opNode> cloneret = GetReturnType()->CloneGeneric();
+        retmod->GetArguments()->AppendNode(cloneret);
+    }
+    return retmod;
 }
 
-opNode* FunctionStatementBase::ModifierFunctionArgumentCount(const opString& name)
-{
-	//function_argument_count()
-	ValuedModifierNode* countmod = AddValueModifier(name);
-	int numarguments = GetFunction()->GetArguments()->GetNumArguments();
-	countmod->GetArguments()->AppendTerminalNode(numarguments,T_MODIFIER);
-	return countmod;
+opNode* FunctionStatementBase::ModifierFunctionArgumentCount(
+    const opString& name) {
+    // function_argument_count()
+    ValuedModifierNode* countmod = AddValueModifier(name);
+    int numarguments = GetFunction()->GetArguments()->GetNumArguments();
+    countmod->GetArguments()->AppendTerminalNode(numarguments, T_MODIFIER);
+    return countmod;
 }
 
 // function signature, no defaults
-opNode* FunctionStatementBase::ModifierFunctionSignature(const opString& name)
-{
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode*			   arguments = modifier->GetArguments();
-	
-	// return type
-	if(GetReturnType())
-	{
-		stacked<opNode> cloned = GetReturnType()->CloneGeneric();
-		arguments->AppendNode(cloned);
-	}
-	
-	// now we need a space (not really)
-	arguments->AppendTerminalNode(" ",T_WHITESPACE);
-	
-	// create the parentheses
-	stacked<ParenBlockNode> parens = NEWNODE(ParenBlockNode());
-	parens->CopyBasics(GetFunction()->GetArguments());
-	
-	// now loop over all the arguments...
-	int numargs = GetFunction()->GetArguments()->GetNumArguments();
-	for(int i = 0; i < numargs; i++)
-	{
-		FunctionArgumentNode* arg = GetFunction()->GetArguments()->GetArgument(i);
-		FunctionArgumentDefinitionNode* def = arg->GetDefinition();
-		
-		//NOTE: what about arrays? :P~
-		stacked<opNode> type = def->GetInnerStatement()->GetType()->CloneGeneric();
-		
-		parens->AppendNode(type);
-		
-		if(i + 1 < numargs)
-			parens->AppendTerminalNode(",",T_COMMA);
-	}
-	
-	arguments->AppendNode(parens);
-	
-	// ignore const in this modifier...
-	
-	return modifier;
+opNode* FunctionStatementBase::ModifierFunctionSignature(const opString& name) {
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* arguments = modifier->GetArguments();
+
+    // return type
+    if (GetReturnType()) {
+        stacked<opNode> cloned = GetReturnType()->CloneGeneric();
+        arguments->AppendNode(cloned);
+    }
+
+    // now we need a space (not really)
+    arguments->AppendTerminalNode(" ", T_WHITESPACE);
+
+    // create the parentheses
+    stacked<ParenBlockNode> parens = NEWNODE(ParenBlockNode());
+    parens->CopyBasics(GetFunction()->GetArguments());
+
+    // now loop over all the arguments...
+    int numargs = GetFunction()->GetArguments()->GetNumArguments();
+    for (int i = 0; i < numargs; i++) {
+        FunctionArgumentNode* arg =
+            GetFunction()->GetArguments()->GetArgument(i);
+        FunctionArgumentDefinitionNode* def = arg->GetDefinition();
+
+        // NOTE: what about arrays? :P~
+        stacked<opNode> type =
+            def->GetInnerStatement()->GetType()->CloneGeneric();
+
+        parens->AppendNode(type);
+
+        if (i + 1 < numargs) parens->AppendTerminalNode(",", T_COMMA);
+    }
+
+    arguments->AppendNode(parens);
+
+    // ignore const in this modifier...
+
+    return modifier;
 }
 
-opNode* FunctionStatementBase::ModifierFunctionArgumentSignature(const opString& name)
-{
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode*			   arguments = modifier->GetArguments();
+opNode* FunctionStatementBase::ModifierFunctionArgumentSignature(
+    const opString& name) {
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* arguments = modifier->GetArguments();
 
-	// create the parentheses
-	stacked<ParenBlockNode> parens = NEWNODE(ParenBlockNode());
-	parens->CopyBasics(GetFunction()->GetArguments());
+    // create the parentheses
+    stacked<ParenBlockNode> parens = NEWNODE(ParenBlockNode());
+    parens->CopyBasics(GetFunction()->GetArguments());
 
-	// now loop over all the arguments...
-	int numargs = GetFunction()->GetArguments()->GetNumArguments();
-	for(int i = 0; i < numargs; i++)
-	{
-		FunctionArgumentNode* arg = GetFunction()->GetArguments()->GetArgument(i);
-		FunctionArgumentDefinitionNode* def = arg->GetDefinition();
-		
-		//NOTE: what about arrays? :P~
-		stacked<opNode> type = def->GetInnerStatement()->GetType()->CloneGeneric();
-		
-		parens->AppendNode(type);
-		
-		if(i + 1 < numargs)
-			parens->AppendTerminalNode(",",T_COMMA);
-	}
-	
-	arguments->AppendNode(parens);
-	
-	return modifier;
+    // now loop over all the arguments...
+    int numargs = GetFunction()->GetArguments()->GetNumArguments();
+    for (int i = 0; i < numargs; i++) {
+        FunctionArgumentNode* arg =
+            GetFunction()->GetArguments()->GetArgument(i);
+        FunctionArgumentDefinitionNode* def = arg->GetDefinition();
+
+        // NOTE: what about arrays? :P~
+        stacked<opNode> type =
+            def->GetInnerStatement()->GetType()->CloneGeneric();
+
+        parens->AppendNode(type);
+
+        if (i + 1 < numargs) parens->AppendTerminalNode(",", T_COMMA);
+    }
+
+    arguments->AppendNode(parens);
+
+    return modifier;
 }
 
-// opNode* FunctionStatementBase::ModifierFunctionPointerSignature(const opString& name)
+// opNode* FunctionStatementBase::ModifierFunctionPointerSignature(const
+// opString& name)
 // {
 // 	//note: can utilize the function arguments for this.
 // 	// first, clone the function arguments
 // 	// second, tell it to become a signature (by deleting nodes)
 // 	// needs a const or something.... I guess it will work
-// 	
+//
 // 	// may not be useful...
-// 
+//
 // 	//TODO: do this!
 // 	return NULL;
 // }
 
 // returntype (type arg, type arg = default)
-// opNode* FunctionStatementBase::ModifierFunctionSignatureDefaults(const opString& name)
+// opNode* FunctionStatementBase::ModifierFunctionSignatureDefaults(const
+// opString& name)
 // {
 // 	ValuedModifierNode* modifier = AddValueModifier(name);
 // 	opNode*			   arguments = modifier->GetArguments();
-// 
+//
 // 	// return type
 // 	arguments->AppendNode(GetReturnType()->CloneGeneric());
-// 
+//
 // 	// now we need a space (not really)
 // 	arguments->AppendTerminalNode(" ",T_WHITESPACE);
-// 
+//
 // 	// create the parentheses
 // 	stacked<ParenBlockNode> parens = NEWNODE(ParenBlockNode());
 // 	parens->CopyBasics(GetFunction()->GetArguments());
-// 
+//
 // 	// now loop over all the arguments...
 // 	int numargs = GetFunction()->GetArguments()->GetNumArguments();
 // 	for(int i = 0; i < numargs; i++)
 // 	{
-// 		FunctionArgumentNode* arg = GetFunction()->GetArguments()->GetArgument(i);
+// 		FunctionArgumentNode* arg =
+// GetFunction()->GetArguments()->GetArgument(i);
 // 		FunctionArgumentDefinitionNode* def = arg->GetDefinition();
-// 
+//
 // 		//NOTE: what about arrays? :P~
-// 		stacked<opNode> type = def->GetInnerStatement()->GetType()->CloneGeneric();
-// 
+// 		stacked<opNode> type =
+// def->GetInnerStatement()->GetType()->CloneGeneric();
+//
 // 		parens->AppendNode(type);
-// 
+//
 // 		if(arg->GetDefault())
 // 		{
 // 			parens->AppendTerminalNode("=",T_ASSIGN);
-// 			
-// 			stacked<opNode> argdefault = arg->GetDefault()->CloneGeneric();
-// 			
+//
+// 			stacked<opNode> argdefault =
+// arg->GetDefault()->CloneGeneric();
+//
 // 			parens->CollapseNode(argdefault,parens->GetEnd());
 // 		}
-// 		
+//
 // 		if(i + 1 < numargs)
 // 			parens->AppendTerminalNode(",",T_COMMA);
 // 	}
-// 	
+//
 // 	arguments->AppendNode(parens);
-// 	
-// 
+//
+//
 // 	// first, clone the function arguments
 // 	// second, tell it to become a signature (by deleting nodes)
 // 	// needs a const or something.... I guess it will work
 // 	//return type
 // 	//function sig
-// 
+//
 // 	//TODO: do this!
 // 	return modifier;
 // }
 
-opNode* FunctionStatementBase::ModifierFunctionOperatorType(const opString& name)
-{
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode*			   arguments = modifier->GetArguments();
-	
-	OperatorNode* node = node_cast<OperatorNode>(GetFunction()->GetName());
-	stacked<OperatorNode> op = node->Clone();
-	
-	arguments->CollapseNode(op,arguments->GetEnd());
-	
-	return modifier;
+opNode* FunctionStatementBase::ModifierFunctionOperatorType(
+    const opString& name) {
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* arguments = modifier->GetArguments();
+
+    OperatorNode* node = node_cast<OperatorNode>(GetFunction()->GetName());
+    stacked<OperatorNode> op = node->Clone();
+
+    arguments->CollapseNode(op, arguments->GetEnd());
+
+    return modifier;
 }
 
+// format: type arg, int name = default ...
+opNode* FunctionStatementBase::ModifierFunctionArgumentsDefaults(
+    const opString& name) {
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* arguments = modifier->GetArguments();
 
-//format: type arg, int name = default ...
-opNode* FunctionStatementBase::ModifierFunctionArgumentsDefaults(const opString& name)
-{
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode*			   arguments = modifier->GetArguments();
+    // now loop over all the arguments...
+    int numargs = GetFunction()->GetArguments()->GetNumArguments();
+    for (int i = 0; i < numargs; i++) {
+        FunctionArgumentNode* arg =
+            GetFunction()->GetArguments()->GetArgument(i);
+        FunctionArgumentDefinitionNode* def = arg->GetDefinition();
 
-	// now loop over all the arguments...
-	int numargs = GetFunction()->GetArguments()->GetNumArguments();
-	for(int i = 0; i < numargs; i++)
-	{
-		FunctionArgumentNode* arg = GetFunction()->GetArguments()->GetArgument(i);
-		FunctionArgumentDefinitionNode* def = arg->GetDefinition();
-		
-		//NOTE: what about arrays? :P~
-		stacked<opNode> type = def->GetInnerStatement()->GetType()->CloneGeneric();
-		
-		arguments->AppendNode(type);
-		
-		if(arg->GetDefault())
-		{
-			arguments->AppendTerminalNode("=",T_ASSIGN);
+        // NOTE: what about arrays? :P~
+        stacked<opNode> type =
+            def->GetInnerStatement()->GetType()->CloneGeneric();
 
-			stacked<opNode> argdefault = arg->GetDefault()->CloneGeneric();
+        arguments->AppendNode(type);
 
-			arguments->CollapseNode(argdefault,arguments->GetEnd());
-		}
+        if (arg->GetDefault()) {
+            arguments->AppendTerminalNode("=", T_ASSIGN);
 
-		if(i + 1 < numargs)
-			arguments->AppendTerminalNode(",",T_COMMA);
-	}
+            stacked<opNode> argdefault = arg->GetDefault()->CloneGeneric();
 
-	return modifier;
+            arguments->CollapseNode(argdefault, arguments->GetEnd());
+        }
+
+        if (i + 1 < numargs) arguments->AppendTerminalNode(",", T_COMMA);
+    }
+
+    return modifier;
 }
 
 /*=== function prototypes ===*/
 
-opNode* FuncPrototypeStatementNode::ModifierFunctionPrototype(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FuncPrototypeStatementNode::ModifierFunctionPrototype(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
 /*=== function definitions ===*/
 
-opNode* FunctionDefinitionStatementNode::ModifierFunctionDefinition(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FunctionDefinitionStatementNode::ModifierFunctionDefinition(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* FunctionDefinitionStatementNode::ModifierFunctionBody(const opString& name)
-{
-	//function body (no braces)
-	stacked<opNode> cloned = FunctionDefinition->GetBody()->CloneGeneric();
-	
-	ValuedModifierNode* function_body = AddValueModifier(name);
-	function_body->GetArguments()->CollapseNode(cloned,function_body->GetArguments()->GetBegin());
-	
-	return function_body;
+opNode* FunctionDefinitionStatementNode::ModifierFunctionBody(
+    const opString& name) {
+    // function body (no braces)
+    stacked<opNode> cloned = FunctionDefinition->GetBody()->CloneGeneric();
+
+    ValuedModifierNode* function_body = AddValueModifier(name);
+    function_body->GetArguments()->CollapseNode(
+        cloned, function_body->GetArguments()->GetBegin());
+
+    return function_body;
 }
 
 /*=== destructors ===*/
 
-opNode* DestructorStatementBase::ModifierFunctionDestructor(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* DestructorStatementBase::ModifierFunctionDestructor(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DestructorDefinitionStatementNode::ModifierFunctionBody(const opString& name)
-{
-	//function body (no braces)
-	stacked<opNode> cloned = DestructorDefinition->GetBody()->CloneGeneric();
+opNode* DestructorDefinitionStatementNode::ModifierFunctionBody(
+    const opString& name) {
+    // function body (no braces)
+    stacked<opNode> cloned = DestructorDefinition->GetBody()->CloneGeneric();
 
-	ValuedModifierNode* function_body = AddValueModifier(name);
-	function_body->GetArguments()->CollapseNode(cloned,function_body->GetArguments()->GetBegin());
+    ValuedModifierNode* function_body = AddValueModifier(name);
+    function_body->GetArguments()->CollapseNode(
+        cloned, function_body->GetArguments()->GetBegin());
 
-	return function_body;
+    return function_body;
 }
 
 /*=== constructors ===*/
 
-opNode* ConstructorStatementBase::ModifierFunctionConstructor(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* ConstructorStatementBase::ModifierFunctionConstructor(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* ConstructorDefinitionStatementNode::ModifierFunctionBody(const opString& name)
-{
-	//function body (no braces)
-	stacked<opNode> cloned = ConstructorDefinition->GetBody()->CloneGeneric();
-	
-	ValuedModifierNode* function_body = AddValueModifier(name);
-	function_body->GetArguments()->CollapseNode(cloned,function_body->GetArguments()->GetBegin());
-	
-	return function_body;
+opNode* ConstructorDefinitionStatementNode::ModifierFunctionBody(
+    const opString& name) {
+    // function body (no braces)
+    stacked<opNode> cloned = ConstructorDefinition->GetBody()->CloneGeneric();
+
+    ValuedModifierNode* function_body = AddValueModifier(name);
+    function_body->GetArguments()->CollapseNode(
+        cloned, function_body->GetArguments()->GetBegin());
+
+    return function_body;
 }
 
 /*=== function pointer ===*/
 
-opNode* FuncPointerStatementNode::ModifierDataStatement(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FuncPointerStatementNode::ModifierDataStatement(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* FuncPointerStatementNode::ModifierFunctionPointer(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* FuncPointerStatementNode::ModifierFunctionPointer(
+    const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-//TODO: add these back... if they make any sense
-// opNode* FuncPointerStatementNode::ModifierFunctionPointerName(const opString& name)
+// TODO: add these back... if they make any sense
+// opNode* FuncPointerStatementNode::ModifierFunctionPointerName(const opString&
+// name)
 // {
 // 	ValuedModifierNode* function_pointer_name = AddValueModifier(name);
 // 	function_pointer_name->GetArguments()->AppendNode(FunctionPointer->GetDecl()->GetName()->CloneGeneric());
 // 	return function_pointer_name;
 //}
 
-// opNode* FuncPointerStatementNode::ModifierFunctionPointerSignature(const opString& name)
+// opNode* FuncPointerStatementNode::ModifierFunctionPointerSignature(const
+// opString& name)
 // {
 // 	//theres no such thing... :/
 // 	//TODO: do this!
 // 	return NULL;
 //}
 
+opNode* DataStatementNode::ModifierDataType(const opString& name) {
+    // data_type
+    ValuedModifierNode* data_type = AddValueModifier(name);
+    if (HasModifier(T_CONST)) {
+        data_type->GetArguments()->AppendTerminalNode("const", T_CONST);
+        data_type->GetArguments()->AppendTerminalNode(" ", T_WHITESPACE);
+    }
+    if (HasModifier(T_VOLATILE)) {
+        data_type->GetArguments()->AppendTerminalNode("volatile", T_VOLATILE);
+        data_type->GetArguments()->AppendTerminalNode(" ", T_WHITESPACE);
+    }
 
+    stacked<opNode> cloned = GetDataType()->CloneGeneric();
+    data_type->GetArguments()->AppendNode(cloned);
 
-opNode* DataStatementNode::ModifierDataType(const opString& name)
-{
-	//data_type
-	ValuedModifierNode* data_type = AddValueModifier(name);
-	if(HasModifier(T_CONST))
-	{
-		data_type->GetArguments()->AppendTerminalNode("const",T_CONST);	
-		data_type->GetArguments()->AppendTerminalNode(" ",T_WHITESPACE);	
-	}
-	if(HasModifier(T_VOLATILE))
-	{
-		data_type->GetArguments()->AppendTerminalNode("volatile",T_VOLATILE);	
-		data_type->GetArguments()->AppendTerminalNode(" ",T_WHITESPACE);	
-	}
-
-	stacked<opNode> cloned = GetDataType()->CloneGeneric();
-	data_type->GetArguments()->AppendNode(cloned);
-	
-	return data_type;
+    return data_type;
 }
 
-opNode* DataStatementNode::ModifierDataStatement(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* DataStatementNode::ModifierDataStatement(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataBits(const opString& name)
-{
-	ValuedModifierNode* mod = AddValueModifier(name);
-	mod->GetArguments()->AppendTerminalNode(Declaration->GetBits()->GetNumber()->GetValue(),T_NUMBER);
-	return mod;
+opNode* DataStatementNode::ModifierDataBits(const opString& name) {
+    ValuedModifierNode* mod = AddValueModifier(name);
+    mod->GetArguments()->AppendTerminalNode(
+        Declaration->GetBits()->GetNumber()->GetValue(), T_NUMBER);
+    return mod;
 }
 
-opNode* DataStatementNode::ModifierDataInitialized(const opString& name)
-{
-	ValuedModifierNode* mod = AddValueModifier(name);
+opNode* DataStatementNode::ModifierDataInitialized(const opString& name) {
+    ValuedModifierNode* mod = AddValueModifier(name);
 
-	stacked<DataInitializationNode> init = Initialization->Clone();
-	DataInitializationNode* cloned = *init;
-	mod->GetArguments()->CollapseNode(init,mod->GetArguments()->GetBegin());
-	return mod;
+    stacked<DataInitializationNode> init = Initialization->Clone();
+    DataInitializationNode* cloned = *init;
+    mod->GetArguments()->CollapseNode(init, mod->GetArguments()->GetBegin());
+    return mod;
 }
 
-opNode* DataStatementNode::ModifierDataReference(const opString& name)
-{
-	//data_reference
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* DataStatementNode::ModifierDataReference(const opString& name) {
+    // data_reference
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataPointer(const opString& name)
-{
-	//data_pointer
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* DataStatementNode::ModifierDataPointer(const opString& name) {
+    // data_pointer
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataPointerLevel(const opString& name)
-{
-	PointerNode* node = node_cast<PointerNode>(GetType());
+opNode* DataStatementNode::ModifierDataPointerLevel(const opString& name) {
+    PointerNode* node = node_cast<PointerNode>(GetType());
 
-	ValuedModifierNode* pmod = AddValueModifier(name);
-	pmod->GetArguments()->AppendTerminalNode(node->GetNumStars(),T_NUMBER);
+    ValuedModifierNode* pmod = AddValueModifier(name);
+    pmod->GetArguments()->AppendTerminalNode(node->GetNumStars(), T_NUMBER);
 
-	return pmod;
+    return pmod;
 }
 
-opNode* DataStatementNode::ModifierDataBaseType(const opString& name)
-{
-	opNode* type = GetDataType();
-	
-	if(ReferenceNode* node = node_cast<ReferenceNode>(type))
-	{
-		//data_base_type()
-		ValuedModifierNode* mod = AddValueModifier(name);
-		stacked<opNode> value = node->GetType()->CloneGeneric();
-		mod->GetArguments()->AppendNode(value);
-		return mod;
-	}
-	else if(PointerNode* node = node_cast<PointerNode>(type))
-	{
-		//data_base_type()
-		ValuedModifierNode* mod = AddValueModifier(name);
-		stacked<opNode> value = node->GetType()->CloneGeneric();
-		mod->GetArguments()->AppendNode(value);
-		return mod;
-	}
+opNode* DataStatementNode::ModifierDataBaseType(const opString& name) {
+    opNode* type = GetDataType();
 
-	return NULL;
+    if (ReferenceNode* node = node_cast<ReferenceNode>(type)) {
+        // data_base_type()
+        ValuedModifierNode* mod = AddValueModifier(name);
+        stacked<opNode> value = node->GetType()->CloneGeneric();
+        mod->GetArguments()->AppendNode(value);
+        return mod;
+    } else if (PointerNode* node = node_cast<PointerNode>(type)) {
+        // data_base_type()
+        ValuedModifierNode* mod = AddValueModifier(name);
+        stacked<opNode> value = node->GetType()->CloneGeneric();
+        mod->GetArguments()->AppendNode(value);
+        return mod;
+    }
+
+    return NULL;
 }
 
-opNode* DataStatementNode::ModifierDataTemplate(const opString& name)
-{
-	//data_template
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* DataStatementNode::ModifierDataTemplate(const opString& name) {
+    // data_template
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataQualified(const opString& name)
-{
-	//data_template
-	return AddBasicModifier(name,T_MODIFIER);	
+opNode* DataStatementNode::ModifierDataQualified(const opString& name) {
+    // data_template
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataBasic(const opString& name)
-{
-	//data_basic
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* DataStatementNode::ModifierDataBasic(const opString& name) {
+    // data_basic
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataFullType(const opString& name)
-{
-	//TODO: this needs to be fixed...
+opNode* DataStatementNode::ModifierDataFullType(const opString& name) {
+    // TODO: this needs to be fixed...
 
-	ValuedModifierNode* data_full_type = AddValueModifier(name);
-	if(HasModifier(T_CONST))
-	{
-		data_full_type->GetArguments()->AppendTerminalNode("const",T_CONST);	
-		data_full_type->GetArguments()->AppendTerminalNode(" ",T_WHITESPACE);	
-	}
-	if(HasModifier(T_VOLATILE))
-	{
-		data_full_type->GetArguments()->AppendTerminalNode("volatile",T_VOLATILE);	
-		data_full_type->GetArguments()->AppendTerminalNode(" ",T_WHITESPACE);	
-	}
+    ValuedModifierNode* data_full_type = AddValueModifier(name);
+    if (HasModifier(T_CONST)) {
+        data_full_type->GetArguments()->AppendTerminalNode("const", T_CONST);
+        data_full_type->GetArguments()->AppendTerminalNode(" ", T_WHITESPACE);
+    }
+    if (HasModifier(T_VOLATILE)) {
+        data_full_type->GetArguments()->AppendTerminalNode("volatile",
+                                                           T_VOLATILE);
+        data_full_type->GetArguments()->AppendTerminalNode(" ", T_WHITESPACE);
+    }
 
-	stacked<opNode> cloneddatatype = GetDataType()->CloneGeneric();
-	data_full_type->GetArguments()->AppendNode(cloneddatatype);
-	
+    stacked<opNode> cloneddatatype = GetDataType()->CloneGeneric();
+    data_full_type->GetArguments()->AppendNode(cloneddatatype);
 
-	if(	ArrayNode* node = node_cast<ArrayNode>(GetName()) )
-	{
-		int numbrackets = node->GetNumBrackets();
-		for(int i = 0; i < numbrackets; i++)
-		{
-			BracketBlockNode* bracket = node->GetBracket(i);	
-			
-			stacked<BracketBlockNode> clonedbracket = bracket->Clone();
-			data_full_type->GetArguments()->AppendNode(clonedbracket);
-		}
-	}
+    if (ArrayNode* node = node_cast<ArrayNode>(GetName())) {
+        int numbrackets = node->GetNumBrackets();
+        for (int i = 0; i < numbrackets; i++) {
+            BracketBlockNode* bracket = node->GetBracket(i);
 
-	return data_full_type;
+            stacked<BracketBlockNode> clonedbracket = bracket->Clone();
+            data_full_type->GetArguments()->AppendNode(clonedbracket);
+        }
+    }
+
+    return data_full_type;
 }
 
-opNode* DataStatementNode::ModifierDataArray(const opString& name)
-{
-	//data_array
-	return AddBasicModifier(name,T_MODIFIER);	
+opNode* DataStatementNode::ModifierDataArray(const opString& name) {
+    // data_array
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* DataStatementNode::ModifierDataArrayBrackets(const opString& name)
-{
-	ArrayNode* node = node_cast<ArrayNode>(GetName());
+opNode* DataStatementNode::ModifierDataArrayBrackets(const opString& name) {
+    ArrayNode* node = node_cast<ArrayNode>(GetName());
 
-	//data_array_brackets()
-	ValuedModifierNode* mod = AddValueModifier("data_array_brackets");
+    // data_array_brackets()
+    ValuedModifierNode* mod = AddValueModifier("data_array_brackets");
 
-	int numbrackets = node->GetNumBrackets();
-	for(int i = 0; i < numbrackets; i++)
-	{
-		BracketBlockNode* bracket = node->GetBracket(i);	
-		stacked<BracketBlockNode> cloned = bracket->Clone();
-		mod->GetArguments()->AppendNode(cloned);
-	}
+    int numbrackets = node->GetNumBrackets();
+    for (int i = 0; i < numbrackets; i++) {
+        BracketBlockNode* bracket = node->GetBracket(i);
+        stacked<BracketBlockNode> cloned = bracket->Clone();
+        mod->GetArguments()->AppendNode(cloned);
+    }
 
-	return mod;
+    return mod;
 }
 
-opNode* DataStatementNode::ModifierDataArrayCommas(const opString& name)
-{
-	ArrayNode* node = node_cast<ArrayNode>(GetName());
-	
-	//data_array_commas()
-	ValuedModifierNode* cmod = AddValueModifier("data_array_commas");
-	
-	//this needs to iterate all the brackets,
-	//extract them, and collapse them, adding commas
-	int numbrackets = node->GetNumBrackets();
-	for(int i = 0; i < numbrackets; i++)
-	{
-		BracketBlockNode* bracket = node->GetBracket(i);
-		
-		stacked<BracketBlockNode> clone = bracket->Clone();
-		
-		iterator end = cmod->GetArguments()->GetEnd();
-		
-		cmod->GetArguments()->CollapseNode(clone,end);
-		
-		if(i < numbrackets - 1)
-			cmod->GetArguments()->AppendTerminalNode(',',T_COMMA);
-	}
-	
-	return cmod;
+opNode* DataStatementNode::ModifierDataArrayCommas(const opString& name) {
+    ArrayNode* node = node_cast<ArrayNode>(GetName());
+
+    // data_array_commas()
+    ValuedModifierNode* cmod = AddValueModifier("data_array_commas");
+
+    // this needs to iterate all the brackets,
+    // extract them, and collapse them, adding commas
+    int numbrackets = node->GetNumBrackets();
+    for (int i = 0; i < numbrackets; i++) {
+        BracketBlockNode* bracket = node->GetBracket(i);
+
+        stacked<BracketBlockNode> clone = bracket->Clone();
+
+        iterator end = cmod->GetArguments()->GetEnd();
+
+        cmod->GetArguments()->CollapseNode(clone, end);
+
+        if (i < numbrackets - 1)
+            cmod->GetArguments()->AppendTerminalNode(',', T_COMMA);
+    }
+
+    return cmod;
 }
 
-opNode* StatementModifierBase::ModifierMemberName(const opString& name)
-{
-	ValuedModifierNode* member_name = AddValueModifier(name);
-	stacked<opNode> cloned = GetMemberName()->CloneGeneric();
-	member_name->GetArguments()->AppendNode(cloned);
+opNode* StatementModifierBase::ModifierMemberName(const opString& name) {
+    ValuedModifierNode* member_name = AddValueModifier(name);
+    stacked<opNode> cloned = GetMemberName()->CloneGeneric();
+    member_name->GetArguments()->AppendNode(cloned);
 
-	return member_name;
+    return member_name;
 }
 
-opNode* StatementModifierBase::ModifierAllModifiers(const opString& name)
-{
-	ValuedModifierNode* all_modifiers = AddValueModifier(name);
-	opNode* arguments = all_modifiers->GetArguments();
+opNode* StatementModifierBase::ModifierAllModifiers(const opString& name) {
+    ValuedModifierNode* all_modifiers = AddValueModifier(name);
+    opNode* arguments = all_modifiers->GetArguments();
 
-	if(modifiers)
-	{
-		//loop through all modifiers
-		//add cloned modifiers to arguments
-		opNode::iterator it  = modifiers->GetBegin();
-		opNode::iterator end = modifiers->GetEnd();
+    if (modifiers) {
+        // loop through all modifiers
+        // add cloned modifiers to arguments
+        opNode::iterator it = modifiers->GetBegin();
+        opNode::iterator end = modifiers->GetEnd();
 
-		while(it != end)
-		{
-			stacked<opNode> cloned = it->CloneGeneric();
-			arguments->AppendNode(cloned);
+        while (it != end) {
+            stacked<opNode> cloned = it->CloneGeneric();
+            arguments->AppendNode(cloned);
 
-			++it;
+            ++it;
 
-			if(it != end)
-				arguments->AppendTerminalNode(" ",T_WHITESPACE);
-		}
-	}
-	
-	return all_modifiers;
+            if (it != end) arguments->AppendTerminalNode(" ", T_WHITESPACE);
+        }
+    }
+
+    return all_modifiers;
 }
 
 //
 // OPTypeBase Modifier Generator
 //
 
-opNode* OPTypeBase::ModifierInnerType(const opString& name)
-{
-	return AddBasicModifier(name,T_MODIFIER);
+opNode* OPTypeBase::ModifierInnerType(const opString& name) {
+    return AddBasicModifier(name, T_MODIFIER);
 }
 
-opNode* OPTypeBase::ModifierScope(const opString& name)
-{
-	//build the scope argument
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode* node = modifier->GetArguments();
+opNode* OPTypeBase::ModifierScope(const opString& name) {
+    // build the scope argument
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* node = modifier->GetArguments();
 
-	opNode* current = GetParent();
-	while(current)
-	{
-		if(OPObjectNode* objectnode = node_cast<OPObjectNode>(current))
-		{
-			//extract string
-			opString scopename;
-			objectnode->GetName()->PrintString(scopename);
+    opNode* current = GetParent();
+    while (current) {
+        if (OPObjectNode* objectnode = node_cast<OPObjectNode>(current)) {
+            // extract string
+            opString scopename;
+            objectnode->GetName()->PrintString(scopename);
 
-			node->PrependTerminalNode(scopename,T_ID);
-			node->PrependTerminalNode("::",T_SCOPE_RESOLUTION);
-		}
-		else if(NamespaceNode* namespacenode = node_cast<NamespaceNode>(current))
-		{
-			//extract string
-			opString scopename;
-			namespacenode->GetName()->PrintString(scopename);
+            node->PrependTerminalNode(scopename, T_ID);
+            node->PrependTerminalNode("::", T_SCOPE_RESOLUTION);
+        } else if (NamespaceNode* namespacenode =
+                       node_cast<NamespaceNode>(current)) {
+            // extract string
+            opString scopename;
+            namespacenode->GetName()->PrintString(scopename);
 
-			node->PrependTerminalNode(scopename,T_ID);
-			node->PrependTerminalNode("::",T_SCOPE_RESOLUTION);
-		}
+            node->PrependTerminalNode(scopename, T_ID);
+            node->PrependTerminalNode("::", T_SCOPE_RESOLUTION);
+        }
 
-		current = current->GetParent();
-	}
+        current = current->GetParent();
+    }
 
-	return modifier;
+    return modifier;
 }
 
-opNode* OPTypeBase::ModifierAltScope(const opString& name)
-{
-	//build the alt scope argument
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode* node = modifier->GetArguments();
+opNode* OPTypeBase::ModifierAltScope(const opString& name) {
+    // build the alt scope argument
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* node = modifier->GetArguments();
 
-	opNode* current = GetParent();
-	while(current)
-	{
-		if(OPObjectNode* objectnode = node_cast<OPObjectNode>(current))
-		{
-			//extract string
-			opString scopename;
-			objectnode->GetName()->PrintString(scopename);
+    opNode* current = GetParent();
+    while (current) {
+        if (OPObjectNode* objectnode = node_cast<OPObjectNode>(current)) {
+            // extract string
+            opString scopename;
+            objectnode->GetName()->PrintString(scopename);
 
-			node->PrependTerminalNode("_" + scopename,T_ID);
-			node->PrependTerminalNode("::",T_SCOPE_RESOLUTION);
-		}
-		else if(NamespaceNode* namespacenode = node_cast<NamespaceNode>(current))
-		{
-			//extract string
-			opString scopename;
-			namespacenode->GetName()->PrintString(scopename);
+            node->PrependTerminalNode("_" + scopename, T_ID);
+            node->PrependTerminalNode("::", T_SCOPE_RESOLUTION);
+        } else if (NamespaceNode* namespacenode =
+                       node_cast<NamespaceNode>(current)) {
+            // extract string
+            opString scopename;
+            namespacenode->GetName()->PrintString(scopename);
 
-			node->PrependTerminalNode("_" + scopename,T_ID);
-			node->PrependTerminalNode("::",T_SCOPE_RESOLUTION);
-		}
+            node->PrependTerminalNode("_" + scopename, T_ID);
+            node->PrependTerminalNode("::", T_SCOPE_RESOLUTION);
+        }
 
-		current = current->GetParent();
-	}
+        current = current->GetParent();
+    }
 
-	return modifier;
+    return modifier;
 }
 
-opNode* OPTypeBase::ModifierNamespaceStart(const opString& name)
-{
+opNode* OPTypeBase::ModifierNamespaceStart(const opString& name) {
+    // build the namespace start argument
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* node = modifier->GetArguments();
 
-	//build the namespace start argument
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode* node = modifier->GetArguments();
+    NamespaceNode* current = FindParent<NamespaceNode>();
 
-	NamespaceNode* current = FindParent<NamespaceNode>();
+    while (current) {
+        // add backwards...
+        // "namespace name { " -> " { name namespace"
+        node->PrependTerminalNode(" ", T_WHITESPACE);
+        node->PrependTerminalNode("{", T_LEFT_BRACE);
+        node->PrependTerminalNode(" ", T_WHITESPACE);
+        node->PrependTerminalNode(current->GetName()->GetValue(), T_ID);
+        node->PrependTerminalNode(" ", T_WHITESPACE);
+        node->PrependTerminalNode("namespace", T_NAMESPACE);
 
-	while(current)
-	{
-		// add backwards...
-		// "namespace name { " -> " { name namespace"
-		node->PrependTerminalNode(" ",T_WHITESPACE);
-		node->PrependTerminalNode("{",T_LEFT_BRACE);
-		node->PrependTerminalNode(" ",T_WHITESPACE);
-		node->PrependTerminalNode(current->GetName()->GetValue(),T_ID);
-		node->PrependTerminalNode(" ",T_WHITESPACE);
-		node->PrependTerminalNode("namespace",T_NAMESPACE);
+        current = current->FindParent<NamespaceNode>();
+    }
 
-		current = current->FindParent<NamespaceNode>();
-	}
-
-	return modifier;
+    return modifier;
 }
 
-opNode* OPTypeBase::ModifierNamespaceEnd(const opString& name)
-{
-	//build the namespace start argument
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode* node = modifier->GetArguments();
+opNode* OPTypeBase::ModifierNamespaceEnd(const opString& name) {
+    // build the namespace start argument
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* node = modifier->GetArguments();
 
-	NamespaceNode* current = FindParent<NamespaceNode>();
+    NamespaceNode* current = FindParent<NamespaceNode>();
 
-	while(current)
-	{
-		node->AppendTerminalNode("}",T_RIGHT_BRACE);
-		node->AppendTerminalNode(" ",T_WHITESPACE);
+    while (current) {
+        node->AppendTerminalNode("}", T_RIGHT_BRACE);
+        node->AppendTerminalNode(" ", T_WHITESPACE);
 
-		current = current->FindParent<NamespaceNode>();
-	}
+        current = current->FindParent<NamespaceNode>();
+    }
 
-	return modifier;
+    return modifier;
 }
 
-opNode* OPTypeBase::ModifierAltNamespaceStart(const opString& name)
-{
-	//build the alt namespace start argument
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode* node = modifier->GetArguments();
+opNode* OPTypeBase::ModifierAltNamespaceStart(const opString& name) {
+    // build the alt namespace start argument
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* node = modifier->GetArguments();
 
-	opNode* current = GetParent();
+    opNode* current = GetParent();
 
-	while(current)
-	{
-		// add backwards...
-		// "namespace _name { " -> " { _name namespace"
-		if(NamespaceNode* c = node_cast<NamespaceNode>(current))
-		{
-			node->PrependTerminalNode(" ",T_WHITESPACE);
-			node->PrependTerminalNode("{",T_LEFT_BRACE);
-			node->PrependTerminalNode(" ",T_WHITESPACE);
-			node->PrependTerminalNode("_" + c->GetName()->GetValue(),T_ID);
-			node->PrependTerminalNode(" ",T_WHITESPACE);
-			node->PrependTerminalNode("namespace",T_NAMESPACE);
-		}
-		else if(OPObjectNode* o = node_cast<OPObjectNode>(current))
-		{
-			node->PrependTerminalNode(" ",T_WHITESPACE);
-			node->PrependTerminalNode("{",T_LEFT_BRACE);
-			node->PrependTerminalNode(" ",T_WHITESPACE);
-			node->PrependTerminalNode("_" + o->GetName()->GetValue(),T_ID);
-			node->PrependTerminalNode(" ",T_WHITESPACE);
-			node->PrependTerminalNode("namespace",T_NAMESPACE);
-		}
+    while (current) {
+        // add backwards...
+        // "namespace _name { " -> " { _name namespace"
+        if (NamespaceNode* c = node_cast<NamespaceNode>(current)) {
+            node->PrependTerminalNode(" ", T_WHITESPACE);
+            node->PrependTerminalNode("{", T_LEFT_BRACE);
+            node->PrependTerminalNode(" ", T_WHITESPACE);
+            node->PrependTerminalNode("_" + c->GetName()->GetValue(), T_ID);
+            node->PrependTerminalNode(" ", T_WHITESPACE);
+            node->PrependTerminalNode("namespace", T_NAMESPACE);
+        } else if (OPObjectNode* o = node_cast<OPObjectNode>(current)) {
+            node->PrependTerminalNode(" ", T_WHITESPACE);
+            node->PrependTerminalNode("{", T_LEFT_BRACE);
+            node->PrependTerminalNode(" ", T_WHITESPACE);
+            node->PrependTerminalNode("_" + o->GetName()->GetValue(), T_ID);
+            node->PrependTerminalNode(" ", T_WHITESPACE);
+            node->PrependTerminalNode("namespace", T_NAMESPACE);
+        }
 
-		current = current->GetParent();
-	}
+        current = current->GetParent();
+    }
 
-	return modifier;
+    return modifier;
 }
 
-opNode* OPTypeBase::ModifierAltNamespaceEnd(const opString& name)
-{
-	//build the alt namespace end argument
-	ValuedModifierNode* modifier = AddValueModifier(name);
-	opNode* node = modifier->GetArguments();
-	
-	opNode* current = GetParent();
-	
-	while(current)
-	{
-		// add backwards...
-		// "namespace _name { " -> " { _name namespace"
-		if(node_cast<NamespaceNode>(current)
-			|| node_cast<OPObjectNode>(current))
-		{
-			node->AppendTerminalNode("}",T_RIGHT_BRACE);
-			node->AppendTerminalNode(" ",T_WHITESPACE);
-		}
+opNode* OPTypeBase::ModifierAltNamespaceEnd(const opString& name) {
+    // build the alt namespace end argument
+    ValuedModifierNode* modifier = AddValueModifier(name);
+    opNode* node = modifier->GetArguments();
 
-		current = current->GetParent();
-	}
+    opNode* current = GetParent();
 
-	return modifier;
+    while (current) {
+        // add backwards...
+        // "namespace _name { " -> " { _name namespace"
+        if (node_cast<NamespaceNode>(current) ||
+            node_cast<OPObjectNode>(current)) {
+            node->AppendTerminalNode("}", T_RIGHT_BRACE);
+            node->AppendTerminalNode(" ", T_WHITESPACE);
+        }
+
+        current = current->GetParent();
+    }
+
+    return modifier;
 }
-
-
-
-
-
-
-

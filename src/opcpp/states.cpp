@@ -13,18 +13,18 @@
 
 #include "opcpp/opcpp.h"
 
-// void StateStatementNode::GatherStateFunctions(vector<statefunctionpair>& gathered)
+// void StateStatementNode::GatherStateFunctions(vector<statefunctionpair>&
+// gathered)
 // {
-// 	vector<FunctionDefinitionStatementNode*>& statefunctions = GetState()->GetBody()->FunctionDefinitionStatements;
-// 	
+// 	vector<FunctionDefinitionStatementNode*>& statefunctions =
+// GetState()->GetBody()->FunctionDefinitionStatements;
+//
 // 	//append all elements of statefunctions to gathered
 // 	size_t numfunctions = statefunctions.size();
-// 
+//
 // 	for(size_t i = 0; i < numfunctions; i++)
 // 	{
 // 		gathered.push_back(statefunctionpair(this,statefunctions[i]));
 // 	}
-// 	
+//
 // }
-
-

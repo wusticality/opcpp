@@ -15,5 +15,5 @@
 
 int opException::ExceptionCount = 0;
 
-opException::ExceptionType opException::ExceptionOverride = opException::DefaultException;
-
+opException::ExceptionType opException::ExceptionOverride =
+    opException::DefaultException;

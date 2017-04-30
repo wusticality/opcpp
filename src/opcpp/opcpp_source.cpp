@@ -8,7 +8,7 @@
 ///
 /// Description:
 ///
-/// This file is the source code "glob" file.  It merges all .cpp's into one 
+/// This file is the source code "glob" file.  It merges all .cpp's into one
 /// before compiling.  This dramatically reduces compile times.
 ///****************************************************************
 
@@ -19,21 +19,18 @@
 //
 
 #ifdef PLATFORM_WINDOWS
-	//OPCPP Related:
-	//print a compiling message to stdout ?
-	#define OPCOMPILING_SOURCE(filestr)	\
-		__pragma(message(filestr))
+// OPCPP Related:
+// print a compiling message to stdout ?
+#define OPCOMPILING_SOURCE(filestr) __pragma(message(filestr))
 
-	#define OPCOMPILING_SOURCE_START \
-		__pragma(message(" :::::::::::"))
+#define OPCOMPILING_SOURCE_START __pragma(message(" :::::::::::"))
 
-	#define OPCOMPILING_SOURCE_END \
-		__pragma(message(" =========== "))
+#define OPCOMPILING_SOURCE_END __pragma(message(" =========== "))
 
 #else
-	#define OPCOMPILING_SOURCE(filestr) 
-	#define OPCOMPILING_SOURCE_START 
-	#define OPCOMPILING_SOURCE_END 
+#define OPCOMPILING_SOURCE(filestr)
+#define OPCOMPILING_SOURCE_START
+#define OPCOMPILING_SOURCE_END
 #endif
 
 OPCOMPILING_SOURCE_START;
@@ -147,5 +144,3 @@ OPCOMPILING_SOURCE("opcpp/modifiers.cpp");
 #include "opcpp/modifiers.cpp"
 
 OPCOMPILING_SOURCE_END;
-
-

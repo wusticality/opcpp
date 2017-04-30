@@ -18,31 +18,28 @@
 //
 
 // make sure we don't have any duplicate modifiers
-void DialectModifiersNode::CheckForDuplicates()
-{
-	iterator i   = GetBegin();
-	iterator end = GetEnd();
-	iterator j;
+void DialectModifiersNode::CheckForDuplicates() {
+    iterator i = GetBegin();
+    iterator end = GetEnd();
+    iterator j;
 
-	while (i != end)
-	{
-		j = i;
-		++j;
+    while (i != end) {
+        j = i;
+        ++j;
 
-		while (j != end)
-		{
-			if (i->GetId() == j->GetId()) 
-			{
-				opString modstring;
+        while (j != end) {
+            if (i->GetId() == j->GetId()) {
+                opString modstring;
 
-				j->PrintString(modstring);
+                j->PrintString(modstring);
 
-				opError::MessageError(*j, "Duplicate modifier '" + modstring + "' found!");			
-			}
+                opError::MessageError(
+                    *j, "Duplicate modifier '" + modstring + "' found!");
+            }
 
-			++j;
-		}
+            ++j;
+        }
 
-		++i;
-	}
+        ++i;
+    }
 }
